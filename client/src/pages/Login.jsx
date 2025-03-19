@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ModeToggle } from "../components/ModeToggle";
 
 function Login() {
   // schema for form validation
@@ -48,6 +49,9 @@ function Login() {
 
       <div className="mx-auto w-full max-w-md">
         <div className="text-center mb-6">
+          <div className="flex">
+            <ModeToggle />
+          </div>
           <h1 className="font-purple-purse text-4xl mb-2">Oh, You're back!</h1>
           <h2 className="font-poppins text-2xl text-gray-600">
             Log in with your credentials
