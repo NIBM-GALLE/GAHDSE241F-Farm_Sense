@@ -1,5 +1,4 @@
 import React from "react";
-import loginPng from "../assets/images/login.png";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,20 +14,27 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../components/ModeToggle";
+import signupPng from "../assets/images/signup.png";
 
-function Login() {
+function SignUp() {
   const navigate = useNavigate();
-  // schema for form validation
+  const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/; // Check for at least one special character
+
   const formSchema = z.object({
     email: z.string().email({
       message: "Please enter a valid email address",
     }),
-    password: z.string().min(4, {
-      message: "Please enter your password",
-    }),
+
+    password: z
+      .string()
+      .regex(format, {
+        message: "Password must contain at least one special character",
+      })
+      .min(8, {
+        message: "Password must contain at least 8 characters",
+      }),
   });
 
-  // Initialize the form with react-hook-form and zod
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,15 +43,13 @@ function Login() {
     },
   });
 
-  // Handle submission
   const onSubmit = (data) => {
     console.log("Form Data:", data);
   };
-
   return (
     <div className="min-h-screen grid sm:grid-cols-2 mx-auto justify-center items-center px-4">
       <div className="mx-auto">
-        <img src={loginPng} alt="login" className="max-w-full h-auto" />
+        <img src={signupPng} alt="login" className="max-w-full h-auto" />
       </div>
 
       <div className="mx-auto w-full max-w-md">
@@ -53,10 +57,8 @@ function Login() {
           <div className="flex">
             <ModeToggle />
           </div>
-          <h1 className="font-purple-purse text-4xl mb-2">Oh, You're back!</h1>
-          <h2 className="font-poppins text-2xl ">
-            Log in with your credentials
-          </h2>
+          <h1 className="font-purple-purse text-4xl mb-2">Hello There !</h1>
+          <h2 className="font-poppins text-2xl ">Register a account with us</h2>
         </div>
         <div>
           <Form {...form}>
@@ -94,24 +96,16 @@ function Login() {
                 size="lg"
                 className="w-full"
               >
-                Login
+                Register
               </Button>
             </form>
-            <div className="flex mt-5 gap-5 justify-between mb-4">
-              <div className="flex">
-                <div>Not a member ?</div>
-                <div
-                  className="ml-2 cursor-pointer hover:underline text-green-500"
-                  onClick={() => navigate("/signup")}
-                >
-                  Signup
-                </div>
-              </div>
+            <div className="flex mt-5 mb-4">
+              <div>Already a member ?</div>
               <div
-                className="cursor-pointer text-red-400 hover:underline"
-                onClick={() => navigate("")}
+                className="ml-1 cursor-pointer hover:underline text-green-500"
+                onClick={() => navigate("/")}
               >
-                Forget Password ?
+                Login
               </div>
             </div>
           </Form>
@@ -121,4 +115,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignUp;

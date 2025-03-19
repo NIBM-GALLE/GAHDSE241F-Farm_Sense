@@ -1,8 +1,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
-import Login from "./pages/Login";
 import { ThemeProvider } from "./components/ui/ThemeProvider";
-import { ModeToggle } from "./components/ModeToggle";
+
+// pages
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 function App() {
   return (
@@ -10,6 +12,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
