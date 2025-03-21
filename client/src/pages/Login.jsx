@@ -44,7 +44,7 @@ function Login() {
 
   return (
     <div className="min-h-screen grid sm:grid-cols-2 mx-auto justify-center items-center px-4">
-      <div className="mx-auto">
+      <div className="mx-auto hidden sm:block">
         <img src={loginPng} alt="login" className="max-w-full h-auto" />
       </div>
 
@@ -109,7 +109,7 @@ function Login() {
               </div>
               <div
                 className="cursor-pointer text-red-400 hover:underline"
-                onClick={() => navigate("")}
+                onClick={() => navigate("/forget-password")}
               >
                 Forget Password ?
               </div>

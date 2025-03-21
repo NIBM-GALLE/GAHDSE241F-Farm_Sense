@@ -1,4 +1,3 @@
-import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,10 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../components/ModeToggle";
 import signupPng from "../assets/images/signup.png";
+import { IoEyeOff } from "react-icons/io5";
+import { useState } from "react";
+import { IoEye } from "react-icons/io5";
 
 function SignUp() {
   const navigate = useNavigate();
   const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/; // Check for at least one special character
+  const [showPassword, setShowPassword] = useState(false);
 
   const formSchema = z.object({
     email: z.string().email({
@@ -48,7 +51,7 @@ function SignUp() {
   };
   return (
     <div className="min-h-screen grid sm:grid-cols-2 mx-auto justify-center items-center px-4">
-      <div className="mx-auto">
+      <div className="mx-auto hidden sm:block">
         <img src={signupPng} alt="login" className="max-w-full h-auto" />
       </div>
 
@@ -82,9 +85,26 @@ function SignUp() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your Password" {...field} />
-                    </FormControl>
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your Password"
+                          {...field}
+                          type={showPassword ? "text" : "password"}
+                        />
+                      </FormControl>
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <IoEyeOff className="h-5 w-5" />
+                        ) : (
+                          <IoEye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
