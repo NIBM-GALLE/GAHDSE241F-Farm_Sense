@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp";
 import Forget_password from "./pages/Forget_password";
 import Reset_password from "./pages/Reset_password";
 import Home from "./pages/Home";
+import Profile from "./pages/Profile";
 
 // App component
 import Navbar from "./components/Navbar";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/forget-password" element={<Forget_password />} />
           <Route path="/reset-password" element={<Reset_password />} />
           <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

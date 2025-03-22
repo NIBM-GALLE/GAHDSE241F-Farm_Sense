@@ -51,18 +51,18 @@ function Navbar() {
               <ul className="py-2">
                 <li>
                   <Link
-                    to="/dashboard"
+                    to="/profile"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
                   >
-                    Dashboard
+                    Profile
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/settings"
+                    to="/dashboard"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
                   >
-                    Settings
+                    Dashboard
                   </Link>
                 </li>
 
