@@ -1,4 +1,4 @@
-// This is the main entry point of the app.
+
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
