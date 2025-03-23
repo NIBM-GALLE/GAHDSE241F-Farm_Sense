@@ -19,7 +19,7 @@ function Dashboard_Sidebar() {
   const items = [
     {
       title: "Home",
-      url: "#",
+      url: "/",
       icon: Home,
     },
     {

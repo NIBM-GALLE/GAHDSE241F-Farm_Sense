@@ -54,6 +54,11 @@ const farmerSchema = mongoose.Schema(
       minLength: [5, "Plant name must be at least 5 characters"],
     },
 
+    role: {
+      type: String,
+      default: "user",
+    },
+
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
