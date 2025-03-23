@@ -23,17 +23,17 @@ function Dashboard_Sidebar() {
       icon: Home,
     },
     {
-      title: "Inbox",
+      title: "Sub centers",
       url: "#",
       icon: Inbox,
     },
     {
-      title: "Calendar",
+      title: "Research Divisions",
       url: "#",
       icon: Calendar,
     },
     {
-      title: "Search",
+      title: "Messages",
       url: "#",
       icon: Search,
     },
