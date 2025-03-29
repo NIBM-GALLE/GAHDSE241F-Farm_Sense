@@ -1,0 +1,10 @@
+# ninja log v5
+1	54	0	D:/Final HDSE/github code/GAHDSE241F-Farm_Sense/mobileapp/android/app/.cxx/Debug/1w5m2p2a/x86_64/CMakeFiles/cmake.verify_globs	c3187bebcbf9fe6f
+1	4319	7644283841260804	CMakeFiles/appmodules.dir/OnLoad.cpp.o	ab721c4d116c3a4e
+4	4032	7644283838426760	CMakeFiles/appmodules.dir/9901173a29668ba136e9f5022b313cfb/mobileapp/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	7512d27b7cc984ce
+24	328	7649305077677381	build.ninja	e5f0fe722703c6b5
+4320	4446	7644283842630613	D:/Final HDSE/github code/GAHDSE241F-Farm_Sense/mobileapp/android/app/build/intermediates/cxx/Debug/1w5m2p2a/obj/x86_64/libappmodules.so	6419168d288d8ec
+1	9	0	clean	f04a2de69052abbb
+55	632	7649305077677381	build.ninja	e5f0fe722703c6b5
+2	38	0	D:/Final HDSE/github code/GAHDSE241F-Farm_Sense/mobileapp/android/app/.cxx/Debug/1w5m2p2a/x86_64/CMakeFiles/cmake.verify_globs	c3187bebcbf9fe6f
+0	20	0	clean	f04a2de69052abbb

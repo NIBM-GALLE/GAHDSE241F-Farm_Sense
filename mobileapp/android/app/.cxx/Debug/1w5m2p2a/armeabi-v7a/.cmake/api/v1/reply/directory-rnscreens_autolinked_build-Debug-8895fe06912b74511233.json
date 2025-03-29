@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "rnscreens_autolinked_build",
+		"source" : "D:/Final HDSE/github code/GAHDSE241F-Farm_Sense/mobileapp/node_modules/react-native-screens/android/src/main/jni"
+	}
+}
