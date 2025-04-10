@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 
 const LoginScreen = ({ navigation, route }: any) => {
+
+  /*const onPressLogin = async (email: string, password: string) => {
+    Alert.alert("Login", `Email: ${email}, Password: ${password}`);
+  }*/
+
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -35,6 +41,9 @@ const LoginScreen = ({ navigation, route }: any) => {
             navigation.replace("AgentHome");
           }
         }}
+        // onPress={() => {
+        //   onPressLogin(email, password)
+        
       >
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
