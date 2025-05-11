@@ -35,6 +35,17 @@ npm install
 npm run dev
 ```
 
+### **Mobile Setup**
+
+Navigate to the "mobileapp" directory:
+
+```bash
+cd mobileapp
+npm install
+npm start
+npm run android
+```
+
 ### **Environment Variables**
 
 To run the project, you need to set up the following environment variables in a `.env` file in the root directory:
