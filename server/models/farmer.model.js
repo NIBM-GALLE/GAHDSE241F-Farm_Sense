@@ -49,11 +49,22 @@ const farmerSchema = mongoose.Schema(
     },
 
     plants: {
-      name: [String],
-      maxLength: [100, "Plant name cannot be more than 100 characters"],
-      minLength: [5, "Plant name must be at least 5 characters"],
+      type: [String],
+      validate: [
+        {
+          validator: function (arr) {
+            return arr.every((plant) => plant.length >= 5);
+          },
+          message: "Each plant name must be at least 5 characters long",
+        },
+        {
+          validator: function (arr) {
+            return arr.every((plant) => plant.length <= 100);
+          },
+          message: "Each plant name cannot be more than 100 characters long",
+        },
+      ],
     },
-
     role: {
       type: String,
       default: "user",
