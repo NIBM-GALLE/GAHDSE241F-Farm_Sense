@@ -69,6 +69,7 @@ const farmerSchema = mongoose.Schema(
       type: String,
       default: "user",
     },
+    isVerified: { type: Boolean, default: false },
 
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

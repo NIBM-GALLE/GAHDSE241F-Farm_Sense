@@ -32,6 +32,7 @@ const subCenterAdminSchema = new mongoose.Schema(
       enum: ["Admin", "SubCenterAdmin"],
       required: true,
     },
+    isVerified: { type: Boolean, default: false },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
