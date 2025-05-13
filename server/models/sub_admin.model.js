@@ -5,6 +5,12 @@ const subCenterAdminSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    contactNumber: {
+      type: String,
+      required: true,
+      maxLength: [15, "Contact number cannot be more than 15 characters"],
+      minLength: [10, "Contact number must be at least 10 characters"],
+    },
     password: { type: String, required: true },
     role: {
       type: String,
@@ -16,7 +22,16 @@ const subCenterAdminSchema = new mongoose.Schema(
       ref: "SubCenter",
       required: true,
     },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "SubCenterAdmin" },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "createdByModel",
+      required: true,
+    },
+    createdByModel: {
+      type: String,
+      enum: ["Admin", "SubCenterAdmin"],
+      required: true,
+    },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
