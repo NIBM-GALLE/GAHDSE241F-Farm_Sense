@@ -5,6 +5,8 @@ import {
   PASSWORD_RESET_SUCCESS_TEMPLATE,
   VERIFICATION_EMAIL_TEMPLATE,
   WELCOME_EMAIL_TEMPLATE,
+  VERIFICATION_EMAIL_TEMPLATE_SUB_CENTER,
+  LOGIN_CREDENTIALS_FOR_ADMINS,
 } from "./mailTrapTemplates.js";
 
 export const sendPasswordResetEmail = async (email, resetUrl, next) => {
@@ -77,6 +79,62 @@ export const sendWelcomeEmail = async (email, name, createdAt, next) => {
     console.log("Welcome email sent successfully:", response);
   } catch (error) {
     console.error("Error sending welcome email:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const sendSubCenterVerificationEmail = async (
+  email,
+  verificationCode,
+  adminName,
+  SubCenterName,
+  next
+) => {
+  try {
+    const recipient = [{ email }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Sub Center Admin Verification",
+      html: VERIFICATION_EMAIL_TEMPLATE_SUB_CENTER.replace(
+        "{adminName}",
+        adminName
+      )
+        .replace("{subCenterName}", SubCenterName)
+        .replace("{verificationCode}", verificationCode),
+      category: "email-verification",
+    });
+
+    console.log("Sub center verification email sent successfully:", response);
+  } catch (error) {
+    console.error("Error sending sub center verification email:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const sendLoginCredentialsEmail = async (
+  name,
+  email,
+  password,
+  subCenterName,
+  next
+) => {
+  try {
+    const recipient = [{ email }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Login Credentials",
+      html: LOGIN_CREDENTIALS_FOR_ADMINS.replace("{adminName}", name)
+        .replace("{subCenterName}", subCenterName)
+        .replace("{adminEmail}", email)
+        .replace("{adminPassword}", password),
+      category: "login-credentials",
+    });
+
+    console.log("Login credentials email sent successfully:", response);
+  } catch (error) {
+    console.error("Error sending login credentials email:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };

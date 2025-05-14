@@ -4,7 +4,6 @@ import Farmer from "../models/farmer.model.js";
 import VisitAgent from "../models/visit_agent.model.js";
 import SubCenterAdmin from "../models/sub_admin.model.js";
 import ResearchDivisionAdmin from "../models/research_admin.model.js";
-import crypto from "crypto";
 import {
   sendPasswordResetEmail,
   sendResetSuccessEmail,
@@ -13,62 +12,14 @@ import {
 } from "../mailtrap/mailTrapEmail.js";
 import dotenv from "dotenv";
 import { generateAccessAndRefreshTokens } from "../utils/jwtTokens.js";
+import {
+  generateOtp,
+  userWithoutPassword,
+  storeTokensAsCookies,
+  generatePasswordResetToken,
+  findUser,
+} from "../utils/helperFunctions.js";
 dotenv.config();
-
-//helper fucntions
-const generatePasswordResetToken = () => {
-  // Generate a random token for password reset
-  const token = crypto.randomBytes(32).toString("hex");
-  return token;
-};
-
-// find user by email , token or id
-const findUser = async (query) => {
-  const models = [
-    Admin,
-    Farmer,
-    VisitAgent,
-    SubCenterAdmin,
-    ResearchDivisionAdmin,
-  ];
-
-  let user = null;
-
-  // Iterate through models to find the user
-  for (const model of models) {
-    user = await model.findOne(query);
-    if (user) break; // Exit loop if user is found
-  }
-
-  return user; // Return the user or null if not found
-};
-
-// store tokens as cookies
-const storeTokensAsCookies = (res, accessToken, refreshToken) => {
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  });
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  });
-};
-
-// user without password
-const userWithoutPassword = (user) => {
-  const userObj = user.toObject();
-  delete userObj.password;
-  return userObj;
-};
-
-// generate 6 digit otp to verify email
-const generateOtp = () => {
-  const otp = Math.floor(100000 + Math.random() * 900000);
-  return otp;
-};
 
 export const getUser = async (req, res, next) => {
   try {
@@ -201,7 +152,7 @@ export const signup = async (req, res, next) => {
       email,
       password,
       verificationToken: generateOtp(),
-      verificationTokenExpiresAt: Date.now() + 3600000,
+      verificationTokenExpiresAt: Date.now() + 3600000, // 1 hour
     });
 
     newUser.save();

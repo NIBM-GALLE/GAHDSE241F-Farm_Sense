@@ -20,7 +20,6 @@ const subCenterAdminSchema = new mongoose.Schema(
     subCenterId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubCenter",
-      required: true,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

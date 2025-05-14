@@ -280,3 +280,91 @@ export const WELCOME_RESEARCH_DIVISION_TEMPLATE = `
 </body>
 </html>
 `;
+
+export const VERIFICATION_EMAIL_TEMPLATE_SUB_CENTER = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your Email</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #2E7D32); padding: 25px; text-align: center; border-radius: 5px 5px 0 0;">
+    <h1 style="color: white; margin: 0; font-weight: 300;">Verify Your Email</h1>
+  </div>
+  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+    <p>Hello {adminName},</p>
+    <p>You have been selected as a admin of {subCenterName} Sub Center. Use the below verification code to verify your account and start working. Your verification code is:</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <div style="background-color: #f0f7f0; border: 2px dashed #81C784; padding: 15px; border-radius: 8px; display: inline-block;">
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #2E7D32;">{verificationCode}</span>
+      </div>
+    </div>
+    <p>Enter this code on the verification page to complete your registration.</p>
+    <p>This code will expire in 1 hour for security reasons.</p>
+    <p>If you didn't sign up for this, please ignore this email.</p>
+    <p style="margin-top: 30px;">Best regards,<br><span style="color: #2E7D32; font-weight: bold;">The Farmsense</span></p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
+    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">This is an automated message, please do not reply to this email.</p>
+    <div style="margin-top: 10px;">
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4CAF50; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #81C784; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #A5D6A7; margin: 0 4px;"></span>
+    </div>
+  </div>
+</body>
+</html>`;
+
+export const LOGIN_CREDENTIALS_FOR_ADMINS = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login Credentials</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #2E7D32); padding: 25px; text-align: center; border-radius: 5px 5px 0 0;">
+    <h1 style="color: white; margin: 0; font-weight: 300;">Your Admin Login Credentials</h1>
+  </div>
+  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+    <p>Hello {adminName},</p>
+    <p>You have been registered as an administrator for {subCenterName} Sub Center. Your login credentials are provided below:</p>
+    
+    <!-- Username display -->
+    <div style="margin: 30px 0;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #f0f7f0; border: 2px dashed #81C784; border-radius: 8px;">
+        <tr>
+          <td style="padding: 12px; font-weight: bold; width: 30%;">Email:</td>
+          <td style="padding: 12px;">{adminEmail}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- Password display (now visible by default) -->
+    <div style="margin: 30px 0;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #f0f7f0; border: 2px dashed #81C784; border-radius: 8px;">
+        <tr>
+          <td style="padding: 12px; font-weight: bold; width: 30%;">Password:</td>
+          <td style="padding: 12px; font-weight: bold; letter-spacing: 1px; color: #2E7D32;">{adminPassword}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <p><strong>Important:</strong> Please change your password after your first login for security reasons.</p>
+    
+    <p style="margin-top: 30px;">Best regards,<br><span style="color: #2E7D32; font-weight: bold;">The Farmsense Team</span></p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
+    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">This is an automated message, please do not reply to this email.</p>
+    <p style="font-size: 12px;">If you did not expect to receive this email, please contact us immediately.</p>
+    <div style="margin-top: 10px;">
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4CAF50; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #81C784; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #A5D6A7; margin: 0 4px;"></span>
+    </div>
+  </div>
+</body>
+</html>`;

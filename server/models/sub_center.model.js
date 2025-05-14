@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 
 const subCenterSchema = new mongoose.Schema(
   {
@@ -21,7 +20,7 @@ const subCenterSchema = new mongoose.Schema(
     ],
     contactNumber: {
       type: String,
-      required: true,
+
       maxLength: [15, "Contact number cannot be more than 15 characters"],
       minLength: [10, "Contact number must be at least 10 characters"],
     },
@@ -33,17 +32,5 @@ const subCenterSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-subCenterSchema.pre("save", async function (next) {
-  try {
-    const sault = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(this.password, sault);
-    this.password = hashedPassword;
-    next();
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
 
 export default mongoose.model("SubCenter", subCenterSchema);
