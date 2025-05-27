@@ -41,6 +41,7 @@ const subCenterAdminSchema = new mongoose.Schema(
 );
 
 subCenterAdminSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   try {
     const sault = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(this.password, sault);
@@ -53,7 +54,7 @@ subCenterAdminSchema.pre("save", async function (next) {
 });
 
 subCenterAdminSchema.methods.matchPassword = async function (password) {
-  return bcrypt.compare(this.password, password);
+  return await bcrypt.compare(password, this.password);
 };
 
 export default mongoose.model("SubCenterAdmin", subCenterAdminSchema);
