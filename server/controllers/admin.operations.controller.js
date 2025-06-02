@@ -10,6 +10,7 @@ import {
   sendSubCenterVerificationEmail,
   sendLoginCredentialsEmail,
 } from "../mailtrap/mailTrapEmail.js";
+
 export const createSubCenter = async (req, res, next) => {
   try {
     const {
@@ -111,3 +112,8 @@ export const createSubCenter = async (req, res, next) => {
     return next(errorHandler(500, "Internal server error"));
   }
 };
+
+
+export const createResearchCenter = async (req, res, next) => {}
+
+

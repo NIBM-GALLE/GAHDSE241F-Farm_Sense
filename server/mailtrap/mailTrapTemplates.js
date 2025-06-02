@@ -165,121 +165,6 @@ export const WELCOME_EMAIL_TEMPLATE = `
 </html>
 `;
 
-export const WELCOME_SUB_CENTER_ADMIN_TEMPLATE = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to FarmSense</title>
-</head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(135deg, #558B2F, #33691E); padding: 30px; text-align: center; border-radius: 5px 5px 0 0;">
-    <h1 style="color: white; margin: 0; font-weight: 400;">Welcome to FarmSense</h1>
-    <p style="color: #E8F5E9; margin: 10px 0 0 0;">Sub Center Administration</p>
-  </div>
-  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
-    <p>Hello {name},</p>
-    <p>Welcome to the FarmSense Sub Center! We're excited to have you onboard as a key administrator for your region.</p>
-    <div style="text-align: center; margin: 35px 0;">
-      <a href="{loginURL}" style="background-color: #558B2F; color: white; padding: 14px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; box-shadow: 0 3px 6px rgba(0,0,0,0.1); transition: all 0.3s;">Access Your Dashboard</a>
-    </div>
-    <p>Here's a summary of your account information:</p>
-    <div style="background-color: #F1F8E9; padding: 20px; border-radius: 5px; border-left: 5px solid #8BC34A; margin: 20px 0;">
-      <p style="margin-top: 0;"><strong style="color: #33691E;">Email:</strong> {email}</p>
-      <p><strong style="color: #33691E;">Account Created:</strong> {creationDate}</p>
-      <p style="margin-bottom: 0;"><strong style="color: #33691E;">Sub Center:</strong> {subCenterName}</p>
-    </div>
-    <p>As a Sub Center Admin, you can:</p>
-    <div style="margin: 20px 0 30px 0;">
-      <div style="display: flex; margin-bottom: 15px;">
-        <div style="background-color: #8BC34A; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 15px; flex-shrink: 0;">1</div>
-        <div>Manage farmer issues and provide timely support</div>
-      </div>
-      <div style="display: flex; margin-bottom: 15px;">
-        <div style="background-color: #8BC34A; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 15px; flex-shrink: 0;">2</div>
-        <div>Oversee crop disease reports and coordinate responses</div>
-      </div>
-      <div style="display: flex;">
-        <div style="background-color: #8BC34A; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 15px; flex-shrink: 0;">3</div>
-        <div>Coordinate with field agents for efficient operations</div>
-      </div>
-    </div>
-    <div style="background-color: #F1F8E9; padding: 15px; border-radius: 5px; margin: 25px 0;">
-      <p style="margin: 0; color: #33691E;"><strong>💡 Pro Tip:</strong> Schedule your first team meeting within the platform to get everyone onboarded quickly.</p>
-    </div>
-    <p>If you have any questions, please visit our <a href="{helpCenter}" style="color: #558B2F; text-decoration: none; font-weight: bold;">Help Center</a> or contact our support team at <a href="mailto:support@farmsense.com" style="color: #558B2F; text-decoration: none; font-weight: bold;">support@farmsense.com</a>.</p>
-    <p style="margin-top: 30px;">Best regards,<br><span style="color: #558B2F; font-weight: bold;">The FarmSense Team</span></p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
-    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">&copy; 2025 FarmSense. All rights reserved.</p>
-    <div style="margin-top: 10px;">
-      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #8BC34A; margin: 0 4px;"></span>
-      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #AED581; margin: 0 4px;"></span>
-      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #C5E1A5; margin: 0 4px;"></span>
-    </div>
-  </div>
-</body>
-</html>
-`;
-
-export const WELCOME_RESEARCH_DIVISION_TEMPLATE = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to FarmSense</title>
-</head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(135deg, #00695C, #004D40); padding: 30px; text-align: center; border-radius: 5px 5px 0 0;">
-    <h1 style="color: white; margin: 0; font-weight: 400;">Welcome to FarmSense</h1>
-    <p style="color: #E0F2F1; margin: 10px 0 0 0;">Research Division</p>
-  </div>
-  <div style="background-color: #f5f9f8; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
-    <p>Hello {name},</p>
-    <p>Welcome to the FarmSense Research Division! We're excited to have you onboard as a key contributor to advancing agricultural research and innovation.</p>
-    <div style="text-align: center; margin: 35px 0;">
-      <a href="{loginURL}" style="background-color: #00897B; color: white; padding: 14px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; box-shadow: 0 3px 6px rgba(0,0,0,0.1); transition: all 0.3s;">Access Your Dashboard</a>
-    </div>
-    <p>Here's a summary of your account information:</p>
-    <div style="background-color: #E0F2F1; padding: 20px; border-radius: 5px; border-left: 5px solid #009688; margin: 20px 0;">
-      <p style="margin-top: 0;"><strong style="color: #00695C;">Email:</strong> {email}</p>
-      <p><strong style="color: #00695C;">Account Created:</strong> {creationDate}</p>
-      <p style="margin-bottom: 0;"><strong style="color: #00695C;">Research Division:</strong> {divisionName}</p>
-    </div>
-    <p>As a Research Division member, you'll contribute to:</p>
-    <div style="margin: 20px 0 30px 0;">
-      <div style="display: flex; margin-bottom: 15px;">
-        <div style="background-color: #009688; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 15px; flex-shrink: 0;">1</div>
-        <div>Groundbreaking research projects and innovative agricultural solutions</div>
-      </div>
-      <div style="display: flex; margin-bottom: 15px;">
-        <div style="background-color: #009688; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 15px; flex-shrink: 0;">2</div>
-        <div>Advanced data analysis of crop disease patterns and trends</div>
-      </div>
-      <div style="display: flex;">
-        <div style="background-color: #009688; color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; margin-right: 15px; flex-shrink: 0;">3</div>
-        <div>Cross-functional collaboration with field experts and technology teams</div>
-      </div>
-    </div>
-    <div style="background-color: #E0F2F1; padding: 15px; border-radius: 5px; margin: 25px 0; border-left: 4px solid #009688;">
-      <p style="margin: 0; color: #00695C;"><strong>Research Spotlight:</strong> Your access to our proprietary AI analysis tools is now active. Check the Research Portal for orientation materials.</p>
-    </div>
-    <p>If you have any questions, please visit our <a href="{helpCenter}" style="color: #00897B; text-decoration: none; font-weight: bold;">Help Center</a> or contact our support team at <a href="mailto:support@farmsense.com" style="color: #00897B; text-decoration: none; font-weight: bold;">support@farmsense.com</a>.</p>
-    <p style="margin-top: 30px;">Best regards,<br><span style="color: #00897B; font-weight: bold;">The FarmSense Team</span></p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
-    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">&copy; 2025 FarmSense. All rights reserved.</p>
-    <div style="margin-top: 10px;">
-      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #009688; margin: 0 4px;"></span>
-      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4DB6AC; margin: 0 4px;"></span>
-      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #80CBC4; margin: 0 4px;"></span>
-    </div>
-  </div>
-</body>
-</html>
-`;
 
 export const VERIFICATION_EMAIL_TEMPLATE_SUB_CENTER = `
 <!DOCTYPE html>
@@ -332,6 +217,94 @@ export const LOGIN_CREDENTIALS_FOR_ADMINS = `
   <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
     <p>Hello {adminName},</p>
     <p>You have been registered as an administrator for {subCenterName} Sub Center. Your login credentials are provided below:</p>
+    
+    <!-- Username display -->
+    <div style="margin: 30px 0;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #f0f7f0; border: 2px dashed #81C784; border-radius: 8px;">
+        <tr>
+          <td style="padding: 12px; font-weight: bold; width: 30%;">Email:</td>
+          <td style="padding: 12px;">{adminEmail}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <!-- Password display (now visible by default) -->
+    <div style="margin: 30px 0;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #f0f7f0; border: 2px dashed #81C784; border-radius: 8px;">
+        <tr>
+          <td style="padding: 12px; font-weight: bold; width: 30%;">Password:</td>
+          <td style="padding: 12px; font-weight: bold; letter-spacing: 1px; color: #2E7D32;">{adminPassword}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <p><strong>Important:</strong> Please change your password after your first login for security reasons.</p>
+    
+    <p style="margin-top: 30px;">Best regards,<br><span style="color: #2E7D32; font-weight: bold;">The Farmsense Team</span></p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
+    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">This is an automated message, please do not reply to this email.</p>
+    <p style="font-size: 12px;">If you did not expect to receive this email, please contact us immediately.</p>
+    <div style="margin-top: 10px;">
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4CAF50; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #81C784; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #A5D6A7; margin: 0 4px;"></span>
+    </div>
+  </div>
+</body>
+</html>`;
+
+export const VERIFICATION_EMAIL_TEMPLATE_RESEARCH_CENTER = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your Email</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #2E7D32); padding: 25px; text-align: center; border-radius: 5px 5px 0 0;">
+    <h1 style="color: white; margin: 0; font-weight: 300;">Verify Your Email</h1>
+  </div>
+  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+    <p>Hello {adminName},</p>
+    <p>You have been selected as a admin of {researchCenter} Research Center. Use the below verification code to verify your account and start working. Your verification code is:</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <div style="background-color: #f0f7f0; border: 2px dashed #81C784; padding: 15px; border-radius: 8px; display: inline-block;">
+        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #2E7D32;">{verificationCode}</span>
+      </div>
+    </div>
+    <p>Enter this code on the verification page to complete your registration.</p>
+    <p>This code will expire in 1 hour for security reasons.</p>
+    <p>If you didn't sign up for this, please ignore this email.</p>
+    <p style="margin-top: 30px;">Best regards,<br><span style="color: #2E7D32; font-weight: bold;">The Farmsense</span></p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
+    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">This is an automated message, please do not reply to this email.</p>
+    <div style="margin-top: 10px;">
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4CAF50; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #81C784; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #A5D6A7; margin: 0 4px;"></span>
+    </div>
+  </div>
+</body>
+</html>`;
+
+export const LOGIN_CREDENTIALS_FOR_ADMINS_RESEARCH_CENTER = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login Credentials</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #2E7D32); padding: 25px; text-align: center; border-radius: 5px 5px 0 0;">
+    <h1 style="color: white; margin: 0; font-weight: 300;">Your Admin Login Credentials</h1>
+  </div>
+  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+    <p>Hello {adminName},</p>
+    <p>You have been registered as an administrator for {researchCenter} Research Center. Your login credentials are provided below:</p>
     
     <!-- Username display -->
     <div style="margin: 30px 0;">

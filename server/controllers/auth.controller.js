@@ -189,9 +189,7 @@ export const login = async (req, res, next) => {
     }
 
     const isPasswordMatched = await user.matchPassword(password);
-    console.log(user.name, "user name");
-    console.log("entered password", password);
-
+   
     if (!isPasswordMatched) {
       return next(errorHandler(400, "Invalid credentials"));
     }
