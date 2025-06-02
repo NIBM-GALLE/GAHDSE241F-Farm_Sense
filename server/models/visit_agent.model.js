@@ -16,6 +16,7 @@ const visitAgentSchema = new mongoose.Schema(
       ref: "SubCenter",
       required: true,
     },
+    isVerified: { type: Boolean, default: false },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "SubCenterAdmin" },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

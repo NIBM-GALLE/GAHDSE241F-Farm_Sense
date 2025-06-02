@@ -47,6 +47,7 @@ const researchDivisionSchema = new mongoose.Schema(
       enum: ["ResearchDivisionAdmin"],
       default: "ResearchDivisionAdmin",
     },
+    isVerified: { type: Boolean, default: false },
 
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
