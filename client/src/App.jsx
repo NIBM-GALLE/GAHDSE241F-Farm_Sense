@@ -38,6 +38,7 @@ function AppContent() {
     "/forget-password",
     "/reset-password",
   ];
+
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (

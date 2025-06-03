@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom"; // <-- Fix import for react-router-dom
 import { ModeToggle } from "./ModeToggle";
 import userPng from "../assets/images/user.png";
 
@@ -21,8 +21,8 @@ function Navbar() {
         </Link>
 
         {/* Right Section */}
-        <div className="relative flex  md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <div className="mx-5">
+        <div className="relative flex md:order-2 items-center gap-3">
+          <div className="mx-2">
             <ModeToggle />
           </div>
           {/* User Menu Button */}
@@ -39,7 +39,7 @@ function Navbar() {
 
           {/* Dropdown Menu */}
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg z-50 top-10 ">
+            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg z-50 top-10">
               <div className="px-4 py-3">
                 <span className="block text-sm text-gray-900 dark:text-black font-poppins">
                   Bonnie Green
@@ -65,7 +65,6 @@ function Navbar() {
                     Dashboard
                   </Link>
                 </li>
-
                 <li>
                   <Link
                     to="/logout"
@@ -81,7 +80,7 @@ function Navbar() {
           {/* Mobile Menu Toggle */}
           <button
             type="button"
-            className=" inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-expanded={isMobileMenuOpen}
             aria-controls="navbar-user"
@@ -116,7 +115,7 @@ function Navbar() {
             <li>
               <Link
                 to="/"
-                className="block py-2 px-3 text-white bg-green-800 rounded-sm md:bg-transparent md:text-green-800/80 md:p-0 md:dark:text-green-400/80 "
+                className="block py-2 px-3 text-white bg-green-800 rounded-sm md:bg-transparent md:text-green-800/80 md:p-0 md:dark:text-green-400/80"
                 aria-current="page"
               >
                 Home
@@ -136,14 +135,6 @@ function Navbar() {
                 className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Services
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/pricing"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Pricing
               </Link>
             </li>
             <li>
