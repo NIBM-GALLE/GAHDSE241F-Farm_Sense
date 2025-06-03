@@ -253,6 +253,7 @@ export const getAllSubCenters = async (req, res, next) => {
         limit: limit,
       };
     }
+
     res.status(200).json({
       status: "success",
       message: "Sub centers retrieved successfully",
