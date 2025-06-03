@@ -7,6 +7,8 @@ import {
   WELCOME_EMAIL_TEMPLATE,
   VERIFICATION_EMAIL_TEMPLATE_SUB_CENTER,
   LOGIN_CREDENTIALS_FOR_ADMINS,
+  VERIFICATION_EMAIL_TEMPLATE_RESEARCH_CENTER,
+  LOGIN_CREDENTIALS_FOR_ADMINS_RESEARCH_CENTER,
 } from "./mailTrapTemplates.js";
 
 export const sendPasswordResetEmail = async (email, resetUrl, next) => {
@@ -135,6 +137,71 @@ export const sendLoginCredentialsEmail = async (
     console.log("Login credentials email sent successfully:", response);
   } catch (error) {
     console.error("Error sending login credentials email:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const sendResearchCenterVerificationEmail = async (
+  email,
+  verificationCode,
+  adminName,
+  researchCenterName,
+  next
+) => {
+  try {
+    const recipient = [{ email }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Research Center Admin Verification",
+      html: VERIFICATION_EMAIL_TEMPLATE_RESEARCH_CENTER.replace(
+        "{adminName}",
+        adminName
+      )
+        .replace("{researchCenter}", researchCenterName)
+        .replace("{verificationCode}", verificationCode),
+      category: "email-verification",
+    });
+
+    console.log(
+      "Research center verification email sent successfully:",
+      response
+    );
+  } catch (error) {
+    console.error("Error sending research center verification email:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const sendResearchCenterLoginCredentialsEmail = async (
+  name,
+  email,
+  password,
+  researchCenterName,
+  next
+) => {
+  try {
+    const recipient = [{ email }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Login Credentials",
+      html: LOGIN_CREDENTIALS_FOR_ADMINS_RESEARCH_CENTER.replace(
+        "{adminName}",
+        name
+      )
+        .replace("{researchCenter}", researchCenterName)
+        .replace("{adminEmail}", email)
+        .replace("{adminPassword}", password),
+      category: "login-credentials",
+    });
+
+    console.log("Login credentials email sent successfully:", response);
+  } catch (error) {
+    console.error(
+      "Error sending login credentials email to research center admin:",
+      error
+    );
     return next(errorHandler(500, "Internal server error"));
   }
 };
