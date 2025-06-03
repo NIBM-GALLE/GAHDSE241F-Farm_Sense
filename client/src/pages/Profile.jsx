@@ -55,7 +55,7 @@ function Profile() {
     console.log("Form Data:", data);
   };
   return (
-    <section className="py-10 my-auto dark:bg-gray-900/70">
+    <section className="py-10 my-auto">
       <div className="lg:w-[80%] md:w-[90%] w-[96%] mx-auto flex gap-4">
         <div className="lg:w-[88%] sm:w-[88%] w-full mx-auto shadow-2xl p-4 rounded-xl h-fit self-center dark:bg-gray-800/40">
           <h1 className="lg:text-3xl md:text-2xl text-xl  font-extrabold mb-2 dark:text-white font-purple-purse">

@@ -10,9 +10,13 @@ import Reset_password from "./pages/Reset_password";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
+import Services from "./pages/Services";
 
 // App component
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -47,7 +51,11 @@ function AppContent() {
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/services" element={<Services />} />
       </Routes>
+      {!shouldHideNavbar && <Footer />}
     </>
   );
 }
