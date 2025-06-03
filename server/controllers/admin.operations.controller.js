@@ -227,45 +227,45 @@ export const createResearchCenter = async (req, res, next) => {
 
 export const getAllSubCenters = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    // Parse pagination parameters with validation
+    const page = Math.max(1, parseInt(req.query.page)) || 1;
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit))) || 10;
     const skip = (page - 1) * limit;
 
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
+    // Get total count and documents in parallel for better performance
+    const [totalSubCenters, subCenters] = await Promise.all([
+      SubCenter.countDocuments(),
+      SubCenter.find()
+        .skip(skip)
+        .limit(limit)
+        .populate("admins", "name email contactNumber")
+        .lean(), // For better performance (return plain JavaScript objects)
+    ]);
 
-    const totalSubCenters = await SubCenter.countDocuments();
-    const subCenters = await SubCenter.find()
-      .skip(skip)
-      .limit(limit)
-      .populate("admins", "name email contactNumber");
+    // Calculate pagination metadata
     const totalPages = Math.ceil(totalSubCenters / limit);
-    const pagination = {};
-    if (endIndex < totalSubCenters) {
-      pagination.next = {
-        page: page + 1,
-        limit: limit,
-      };
-    }
-    if (startIndex > 0) {
-      pagination.previous = {
-        page: page - 1,
-        limit: limit,
-      };
-    }
+    const hasNext = page < totalPages;
+    const hasPrevious = page > 1;
 
     res.status(200).json({
       status: "success",
       message: "Sub centers retrieved successfully",
       data: {
         subCenters,
-        totalSubCenters,
-        totalPages,
-        pagination,
+        pagination: {
+          currentPage: page,
+          itemsPerPage: limit,
+          totalItems: totalSubCenters,
+          totalPages,
+          hasNext,
+          hasPrevious,
+          nextPage: hasNext ? page + 1 : null,
+          previousPage: hasPrevious ? page - 1 : null,
+        },
       },
     });
   } catch (error) {
-    console.log("Error in getAllSubCenters:", error);
+    console.error("Error in getAllSubCenters:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };
