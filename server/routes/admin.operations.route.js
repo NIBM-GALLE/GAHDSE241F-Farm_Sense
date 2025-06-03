@@ -5,6 +5,7 @@ import {
   createSubCenter,
   createResearchCenter,
   getAllSubCenters,
+  getAllResearchCenters,
 } from "../controllers/admin.operations.controller.js";
 const router = express.Router();
 
@@ -27,5 +28,12 @@ router.get(
   authMiddleware,
   adminMiddleware,
   getAllSubCenters
+);
+
+router.get(
+  "/get-all-research-centers",
+  authMiddleware,
+  adminMiddleware,
+  getAllResearchCenters
 );
 export default router;

@@ -269,3 +269,44 @@ export const getAllSubCenters = async (req, res, next) => {
     return next(errorHandler(500, "Internal server error"));
   }
 };
+
+export const getAllResearchCenters = async (req, res, next) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page)) || 1;
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit))) || 10;
+    const skip = (page - 1) * limit;
+
+    const [totalResearchCenters, researchCenters] = await Promise.all([
+      ResearchDivision.countDocuments(),
+      ResearchDivision.find()
+        .skip(skip)
+        .limit(limit)
+        .populate("admins", "name email contactNumber")
+        .lean(),
+    ]);
+
+    const totalPages = Math.ceil(totalResearchCenters / limit);
+    const hasNext = page < totalPages;
+    const hasPrevious = page > 1;
+    res.status(200).json({
+      status: "success",
+      message: "Research centers retrieved successfully",
+      data: {
+        researchCenters,
+        pagination: {
+          currentPage: page,
+          itemsPerPage: limit,
+          totalItems: totalResearchCenters,
+          totalPages,
+          hasNext,
+          hasPrevious,
+          nextPage: hasNext ? page + 1 : null,
+          previousPage: hasPrevious ? page - 1 : null,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error in getAllResearchCenters:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
