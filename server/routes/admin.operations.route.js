@@ -6,6 +6,8 @@ import {
   createResearchCenter,
   getAllSubCenters,
   getAllResearchCenters,
+  deleteResearchCenter,
+  deleteSubCenter,
 } from "../controllers/admin.operations.controller.js";
 const router = express.Router();
 
@@ -35,5 +37,19 @@ router.get(
   authMiddleware,
   adminMiddleware,
   getAllResearchCenters
+);
+
+router.delete(
+  "/delete-sub-center/:subCenterId",
+  authMiddleware,
+  adminMiddleware,
+  deleteSubCenter
+);
+
+router.delete(
+  "/delete-research-center/:researchCenterId",
+  authMiddleware,
+  adminMiddleware,
+  deleteResearchCenter
 );
 export default router;

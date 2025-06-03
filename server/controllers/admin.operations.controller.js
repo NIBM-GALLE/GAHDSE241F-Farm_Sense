@@ -310,3 +310,63 @@ export const getAllResearchCenters = async (req, res, next) => {
     return next(errorHandler(500, "Internal server error"));
   }
 };
+
+export const deleteSubCenter = async (req, res, next) => {
+  try {
+    const { subCenterId } = req.params;
+    if (!subCenterId) {
+      return next(errorHandler(400, "Sub center ID is required"));
+    }
+
+    // Find the sub center
+    const subCenter = await SubCenter.findById(subCenterId);
+    if (!subCenter) {
+      return next(errorHandler(404, "Sub center not found"));
+    }
+
+    // get the sub center admins id's
+    const subCenterAdmins = subCenter.admins;
+    // Delete the sub center
+    await SubCenter.findByIdAndDelete(subCenterId);
+    // Delete the sub center admins
+    await SubCenterAdmin.deleteMany({ _id: { $in: subCenterAdmins } });
+    res.status(200).json({
+      status: "success",
+      message: "Sub center and its admins deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error in deleteSubCenter:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const deleteResearchCenter = async (req, res, next) => {
+  try {
+    const { researchCenterId } = req.params;
+    if (!researchCenterId) {
+      return next(errorHandler(400, "Research center ID is required"));
+    }
+
+    const researchCenter = await ResearchDivision.findById(researchCenterId);
+    if (!researchCenter) {
+      return next(errorHandler(404, "Research center not found"));
+    }
+
+    // Get the research center admins' IDs
+    const researchCenterAdmins = researchCenter.admins;
+    // Delete the research center
+    await ResearchDivision.findByIdAndDelete(researchCenterId);
+    // Delete the research center admins
+    await ResearchDivisionAdmin.deleteMany({
+      _id: { $in: researchCenterAdmins },
+    });
+
+    res.status(200).json({
+      message: "Research center and its admins deleted successfully",
+      status: "success",
+    });
+  } catch (error) {
+    console.error("Error in deleteResearchCenter:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
