@@ -1,6 +1,8 @@
 import { errorHandler } from "../utils/errorHandler.js";
 import SubCenterAdmin from "../models/sub_admin.model.js";
 import SubCenter from "../models/sub_center.model.js";
+import ResearchDivision from "../models/research_divisions.model.js";
+import ResearchDivisionAdmin from "../models/research_admin.model.js";
 import {
   generateRandomPassword,
   generateOtp,
@@ -139,7 +141,7 @@ export const createResearchCenter = async (req, res, next) => {
     }
 
     // Check if the research center already exists
-    const existingResearchCenter = await SubCenter.findOne({
+    const existingResearchCenter = await ResearchDivision.findOne({
       email: centerEmail,
       $or: [{ name: centerName }, { location: centerLocation }],
     });
@@ -162,22 +164,24 @@ export const createResearchCenter = async (req, res, next) => {
       );
     }
 
-    const password = generateRandomPassword();
-    const researchCenterAdmin = await SubCenterAdmin.create({
+    // Generate password and create admin first
+    const rawPassword = generateRandomPassword();
+    const researchCenterAdmin = new ResearchDivisionAdmin({
       name: adminName,
       email: adminEmail,
       contactNumber: adminContact,
-      password,
+      password: rawPassword,
       createdBy: adminId,
       createdByModel: "Admin",
       verificationToken: generateOtp(),
       verificationTokenExpiresAt: Date.now() + 3600000, // 1 hour
     });
 
+    // Save admin
     await researchCenterAdmin.save();
 
     // Create the research center
-    const researchCenter = await SubCenter.create({
+    const researchCenter = await ResearchDivision.create({
       name: centerName,
       location: centerLocation,
       email: centerEmail,
@@ -185,17 +189,20 @@ export const createResearchCenter = async (req, res, next) => {
       createdBy: adminId,
     });
 
-    await researchCenter.save();
-    researchCenterAdmin.subCenterId = researchCenter._id;
+    // Update admin with research center ID
+    researchCenterAdmin.researchDivisionId = researchCenter._id;
     await researchCenterAdmin.save();
+
+    // Send emails with the original raw password
     await sendResearchCenterLoginCredentialsEmail(
       researchCenterAdmin.name,
       researchCenterAdmin.email,
-      password,
+      rawPassword,
       researchCenter.name,
       next
     );
 
+    // Send verification email
     await sendResearchCenterVerificationEmail(
       researchCenterAdmin.email,
       researchCenterAdmin.verificationToken,
@@ -214,6 +221,50 @@ export const createResearchCenter = async (req, res, next) => {
     });
   } catch (error) {
     console.log("Error in createResearchCenter:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getAllSubCenters = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalSubCenters = await SubCenter.countDocuments();
+    const subCenters = await SubCenter.find()
+      .skip(skip)
+      .limit(limit)
+      .populate("admins", "name email contactNumber");
+    const totalPages = Math.ceil(totalSubCenters / limit);
+    const pagination = {};
+    if (endIndex < totalSubCenters) {
+      pagination.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+    if (startIndex > 0) {
+      pagination.previous = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Sub centers retrieved successfully",
+      data: {
+        subCenters,
+        totalSubCenters,
+        totalPages,
+        pagination,
+      },
+    });
+  } catch (error) {
+    console.log("Error in getAllSubCenters:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };
