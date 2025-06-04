@@ -1,26 +1,30 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { PlusCircle } from "lucide-react";
 import { Button } from "./ui/button";
 
-const initialSubCenters = [
-  { id: "gampaha", name: "Gampaha Regional Center" },
-  { id: "matara", name: "Matara Sub-Center" },
-  { id: "anuradhapura", name: "Anuradhapura Field Office" },
-  { id: "jaffna", name: "Jaffna District Branch" },
+const initialReports = [
+  {
+    id: "2024-q1",
+    title: "Q1 Disease Outbreak Report",
+    division: "Plant Pathology Division",
+    summary: "Analysis of fungal outbreaks in northern provinces",
+  },
+  {
+    id: "soil-health",
+    title: "Soil Health Annual Survey",
+    division: "Soil Science Division",
+    summary: "Evaluation of fertilizer impact in southern regions",
+  },
 ];
 
-function SubCentersTab() {
-  const navigate = useNavigate();
-  const [subCenters, setSubCenters] = useState(initialSubCenters);
+function ReportsTab() {
+  const [reports, setReports] = useState(initialReports);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
-    name: "",
-    location: "",
-    email: "",
-    phone: "",
-    admin: "",
+    title: "",
+    division: "",
+    summary: "",
   });
 
   const handleChange = (e) => {
@@ -29,11 +33,14 @@ function SubCentersTab() {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
-    const newId = form.name.toLowerCase().replace(/\s+/g, "-");
-    setSubCenters([...subCenters, { ...form, id: newId }]);
-    setForm({ name: "", location: "", email: "", phone: "", admin: "" });
+    if (!form.title.trim()) return;
+    const newId = form.title.toLowerCase().replace(/\s+/g, "-");
+    setReports([...reports, { ...form, id: newId }]);
+    setForm({ title: "", division: "", summary: "" });
     setShowForm(false);
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 100);
   };
 
   return (
@@ -51,14 +58,14 @@ function SubCentersTab() {
               <span className="bg-gradient-to-r from-green-400 to-green-200 bg-clip-text text-transparent dark:from-green-300 dark:to-green-100">
                 FarmSense
               </span>{" "}
-              Regional Centers
+              Research Reports
             </h2>
             <p className="text-lg text-green-800 dark:text-green-100 max-w-2xl">
-              Our network of regional support centers across Sri Lanka
+              Browse analytical findings and shared knowledge from our research
+              divisions
             </p>
           </div>
         </motion.div>
-
         {showForm && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -66,15 +73,17 @@ function SubCentersTab() {
             className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto shadow-md"
           >
             <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
-              Add Sub Center
+              Add Research Report
             </h3>
             <form onSubmit={handleAdd} className="space-y-4">
               {[
-                { name: "name", type: "text", placeholder: "Sub Center Name" },
-                { name: "location", type: "text", placeholder: "Location" },
-                { name: "email", type: "email", placeholder: "Email" },
-                { name: "phone", type: "text", placeholder: "Phone Number" },
-                { name: "admin", type: "text", placeholder: "Admin Name" },
+                { name: "title", type: "text", placeholder: "Report Title" },
+                {
+                  name: "division",
+                  type: "text",
+                  placeholder: "Division Name",
+                },
+                { name: "summary", type: "text", placeholder: "Short Summary" },
               ].map((field) => (
                 <input
                   key={field.name}
@@ -92,7 +101,7 @@ function SubCentersTab() {
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition"
                 >
-                  Add Sub Center
+                  Add Report
                 </button>
               </div>
             </form>
@@ -103,46 +112,28 @@ function SubCentersTab() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {subCenters.map((center) => (
+          {reports.map((report) => (
             <motion.div
-              key={center.id}
+              key={report.id}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-green-50 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all cursor-pointer group"
-              onClick={() => navigate(`/sub-centers/${center.id}`)}
+              className="bg-green-50 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all cursor-pointer group"
             >
-              <div className="h-16 flex items-center justify-center mb-4">
-                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5 text-green-600 dark:text-green-400"
-                  >
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
-                {center.name}
+              <h3 className="text-lg font-semibold text-green-900 dark:text-white mb-2">
+                {report.title}
               </h3>
-              <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                Click to view details
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Division: <span className="font-medium">{report.division}</span>
+              </p>
+              <p className="mt-2 text-green-800 dark:text-green-100 text-sm">
+                {report.summary}
               </p>
             </motion.div>
           ))}
         </motion.div>
-
-        {/* Add New Sub Center Button at the bottom */}
+        {/* Add New Report button moved below the reports grid */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -155,21 +146,20 @@ function SubCentersTab() {
             onClick={() => setShowForm(!showForm)}
           >
             <PlusCircle className="w-5 h-5 mr-2" />
-            {showForm ? "Close Form" : "Add New Sub Center"}
+            {showForm ? "Close Form" : "Add New Report"}
           </Button>
         </motion.div>
-
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="text-center text-green-700 dark:text-green-100/70 text-sm mt-8"
+          className="text-center text-green-700 dark:text-green-100/70 text-sm mt-10"
         >
-          More sub-centers coming soon across all districts
+          More reports coming soon as research progresses across Sri Lanka
         </motion.p>
       </div>
     </div>
   );
 }
 
-export default SubCentersTab;
+export default ReportsTab;

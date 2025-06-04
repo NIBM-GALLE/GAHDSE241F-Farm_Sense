@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router"; // Correct import
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "./components/ui/ThemeProvider";
 
 // pages
@@ -13,10 +13,16 @@ import Dashboard from "./pages/Dashboard";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
+import SubCenters from "./pages/SubCenters";
+import ResearchDivisions from "./pages/ResearchDividions";
+import Cases from "./pages/Cases";
 
 // App component
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import SubCentersTab from "./components/SubCentersTab";
+import ResearchDivisionsTab from "./components/ResearchDivisionsTab";
+import CasesTab from "./components/CasesTab";
 
 function App() {
   return (
@@ -55,6 +61,14 @@ function AppContent() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/sub-centers/:id" element={<SubCenters />} />
+        <Route path="/sub-centers" element={<SubCentersTab />} />
+        <Route path="/research-divisions/:id" element={<ResearchDivisions />} />
+        <Route path="/research-divisions" element={<ResearchDivisionsTab />} />
+        <Route path="/cases/:id" element={<Cases />} />
+        <Route path="/cases" element={<CasesTab />} />
+
+        {/* Add more routes as needed */}
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>
