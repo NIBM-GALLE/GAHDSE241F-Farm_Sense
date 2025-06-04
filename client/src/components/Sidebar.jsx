@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
 
-function Sidebar({ items, activeTab, setActiveTab, onLogout }) {
+function Sidebar({ items, activeTab, setActiveTab }) {
   const navigate = useNavigate();
 
   return (
