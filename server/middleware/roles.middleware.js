@@ -5,10 +5,10 @@ import SubCenter from "../models/sub_center.model.js";
 export const adminMiddleware = (req, res, next) => {
   try {
     const role = req.role;
-    if (!role === "main-admin") {
-      return next(errorHandler(401, "Unauthorized access"));
+    if (role === "main-admin") {
+      next();
     }
-    next();
+    return next(errorHandler(401, "Unauthorized access"));
   } catch (error) {
     console.log("Error in admin middleware:", error);
     next(errorHandler(500, "Internal server error"));

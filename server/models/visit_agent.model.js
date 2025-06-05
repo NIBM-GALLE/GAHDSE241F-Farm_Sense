@@ -16,6 +16,16 @@ const visitAgentSchema = new mongoose.Schema(
       ref: "SubCenter",
       required: true,
     },
+    contactNumber: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (v) {
+          return /\d{10}/.test(v); // Validate for 10-digit phone number
+        },
+        message: (props) => `${props.value} is not a valid phone number!`,
+      },
+    },
     isVerified: { type: Boolean, default: false },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "SubCenterAdmin" },
     resetPasswordToken: String,
