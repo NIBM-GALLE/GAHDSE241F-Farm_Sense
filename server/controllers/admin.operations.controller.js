@@ -253,7 +253,6 @@ export const getAllSubCenters = async (req, res, next) => {
       data: {
         subCenters,
         pagination: {
-          currentPage: page,
           itemsPerPage: limit,
           totalItems: totalSubCenters,
           totalPages,

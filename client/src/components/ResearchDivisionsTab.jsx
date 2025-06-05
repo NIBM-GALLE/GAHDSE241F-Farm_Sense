@@ -75,7 +75,9 @@ function ResearchDivisionsTab() {
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
               className="bg-green-50 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all cursor-pointer group"
-              onClick={() => navigate(`/research-divisions/${division.id}`)} // Add navigation here
+              onClick={() =>
+                navigate(`/dashboard/research-divisions/${division.id}`)
+              } // Add navigation here
             >
               <div className="h-16 flex items-center justify-center mb-4">
                 <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">

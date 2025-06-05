@@ -63,7 +63,10 @@ function AppContent() {
         <Route path="/services" element={<Services />} />
         <Route path="/dashboard/sub-centers/:id" element={<SubCenters />} />
         <Route path="/sub-centers" element={<SubCentersTab />} />
-        <Route path="/research-divisions/:id" element={<ResearchDivisions />} />
+        <Route
+          path="/dashboard/research-divisions/:id"
+          element={<ResearchDivisions />}
+        />
         <Route path="/research-divisions" element={<ResearchDivisionsTab />} />
         <Route path="/cases/:id" element={<Cases />} />
         <Route path="/cases" element={<CasesTab />} />

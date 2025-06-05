@@ -67,6 +67,12 @@ const plantCaseSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
+    visitAgentComment: {
+      type: String,
+      default: null,
+      maxLength: [500, "Comment cannot be more than 500 characters"],
+    },
   },
   { timestamps: true }
 );

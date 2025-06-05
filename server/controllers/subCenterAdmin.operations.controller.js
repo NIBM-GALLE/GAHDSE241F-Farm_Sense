@@ -25,9 +25,9 @@ const subCenterFindById = async (subCenterId) => {
 export const createVisitAgent = async (req, res, next) => {
   try {
     console.log("Creating visit agent with body:", req.body);
-    const { name, email } = req.body;
-    if (!name || !email) {
-      return next(errorHandler(400, "Name and email are required"));
+    const { name, email, contactNumber } = req.body;
+    if (!name || !email || !contactNumber) {
+      return next(errorHandler(400, "All fields are required"));
     }
 
     const subCenterId = req.subCenterId;
@@ -49,6 +49,7 @@ export const createVisitAgent = async (req, res, next) => {
       password: rawPassword,
       subCenterId,
       createdBy: subCenterAdminId,
+      contactNumber,
     });
 
     await visitAgent.save();
