@@ -9,6 +9,8 @@ import {
   LOGIN_CREDENTIALS_FOR_ADMINS,
   VERIFICATION_EMAIL_TEMPLATE_RESEARCH_CENTER,
   LOGIN_CREDENTIALS_FOR_ADMINS_RESEARCH_CENTER,
+  LOGIN_CREDENTIALS_FOR_VISIT_AGENTS,
+  VERIFICATION_EMAIL_TEMPLATE_VISIT_AGENTS,
 } from "./mailTrapTemplates.js";
 
 export const sendPasswordResetEmail = async (email, resetUrl, next) => {
@@ -202,6 +204,57 @@ export const sendResearchCenterLoginCredentialsEmail = async (
       "Error sending login credentials email to research center admin:",
       error
     );
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const sendVisitAgentLoginCredentialsEmail = async (
+  name,
+  email,
+  password,
+  subCenterName,
+  next
+) => {
+  try {
+    const recipient = [{ email }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Visit Agent Login Credentials",
+      html: LOGIN_CREDENTIALS_FOR_VISIT_AGENTS.replace("{agentName}", name)
+        .replace("{agentEmail}", email)
+        .replace("{agentPassword}", password)
+        .replace("{subCenterName}", subCenterName),
+    });
+  } catch (error) {
+    console.error("Error sending visit agent login credentials email:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const sendVisitAgentVerificationEmail = async (
+  email,
+  agentName,
+  centerName,
+  verificationCode,
+  next
+) => {
+  try {
+    const recipient = [{ email }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Visit Agent Verification",
+      html: VERIFICATION_EMAIL_TEMPLATE_VISIT_AGENTS.replace(
+        "{agentName}",
+        agentName
+      )
+        .replace("{subCenterName}", centerName)
+        .replace("{verificationCode}", verificationCode),
+      category: "visit-agent-verification",
+    });
+  } catch (error) {
+    console.error("Error sending visit agent verification email:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };
