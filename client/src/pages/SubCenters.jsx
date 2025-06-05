@@ -153,7 +153,7 @@ function SubCenters() {
               {/* Back button under the card */}
               <div className="flex justify-center mt-8">
                 <button
-                  onClick={() => navigate("/sub-centers")}
+                  onClick={() => navigate("/dashboard")}
                   className="flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-medium transition"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
