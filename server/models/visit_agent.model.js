@@ -27,6 +27,7 @@ const visitAgentSchema = new mongoose.Schema(
 );
 
 visitAgentSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   try {
     const sault = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(this.password, sault);
@@ -38,6 +39,6 @@ visitAgentSchema.pre("save", async function (next) {
   }
 });
 visitAgentSchema.methods.matchPassword = async function (password) {
-  return bcrypt.compare(this.password, password);
+  return await bcrypt.compare(password, this.password);
 };
 export default mongoose.model("VisitAgent", visitAgentSchema);

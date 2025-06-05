@@ -39,7 +39,6 @@ const researchDivisionSchema = new mongoose.Schema(
     researchDivisionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ResearchDivision",
-      required: true,
     },
 
     role: {
@@ -48,6 +47,7 @@ const researchDivisionSchema = new mongoose.Schema(
       default: "ResearchDivisionAdmin",
     },
     isVerified: { type: Boolean, default: false },
+    password: { type: String, required: true },
 
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
@@ -58,6 +58,7 @@ const researchDivisionSchema = new mongoose.Schema(
 );
 
 researchDivisionSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(this.password, salt);
@@ -69,8 +70,10 @@ researchDivisionSchema.pre("save", async function (next) {
   }
 });
 
-researchDivisionSchema.methods.matchPassword = async function (password) {
-  return bcrypt.compare(this.password, password);
+researchDivisionSchema.methods.matchPassword = async function (
+  enteredPassword
+) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 const ResearchDivisionAdmin = mongoose.model(

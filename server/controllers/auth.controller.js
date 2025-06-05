@@ -189,7 +189,7 @@ export const login = async (req, res, next) => {
     }
 
     const isPasswordMatched = await user.matchPassword(password);
-   
+
     if (!isPasswordMatched) {
       return next(errorHandler(400, "Invalid credentials"));
     }
@@ -241,6 +241,7 @@ export const verifyEmail = async (req, res, next) => {
     // Update the user to mark email as verified
     user.isVerified = true;
     user.verificationToken = undefined;
+    user.verificationTokenExpiresAt = undefined;
 
     await user.save();
     await sendWelcomeEmail(user.email, user.name, user.createdAt, next);
