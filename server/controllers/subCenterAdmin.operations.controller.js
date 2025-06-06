@@ -3,6 +3,7 @@ import SubCenter from "../models/sub_center.model.js";
 import VisitAgent from "../models/visit_agent.model.js";
 import PlantCase from "../models/plant_case.model.js";
 import ResearchDivision from "../models/research_divisions.model.js";
+import SubCenterAdmin from "../models/sub_admin.model.js";
 import {
   generateRandomPassword,
   generateOtp,
@@ -11,6 +12,8 @@ import {
 import {
   sendVisitAgentLoginCredentialsEmail,
   sendVisitAgentVerificationEmail,
+  sendSubCenterVerificationEmail,
+  sendLoginCredentialsEmail,
 } from "../mailtrap/mailTrapEmail.js";
 
 const subCenterFindById = async (subCenterId) => {
@@ -318,6 +321,74 @@ export const assignResearchCenterToPlantCase = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error in assignResearchCenterToPlantCase:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const createAdmins = async (req, res, next) => {
+  try {
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return next(errorHandler(400, "Name and email are required"));
+    }
+
+    const subCenter = await SubCenter.findById(req.subCenterId);
+    if (!subCenter) {
+      return next(errorHandler(404, "Sub Center not found"));
+    }
+
+    const checkIsAdminsFull = subCenter.admins.length >= 5;
+    if (checkIsAdminsFull) {
+      return next(errorHandler(400, "Sub Center already has 5 admins"));
+    }
+
+    const existingAdmin = await SubCenterAdmin.findOne({
+      email,
+      subCenterId: req.subCenterId,
+    });
+
+    if (existingAdmin) {
+      return next(errorHandler(400, "Admin with this email already exists"));
+    }
+
+    const rawPassword = generateRandomPassword();
+    const subCenterAdmin = new SubCenterAdmin({
+      name,
+      email,
+      password: rawPassword,
+      subCenterId: req.subCenterId,
+      createdBy: req.userId,
+      createdByModel: "SubCenterAdmin",
+      verificationToken: generateOtp(),
+      verificationTokenExpiresAt: new Date(Date.now() + 3600000), // 1 hour expiration
+    });
+
+    await subCenterAdmin.save();
+    subCenter.admins.push(subCenterAdmin._id);
+    await subCenter.save();
+
+    await sendLoginCredentialsEmail(
+      subCenterAdmin.name,
+      subCenterAdmin.email,
+      rawPassword,
+      subCenter.name,
+      next
+    );
+
+    await sendSubCenterVerificationEmail(
+      subCenterAdmin.email,
+      subCenterAdmin.verificationToken,
+      subCenterAdmin.name,
+      subCenter.name,
+      next
+    );
+
+    res.status(201).json({
+      message: "Sub Center Admin created successfully",
+      subCenterAdmin,
+    });
+  } catch (error) {
+    console.error("Error in createAdmins:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };
