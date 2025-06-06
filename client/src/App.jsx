@@ -15,13 +15,9 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import Chat from "./pages/Chat";
 
-
 // App component
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import SubCentersTab from "./components/SubCentersTab";
-import ResearchDivisionsTab from "./components/ResearchDivisionsTab";
-import CasesTab from "./components/CasesTab";
 
 function App() {
   return (
@@ -36,15 +32,21 @@ function App() {
 function AppContent() {
   const location = useLocation();
 
-  const hideNavbarRoutes = [
-    "/dashboard",
-    "/login",
-    "/signup",
-    "/forget-password",
-    "/reset-password",
+  const hideNavbarPatterns = [
+    /^\/dashboard\/sub-centers(\/.*)?$/,
+    /^\/dashboard\/research-divisions(\/.*)?$/,
+    /^\/dashboard\/reports$/,
+    /^\/dashboard\/visit-agents$/,
+    /^\/dashboard\/cases(\/.*)?$/,
+    /^\/login$/,
+    /^\/signup$/,
+    /^\/forget-password$/,
+    /^\/reset-password$/,
   ];
 
-  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
+  const shouldHideNavbar = hideNavbarPatterns.some((pattern) =>
+    pattern.test(location.pathname)
+  );
 
   return (
     <>
@@ -60,6 +62,7 @@ function AppContent() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

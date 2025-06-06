@@ -264,7 +264,7 @@ export const getAllSubCenters = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("Error in getAllSubCenters:", error);
+    console.error("Error in getAllSubCenters:", error.message);
     return next(errorHandler(500, "Internal server error"));
   }
 };

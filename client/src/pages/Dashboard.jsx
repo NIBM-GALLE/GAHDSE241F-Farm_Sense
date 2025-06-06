@@ -21,6 +21,7 @@ import VisitAgentsTab from "../components/VisitAgentsTab";
 import CasesTab from "../components/CasesTab";
 import SubCenters from "./SubCenters";
 import ResearchDivisions from "./ResearchDividions";
+import Cases from "./Cases";
 const items = [
   { title: "Sub centers", icon: MapPin, path: "sub-centers" },
   {
@@ -68,7 +69,7 @@ function Dashboard() {
           <Route path="reports" element={<ReportsTab />} />
           <Route path="visit-agents" element={<VisitAgentsTab />} />
           <Route path="cases" element={<CasesTab />} />
-          {/* Redirect default/unknown paths to sub-centers */}
+          <Route path="cases/:id" element={<Cases />} />
           <Route path="*" element={<Navigate to="sub-centers" replace />} />
         </Routes>
       </main>
