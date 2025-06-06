@@ -67,7 +67,7 @@ function ResearchDivisions() {
   }
 
   return (
-    <div className="min-h-screen py-16 px-4 bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5">
+    <div className="min-h-screen py-16 sm:py-20 px-4 bg-balck transition-colors">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

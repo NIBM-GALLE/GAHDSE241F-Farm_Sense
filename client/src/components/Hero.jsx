@@ -70,7 +70,7 @@ export default function Hero() {
           transition={{ delay: 0.4, duration: 0.8 }}
           className="flex flex-col sm:flex-row justify-center gap-4 mb-16"
         >
-          <Link to="/upload">
+          <Link to="/Chat">
             <Button
               size="lg"
               className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg font-semibold shadow-lg transition-all hover:shadow-green-700/30"

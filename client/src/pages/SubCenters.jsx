@@ -71,12 +71,14 @@ function SubCenters() {
   }
 
   return (
-    <div className="min-h-screen py-16 px-4 bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5 dark:from-green-900/20 dark:to-green-900/5 transition-colors">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen flex items-center justify-center py-16 sm:py-20 px-4 bg-balck transition-colors">
+      <div className="max-w-4xl w-full">
         <motion.div
+          drag
+          dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-white/10 dark:border-green-800 shadow-lg overflow-hidden"
+          className="bg-white/5 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-white/10 dark:border-green-800 shadow-lg overflow-hidden cursor-move"
         >
           <div className="flex flex-col md:flex-row">
             <motion.div
@@ -153,7 +155,7 @@ function SubCenters() {
               {/* Back button under the card */}
               <div className="flex justify-center mt-8">
                 <button
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => navigate("/dashboard/")}
                   className="flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-medium transition"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />

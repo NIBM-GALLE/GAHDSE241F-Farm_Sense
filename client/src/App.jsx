@@ -16,6 +16,7 @@ import Services from "./pages/Services";
 import SubCenters from "./pages/SubCenters";
 import ResearchDivisions from "./pages/ResearchDividions";
 import Cases from "./pages/Cases";
+import Chat from "./pages/Chat";
 
 // App component
 import Navbar from "./components/Navbar";
@@ -67,9 +68,13 @@ function AppContent() {
           path="/dashboard/research-divisions/:id"
           element={<ResearchDivisions />}
         />
-        <Route path="/research-divisions" element={<ResearchDivisionsTab />} />
-        <Route path="/cases/:id" element={<Cases />} />
+        <Route
+          path="/dashboard/research-divisions"
+          element={<ResearchDivisionsTab />}
+        />
+        <Route path="/dashboard/cases/:id" element={<Cases />} />
         <Route path="/cases" element={<CasesTab />} />
+        <Route path="/chat" element={<Chat />} />
 
         {/* Add more routes as needed */}
       </Routes>
