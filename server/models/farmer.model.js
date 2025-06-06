@@ -19,17 +19,14 @@ const farmerSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Please enter password"],
-      trim: true,
-      minLength: [6, "Password must be at least 6 characters"],
-      maxLength: [40, "Password cannot be more than 40 characters"],
+      required: true,
     },
 
     address: {
       type: String,
       trim: true,
       maxLength: [200, "Address cannot be more than 200 characters"],
-      minLength: [50, "Address must be at least 50 characters"],
+      minLength: [10, "Address must be at least 10 characters"],
     },
     lastLogin: {
       type: Date,
@@ -43,11 +40,10 @@ const farmerSchema = mongoose.Schema(
 
     phone: {
       type: String,
-      maxLength: [15, "Phone number cannot be more than 15 characters"],
-      minLength: [10, "Phone number must be at least 10 characters"],
       trim: true,
+      maxLength: [15, "Contact number cannot be more than 15 characters"],
+      minLength: [10, "Contact number must be at least 10 characters"],
     },
-
     plants: {
       type: [String],
       validate: [
@@ -65,10 +61,16 @@ const farmerSchema = mongoose.Schema(
         },
       ],
     },
+
+    image: {
+      type: String,
+      default: null,
+    },
     role: {
       type: String,
       default: "user",
     },
+
     isVerified: { type: Boolean, default: false },
 
     resetPasswordToken: String,
@@ -82,11 +84,12 @@ const farmerSchema = mongoose.Schema(
 farmerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = bcrypt.hash(this.password, salt);
+    const sault = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(this.password, sault);
     this.password = hashedPassword;
     next();
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });

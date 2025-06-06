@@ -257,3 +257,40 @@ export const verifyEmail = async (req, res, next) => {
     next(errorHandler(500, "Internal server error"));
   }
 };
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const { name, contactNumber, image } = req.body;
+    if (!name && !contactNumber && !image) {
+      return next(
+        errorHandler(400, "Please provide at least one field to update")
+      );
+    }
+    if (
+      contactNumber &&
+      (contactNumber.length < 10 || contactNumber.length > 15)
+    ) {
+      return next(
+        errorHandler(400, "Contact number must be between 10 and 15 characters")
+      );
+    }
+    const user = await findUser({ _id: req.userId, role: req.role });
+    if (!user) {
+      return next(errorHandler(400, "User does not exist"));
+    }
+
+    user.name = name || user.name;
+    user.contactNumber = contactNumber || user.contactNumber;
+    user.image = image || user.image;
+
+    await user.save();
+    const sanitizedUser = userWithoutPassword(user);
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: sanitizedUser,
+    });
+  } catch (error) {
+    console.log("Error in update profile:", error);
+    next(errorHandler(500, "Internal server error"));
+  }
+};

@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Home,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
+import {
   MapPin,
   FlaskConical,
   FileBarChart2,
@@ -12,34 +18,34 @@ import SubCentersTab from "../components/SubCentersTab";
 import ResearchDivisionsTab from "../components/ResearchDivisionsTab";
 import ReportsTab from "../components/ReportsTab";
 import VisitAgentsTab from "../components/VisitAgentsTab";
-
 import CasesTab from "../components/CasesTab";
-
+import SubCenters from "./SubCenters";
+import ResearchDivisions from "./ResearchDividions";
 const items = [
-  { title: "Sub centers", icon: MapPin },
-  { title: "Research Divisions", icon: FlaskConical },
-  { title: "Reports", icon: FileBarChart2 },
-  { title: "Visit Agents", icon: Users },
-  { title: "Cases", icon: Briefcase },
+  { title: "Sub centers", icon: MapPin, path: "sub-centers" },
+  {
+    title: "Research Divisions",
+    icon: FlaskConical,
+    path: "research-divisions",
+  },
+  { title: "Reports", icon: FileBarChart2, path: "reports" },
+  { title: "Visit Agents", icon: Users, path: "visit-agents" },
+  { title: "Cases", icon: Briefcase, path: "cases" },
 ];
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState("Home");
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "Sub centers":
-        return <SubCentersTab />;
-      case "Research Divisions":
-        return <ResearchDivisionsTab />;
-      case "Reports":
-        return <ReportsTab />;
-      case "Visit Agents":
-        return <VisitAgentsTab />;
-      case "Cases":
-        return <CasesTab />;
-      default:
-        return <SubCentersTab />;
+  // Get the current tab from the URL
+  const currentTab =
+    items.find((item) => location.pathname.endsWith(item.path))?.title ||
+    "Sub centers";
+
+  const handleTabChange = (tab) => {
+    const item = items.find((i) => i.title === tab);
+    if (item) {
+      navigate(`/dashboard/${item.path}`);
     }
   };
 
@@ -47,10 +53,25 @@ function Dashboard() {
     <div className="flex">
       <Sidebar
         items={items}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        activeTab={currentTab}
+        setActiveTab={handleTabChange}
       />
-      <main className="flex-1 p-8">{renderTabContent()}</main>
+      <main className="flex-1 p-8">
+        <Routes>
+          <Route path="sub-centers" element={<SubCentersTab />} />
+          <Route path="sub-centers/:id" element={<SubCenters />} />
+          <Route path="research-divisions" element={<ResearchDivisionsTab />} />
+          <Route
+            path="research-divisions/:id"
+            element={<ResearchDivisions />}
+          />
+          <Route path="reports" element={<ReportsTab />} />
+          <Route path="visit-agents" element={<VisitAgentsTab />} />
+          <Route path="cases" element={<CasesTab />} />
+          {/* Redirect default/unknown paths to sub-centers */}
+          <Route path="*" element={<Navigate to="sub-centers" replace />} />
+        </Routes>
+      </main>
     </div>
   );
 }
