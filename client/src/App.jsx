@@ -13,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
+import Chat from "./pages/Chat";
+
 
 // App component
 import Navbar from "./components/Navbar";

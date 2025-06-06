@@ -20,6 +20,8 @@ function ResearchDivisionsTab() {
     email: "",
     phone: "",
     focus: "",
+    adminEmail: "",
+    adminContact: "",
   });
 
   const handleChange = (e) => {
@@ -123,13 +125,23 @@ function ResearchDivisionsTab() {
             <form onSubmit={handleAdd} className="space-y-4">
               {[
                 { name: "name", type: "text", placeholder: "Division Name" },
-                { name: "lead", type: "text", placeholder: "Lead Researcher" },
-                { name: "email", type: "email", placeholder: "Email Address" },
-                { name: "phone", type: "text", placeholder: "Phone Number" },
                 {
                   name: "focus",
                   type: "text",
                   placeholder: "Research Focus Area",
+                },
+                { name: "email", type: "email", placeholder: "Email Address" },
+                { name: "phone", type: "text", placeholder: "Phone Number" },
+                { name: "lead", type: "text", placeholder: "Admin name" },
+                {
+                  name: "adminEmail",
+                  type: "email",
+                  placeholder: "Admin Email",
+                },
+                {
+                  name: "adminContact",
+                  type: "text",
+                  placeholder: "Admin Contact",
                 },
               ].map((field) => (
                 <input

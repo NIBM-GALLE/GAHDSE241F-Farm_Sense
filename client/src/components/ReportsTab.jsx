@@ -66,11 +66,57 @@ function ReportsTab() {
             </p>
           </div>
         </motion.div>
+
+        {/* Reports grid */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {reports.map((report) => (
+            <motion.div
+              key={report.id}
+              whileHover={{ y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-green-50 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all cursor-pointer group"
+            >
+              <h3 className="text-lg font-semibold text-green-900 dark:text-white mb-2">
+                {report.title}
+              </h3>
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Division: <span className="font-medium">{report.division}</span>
+              </p>
+              <p className="mt-2 text-green-800 dark:text-green-100 text-sm">
+                {report.summary}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Add New Report button below the reports grid */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="flex justify-center mt-12"
+        >
+          <Button
+            variant="outline"
+            className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium transition-colors"
+            onClick={() => setShowForm(!showForm)}
+          >
+            <PlusCircle className="w-5 h-5 mr-2" />
+            {showForm ? "Close Form" : "Add New Report"}
+          </Button>
+        </motion.div>
+
+        {/* Show the form under the button */}
         {showForm && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto shadow-md"
+            className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mt-8 max-w-2xl mx-auto shadow-md"
           >
             <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
               Add Research Report
@@ -108,47 +154,6 @@ function ReportsTab() {
           </motion.div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {reports.map((report) => (
-            <motion.div
-              key={report.id}
-              whileHover={{ y: -5 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-green-50 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all cursor-pointer group"
-            >
-              <h3 className="text-lg font-semibold text-green-900 dark:text-white mb-2">
-                {report.title}
-              </h3>
-              <p className="text-sm text-green-700 dark:text-green-300">
-                Division: <span className="font-medium">{report.division}</span>
-              </p>
-              <p className="mt-2 text-green-800 dark:text-green-100 text-sm">
-                {report.summary}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
-        {/* Add New Report button moved below the reports grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="flex justify-center mt-12"
-        >
-          <Button
-            variant="outline"
-            className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium transition-colors"
-            onClick={() => setShowForm(!showForm)}
-          >
-            <PlusCircle className="w-5 h-5 mr-2" />
-            {showForm ? "Close Form" : "Add New Report"}
-          </Button>
-        </motion.div>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

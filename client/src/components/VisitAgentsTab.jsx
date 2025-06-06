@@ -1,14 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  PlusCircle,
-  Edit2,
-  Trash2,
-  User,
-  Phone,
-  Mail,
-  MapPin,
-} from "lucide-react";
+import { PlusCircle, Edit2, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 
 const initialAgents = [
@@ -17,14 +9,12 @@ const initialAgents = [
     name: "Tharindu Senanayake",
     phoneNumber: "077-1234567",
     email: "tharindu@farmsense.lk",
-    subCenter: "Gampaha Regional Center",
   },
   {
     id: "agent-002",
     name: "Ishara Fernando",
     phoneNumber: "071-9876543",
     email: "ishara@farmsense.lk",
-    subCenter: "Matara Sub-Center",
   },
 ];
 
@@ -34,8 +24,6 @@ function VisitAgentsTab() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    password: "",
-    subCenter: "",
     phoneNumber: "",
   });
   const [editId, setEditId] = useState(null);
@@ -47,12 +35,7 @@ function VisitAgentsTab() {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    if (
-      !form.name.trim() ||
-      !form.email.trim() ||
-      !form.subCenter.trim() ||
-      !form.phoneNumber.trim()
-    )
+    if (!form.name.trim() || !form.email.trim() || !form.phoneNumber.trim())
       return;
 
     if (editId) {
@@ -69,8 +52,6 @@ function VisitAgentsTab() {
     setForm({
       name: "",
       email: "",
-      password: "",
-      subCenter: "",
       phoneNumber: "",
     });
     setEditId(null);
@@ -81,8 +62,6 @@ function VisitAgentsTab() {
     setForm({
       name: agent.name,
       email: agent.email,
-      password: "",
-      subCenter: agent.subCenter,
       phoneNumber: agent.phoneNumber,
     });
     setEditId(agent.id);
@@ -119,77 +98,6 @@ function VisitAgentsTab() {
           </div>
         </motion.div>
 
-        {showForm && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto shadow-md"
-          >
-            <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
-              {editId ? "Edit Visit Agent" : "Add Visit Agent"}
-            </h3>
-            <form onSubmit={handleAdd} className="space-y-4">
-              {["name", "email", "phoneNumber", "password", "subCenter"].map(
-                (field) => (
-                  <input
-                    key={field}
-                    name={field}
-                    type={
-                      field === "password"
-                        ? "password"
-                        : field === "email"
-                        ? "email"
-                        : field === "phoneNumber"
-                        ? "tel"
-                        : "text"
-                    }
-                    value={form[field]}
-                    onChange={handleChange}
-                    placeholder={
-                      field === "name"
-                        ? "Agent Name"
-                        : field === "email"
-                        ? "Email Address"
-                        : field === "phoneNumber"
-                        ? "Phone Number"
-                        : field === "password"
-                        ? "Temporary Password"
-                        : "Sub Center Name"
-                    }
-                    required={field !== "password"}
-                    className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
-                  />
-                )
-              )}
-              <div className="flex justify-center gap-4">
-                <button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition shadow hover:shadow-green-700/30"
-                >
-                  {editId ? "Update Agent" : "Add Agent"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditId(null);
-                    setForm({
-                      name: "",
-                      email: "",
-                      password: "",
-                      subCenter: "",
-                      phoneNumber: "",
-                    });
-                  }}
-                  className="border border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 px-6 py-2 rounded-lg font-medium transition hover:bg-green-50 dark:hover:bg-green-900/30"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        )}
-
         <motion.table
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -201,7 +109,6 @@ function VisitAgentsTab() {
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Phone</th>
-              <th className="px-4 py-2">Sub Center</th>
               <th className="px-4 py-2">Actions</th>
             </tr>
           </thead>
@@ -219,9 +126,6 @@ function VisitAgentsTab() {
                 </td>
                 <td className="px-4 py-3 text-green-700 dark:text-green-300">
                   {agent.phoneNumber}
-                </td>
-                <td className="px-4 py-3 text-green-700 dark:text-green-300">
-                  {agent.subCenter}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
@@ -246,6 +150,7 @@ function VisitAgentsTab() {
           </tbody>
         </motion.table>
 
+        {/* Add New Agent Button */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -261,8 +166,6 @@ function VisitAgentsTab() {
               setForm({
                 name: "",
                 email: "",
-                password: "",
-                subCenter: "",
                 phoneNumber: "",
               });
             }}
@@ -271,6 +174,64 @@ function VisitAgentsTab() {
             {showForm ? "Close Form" : "Add Visit Agent"}
           </Button>
         </motion.div>
+
+        {/* Show the form under the button */}
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mt-8 max-w-2xl mx-auto shadow-md"
+          >
+            <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
+              {editId ? "Edit Visit Agent" : "Add Visit Agent"}
+            </h3>
+            <form onSubmit={handleAdd} className="space-y-4">
+              {[
+                { name: "name", type: "text", placeholder: "Agent Name" },
+                { name: "email", type: "email", placeholder: "Email Address" },
+                {
+                  name: "phoneNumber",
+                  type: "tel",
+                  placeholder: "Phone Number",
+                },
+              ].map((field) => (
+                <input
+                  key={field.name}
+                  name={field.name}
+                  type={field.type}
+                  value={form[field.name]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  required
+                  className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+              ))}
+              <div className="flex justify-center gap-4">
+                <button
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition shadow hover:shadow-green-700/30"
+                >
+                  {editId ? "Update Agent" : "Add Agent"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditId(null);
+                    setForm({
+                      name: "",
+                      email: "",
+                      phoneNumber: "",
+                    });
+                  }}
+                  className="border border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 px-6 py-2 rounded-lg font-medium transition hover:bg-green-50 dark:hover:bg-green-900/30"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        )}
 
         <motion.p
           initial={{ opacity: 0 }}

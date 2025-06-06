@@ -33,6 +33,9 @@ function SubCentersTab() {
     setSubCenters([...subCenters, { ...form, id: newId }]);
     setForm({ name: "", location: "", email: "", phone: "", admin: "" });
     setShowForm(false);
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 100);
   };
 
   return (
@@ -57,46 +60,6 @@ function SubCentersTab() {
             </p>
           </div>
         </motion.div>
-
-        {showForm && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto shadow-md"
-          >
-            <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
-              Add Sub Center
-            </h3>
-            <form onSubmit={handleAdd} className="space-y-4">
-              {[
-                { name: "name", type: "text", placeholder: "Sub Center Name" },
-                { name: "location", type: "text", placeholder: "Location" },
-                { name: "email", type: "email", placeholder: "Email" },
-                { name: "phone", type: "text", placeholder: "Phone Number" },
-                { name: "admin", type: "text", placeholder: "Admin Name" },
-              ].map((field) => (
-                <input
-                  key={field.name}
-                  name={field.name}
-                  type={field.type}
-                  value={form[field.name]}
-                  onChange={handleChange}
-                  placeholder={field.placeholder}
-                  required
-                  className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
-                />
-              ))}
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition"
-                >
-                  Add Sub Center
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        )}
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -161,6 +124,57 @@ function SubCentersTab() {
             {showForm ? "Close Form" : "Add New Sub Center"}
           </Button>
         </motion.div>
+
+        {/* Show the form under the button, user-friendly */}
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mt-8 max-w-2xl mx-auto shadow-md"
+          >
+            <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
+              Add Sub Center
+            </h3>
+            <form onSubmit={handleAdd} className="space-y-4">
+              {[
+                { name: "name", type: "text", placeholder: "Sub Center Name" },
+                { name: "location", type: "text", placeholder: "Location" },
+                { name: "email", type: "email", placeholder: "Email" },
+                { name: "phone", type: "text", placeholder: "Phone Number" },
+                { name: "admin", type: "text", placeholder: "Admin Name" },
+                {
+                  name: "adminEmail",
+                  type: "email",
+                  placeholder: "Admin Email",
+                },
+                {
+                  name: "adminPhone",
+                  type: "text",
+                  placeholder: "Admin Phone Number",
+                },
+              ].map((field) => (
+                <input
+                  key={field.name}
+                  name={field.name}
+                  type={field.type}
+                  value={form[field.name] || ""}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  required
+                  className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+              ))}
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition"
+                >
+                  Add Sub Center
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        )}
 
         <motion.p
           initial={{ opacity: 0 }}

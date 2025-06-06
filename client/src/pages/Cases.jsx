@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -9,6 +9,8 @@ import {
   Image as ImageIcon,
   ChevronRight,
   MapPin,
+  Building2,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 
@@ -23,40 +25,66 @@ const casesData = {
     location: "Gampaha",
     image:
       "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
+    assignedVisitAgent: "",
+    researchDivision: {
+      name: "Plant Pathology Division",
+      status: "answered",
+      comment:
+        "Fungal infection suspected. Recommend field inspection and sample collection for lab analysis.",
+    },
   },
   "case-002": {
     id: "case-002",
     plantName: "Chili",
     farmer: "Nirosha Silva",
-    issue: "Wilting and stem rot",
-    status: "in-progress",
-    createdAt: "2024-06-03",
-    location: "Matara",
+    issue: "Wilting and brown spots",
+    status: "pending",
+    createdAt: "2024-06-02",
+    location: "Kurunegala",
     image:
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
+    assignedVisitAgent: "",
+    researchDivision: {
+      name: "Plant Pathology Division",
+      status: "answered",
+      comment:
+        "Possible bacterial wilt. Advise to avoid overhead irrigation and monitor soil moisture.",
+    },
   },
   "case-003": {
     id: "case-003",
     plantName: "Banana",
     farmer: "Ajith Kumara",
-    issue: "Fungal infection on roots",
-    status: "resolved",
-    createdAt: "2024-06-04",
-    location: "Anuradhapura",
+    issue: "Yellowing leaves and stunted growth",
+    status: "in-progress",
+    createdAt: "2024-06-03",
+    location: "Matara",
     image:
-      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=400&q=80",
+    assignedVisitAgent: "",
+    researchDivision: {
+      name: "Plant Pathology Division",
+      status: "answered",
+      comment:
+        "Likely nutrient deficiency. Recommend soil testing and fertilizer adjustment.",
+    },
   },
 };
+
+const visitAgents = ["Tharindu Senanayake", "Ishara Fernando", "Ajith Kumara"];
 
 function Cases() {
   const { id } = useParams();
   const navigate = useNavigate();
   const currentCase = casesData[id];
 
+  // Always default to "" so "Select Agent" is shown unless user picks one
+  const [selectedAgent, setSelectedAgent] = useState("");
+
   if (!currentCase) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#111827]">
-        <div className="text-center space-y-4 p-8 bg-white/90 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-700 shadow-lg">
+      <div className="min-h-screen py-16 sm:py-20 px-4 bg-white dark:bg-[#111827] transition-colors">
+        <div className="text-center space-y-4 p-8 bg-white dark:bg-black rounded-xl border border-green-700 shadow-lg">
           <h2 className="text-2xl font-bold text-green-900 dark:text-white">
             Case Not Found
           </h2>
@@ -73,45 +101,37 @@ function Cases() {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      pending: {
-        text: "Pending",
-        class:
-          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-      },
-      "in-progress": {
-        text: "In Progress",
-        class:
-          "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-      },
-      resolved: {
-        text: "Resolved",
-        class:
-          "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-      },
+      pending:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+      "in-progress":
+        "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+      resolved:
+        "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+      answered:
+        "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300",
     };
-
     return (
       <span
-        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusMap[status].class}`}
+        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusMap[status]}`}
       >
-        {statusMap[status].text}
+        {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
   };
 
   return (
-    <div className="min-h-screen py-16 px-4 bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5 dark:from-green-900/20 dark:to-green-900/5 transition-colors">
+    <div className="min-h-screen py-16 sm:py-20 px-4 bg-balck transition-colors">
       <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl shadow-lg overflow-hidden"
+          className="bg-white dark:bg-[#1f2937] border border-green-700 rounded-xl shadow-lg overflow-hidden"
         >
           {/* Header */}
-          <div className="bg-green-50 dark:bg-[#22311a] p-6">
+          <div className="bg-green-100 dark:bg-[#22311a] p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-green-200 dark:bg-green-900/50 flex items-center justify-center">
                   <Leaf className="w-5 h-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -123,47 +143,32 @@ function Cases() {
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                {getStatusBadge(currentCase.status)}
-              </div>
+              <div>{getStatusBadge(currentCase.status)}</div>
             </div>
           </div>
 
           {/* Content */}
           <div className="p-6 space-y-8">
-            {/* Image Section */}
+            {/* Image */}
             <div className="flex flex-col items-center">
               <h4 className="text-sm font-medium text-green-700 dark:text-green-300 mb-3 flex items-center gap-2">
                 <ImageIcon className="w-4 h-4" /> Plant Image
               </h4>
-              <div className="w-full flex justify-center">
-                {currentCase.image ? (
-                  <motion.div
-                    whileHover={{ scale: 1.03 }}
-                    className="cursor-pointer"
-                  >
-                    <img
-                      src={currentCase.image}
-                      alt={currentCase.plantName}
-                      className="w-full max-w-xs h-64 object-cover rounded-lg border border-green-200 dark:border-green-700 shadow-sm"
-                    />
-                  </motion.div>
-                ) : (
-                  <div className="w-full max-w-xs h-64 flex items-center justify-center bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700 opacity-60">
-                    <ImageIcon className="w-12 h-12 text-green-200" />
-                  </div>
-                )}
-              </div>
+              <img
+                src={currentCase.image}
+                alt="Plant"
+                className="w-full max-w-xs h-64 object-cover rounded-lg border border-green-700 shadow-sm"
+              />
               <p className="text-xs text-green-500 dark:text-green-400 mt-2">
-                {currentCase.image ? "Uploaded by farmer" : "No image uploaded"}
+                Uploaded by farmer
               </p>
             </div>
 
-            {/* Details */}
+            {/* Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <User className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <User className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
                   <div>
                     <h4 className="text-sm font-medium text-green-700 dark:text-green-300 mb-1">
                       Farmer
@@ -173,9 +178,8 @@ function Cases() {
                     </p>
                   </div>
                 </div>
-
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <Calendar className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
                   <div>
                     <h4 className="text-sm font-medium text-green-700 dark:text-green-300 mb-1">
                       Submitted Date
@@ -185,9 +189,8 @@ function Cases() {
                     </p>
                   </div>
                 </div>
-
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <MapPin className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
                   <div>
                     <h4 className="text-sm font-medium text-green-700 dark:text-green-300 mb-1">
                       Location
@@ -203,7 +206,7 @@ function Cases() {
                 <h4 className="text-sm font-medium text-green-700 dark:text-green-300 mb-2">
                   Issue Description
                 </h4>
-                <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-700 rounded-lg p-4">
+                <div className="bg-green-50 dark:bg-green-900/10 border border-green-700 rounded-lg p-4">
                   <p className="text-green-900 dark:text-green-100">
                     {currentCase.issue}
                   </p>
@@ -211,10 +214,57 @@ function Cases() {
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* Assign Visit Agent */}
+            <div className="pt-6">
+              <label className="block mb-2 text-sm font-medium text-green-700 dark:text-green-300">
+                Assign Visit Agent
+              </label>
+              <select
+                className="w-full bg-green-50 dark:bg-[#222b3a] border border-green-700 text-green-900 dark:text-green-100 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                value={selectedAgent}
+                onChange={(e) => setSelectedAgent(e.target.value)}
+              >
+                <option value="" disabled>
+                  Select Agent
+                </option>
+                {visitAgents.map((agent) => (
+                  <option key={agent} value={agent}>
+                    {agent}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Research Division Info */}
+            {currentCase.researchDivision && (
+              <div className="pt-6">
+                <div className="flex items-start gap-3">
+                  <Building2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-medium text-green-700 dark:text-green-300 mb-1">
+                      Research Division
+                    </h4>
+                    <p className="text-green-900 dark:text-green-100">
+                      {currentCase.researchDivision.name}
+                    </p>
+                    <div className="mt-1 flex items-center gap-2">
+                      {getStatusBadge(currentCase.researchDivision.status)}
+                      {currentCase.researchDivision.comment && (
+                        <span className="ml-2 flex items-center text-green-800 dark:text-green-200 text-xs bg-green-100 dark:bg-green-900/30 rounded px-2 py-1">
+                          <MessageCircle className="w-4 h-4 mr-1" />
+                          {currentCase.researchDivision.comment}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
               <Button
-                onClick={() => navigate("/cases")}
+                onClick={() => navigate("/dashboard")}
                 className="bg-green-600 hover:bg-green-700"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to All Cases
