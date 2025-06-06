@@ -63,7 +63,7 @@ const plantCaseSchema = new mongoose.Schema(
       enum: ["pending", "answered"],
       default: "pending",
     },
-    Answer: {
+    answer: {
       type: String,
       default: null,
     },

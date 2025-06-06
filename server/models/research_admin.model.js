@@ -19,7 +19,6 @@ const researchDivisionSchema = new mongoose.Schema(
 
     contactNumber: {
       type: String,
-      required: true,
       maxLength: [15, "Contact number cannot be more than 15 characters"],
       minLength: [10, "Contact number must be at least 10 characters"],
     },
@@ -48,6 +47,11 @@ const researchDivisionSchema = new mongoose.Schema(
     },
     isVerified: { type: Boolean, default: false },
     password: { type: String, required: true },
+    image: {
+      type: String,
+      default:
+        "https://img.freepik.com/free-vector/illustration-customer-service-concept_53876-5883.jpg?semt=ais_hybrid&w=740",
+    },
 
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

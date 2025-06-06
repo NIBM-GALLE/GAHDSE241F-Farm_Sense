@@ -2,6 +2,7 @@ import { errorHandler } from "../utils/errorHandler.js";
 import SubCenterAdmin from "../models/sub_admin.model.js";
 import SubCenter from "../models/sub_center.model.js";
 import VisitAgent from "../models/visit_agent.model.js";
+import PlantCase from "../models/plant_case.model.js";
 import {
   generateRandomPassword,
   generateOtp,
@@ -79,6 +80,132 @@ export const createVisitAgent = async (req, res, next) => {
     });
   } catch (error) {
     console.log("Error in createVisitAgent:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getAllVisitAgents = async (req, res, next) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(10, Math.max(1, parseInt(req.query.limit) || 10));
+  const skip = (page - 1) * limit;
+
+  try {
+    const [totalVisitAgents, visitAgents] = await Promise.all([
+      VisitAgent.countDocuments({ subCenterId: req.subCenterId }),
+      VisitAgent.find({ subCenterId: req.subCenterId })
+        .select("name email contactNumber status createdAt")
+        .populate("createdBy", "name email contactNumber")
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 }),
+    ]);
+
+    const totalPages = Math.ceil(totalVisitAgents / limit);
+    const hasNext = page < totalPages;
+    const hasPrevious = page > 1;
+
+    res.status(200).json({
+      message: "Visit agents fetched successfully",
+      visitAgents,
+      pagination: {
+        totalVisitAgents,
+        totalPages,
+        hasNext,
+        hasPrevious,
+        nextPage: hasNext ? page + 1 : null,
+        previousPage: hasPrevious ? page - 1 : null,
+      },
+    });
+  } catch (error) {
+    console.error("Error in getAllVisitAgents:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getAllPlantCasesForCenter = async (req, res, next) => {
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(10, Math.max(1, parseInt(req.query.limit) || 10));
+  const skip = (page - 1) * limit;
+  try {
+    const [totalCases, plantCases] = await Promise.all([
+      PlantCase.countDocuments({ assignedSubCenter: req.subCenterId }),
+      PlantCase.find({ assignedSubCenter: req.subCenterId })
+        .select("status plantName plantIssue images createdAt")
+        // .populate("createdBy", "name address email phone")
+        // .populate("assignedVisitAgent", "name contactNumber email")
+        // .populate("assignedBy", "name email contactNumber")
+        // .populate(
+        //   "assignedResearchDivision",
+        //   "name location contactNumber email"
+        // )
+        .populate("answeredBy", "name email contactNumber")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+    ]);
+
+    const totalPages = Math.ceil(totalCases / limit);
+    const hasNext = page < totalPages;
+    const hasPrevious = page > 1;
+
+    res.status(200).json({
+      message: "Plant cases fetched successfully",
+      plantCases,
+      pagination: {
+        totalCases,
+        totalPages,
+        currentPage: page,
+        hasNext,
+        hasPrevious,
+        nextPage: hasNext ? page + 1 : null,
+        previousPage: hasPrevious ? page - 1 : null,
+      },
+    });
+  } catch (error) {
+    console.error("Error in getAllPlantCasesForCenter:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getPlantCaseById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      return next(errorHandler(400, "Plant case ID is required"));
+    }
+
+    const plantCase = await PlantCase.findById(id);
+    if (!plantCase) {
+      return next(errorHandler(404, "Plant case not found"));
+    }
+
+    if (plantCase.assignedSubCenter.toString() !== req.subCenterId) {
+      return next(errorHandler(403, "Unauthorized access to this plant case"));
+    }
+
+    const populatedPlantCase = await PlantCase.findById(id)
+      .select(
+        "status plantName plantIssue images answerStatus  answer visitAgentComment createdAt"
+      )
+      .populate("createdBy", "name address email phone")
+      .populate("assignedVisitAgent", "name contactNumber email")
+      .populate("assignedBy", "name email contactNumber")
+      .populate("assignedResearchDivision", "name location contactNumber email")
+      .populate("answeredBy", "name email contactNumber");
+
+    res.status(200).json({
+      plantCase: populatedPlantCase,
+    });
+  } catch (error) {
+    console.error("Error in getPlantCaseById:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const assignVisitAgentToPlantCase = async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.error("Error in assignVisitAgentToPlantCase:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };

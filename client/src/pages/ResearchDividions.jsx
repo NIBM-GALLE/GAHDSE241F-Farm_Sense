@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Phone, Mail, User } from "lucide-react";
 
@@ -40,7 +40,6 @@ const researchDivisions = {
 
 function ResearchDivisions() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const division = researchDivisions[id];
 
   if (!division) {
@@ -54,13 +53,13 @@ function ResearchDivisions() {
           <h2 className="text-2xl font-bold text-green-900 dark:text-white mb-4">
             Research Division Not Found
           </h2>
-          <button
-            onClick={() => navigate("/research-divisions")}
-            className="mt-4 flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"
+          <Link
+            to="/dashboard/research-divisions"
+            className="flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-medium transition"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Research Divisions
-          </button>
+            Back to All Divisions
+          </Link>
         </motion.div>
       </div>
     );
@@ -152,13 +151,13 @@ function ResearchDivisions() {
               </div>
 
               <div className="flex justify-center mt-8">
-                <button
-                  onClick={() => navigate("/dashboard")}
+                <Link
+                  to="/dashboard/research-divisions"
                   className="flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-medium transition"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to All Divisions
-                </button>
+                </Link>
               </div>
             </div>
           </div>
