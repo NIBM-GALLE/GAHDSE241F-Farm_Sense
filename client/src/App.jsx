@@ -13,9 +13,6 @@ import Dashboard from "./pages/Dashboard";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
-import SubCenters from "./pages/SubCenters";
-import ResearchDivisions from "./pages/ResearchDividions";
-import Cases from "./pages/Cases";
 
 // App component
 import Navbar from "./components/Navbar";
@@ -57,21 +54,10 @@ function AppContent() {
         <Route path="/reset-password" element={<Reset_password />} />
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/dashboard/sub-centers/:id" element={<SubCenters />} />
-        <Route path="/sub-centers" element={<SubCentersTab />} />
-        <Route
-          path="/dashboard/research-divisions/:id"
-          element={<ResearchDivisions />}
-        />
-        <Route path="/research-divisions" element={<ResearchDivisionsTab />} />
-        <Route path="/cases/:id" element={<Cases />} />
-        <Route path="/cases" element={<CasesTab />} />
-
-        {/* Add more routes as needed */}
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

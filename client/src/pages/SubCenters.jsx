@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Phone, Mail, User } from "lucide-react";
 
@@ -44,7 +44,6 @@ const subCenters = {
 
 function SubCenters() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const center = subCenters[id];
 
   if (!center) {
@@ -58,13 +57,13 @@ function SubCenters() {
           <h2 className="text-2xl font-bold text-green-900 dark:text-white mb-4">
             Sub Center Not Found
           </h2>
-          <button
-            onClick={() => navigate("/sub-centers")}
+          <Link
+            to="/dashboard/sub-centers"
             className="mt-4 flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Sub Centers
-          </button>
+          </Link>
         </motion.div>
       </div>
     );
@@ -152,13 +151,13 @@ function SubCenters() {
 
               {/* Back button under the card */}
               <div className="flex justify-center mt-8">
-                <button
-                  onClick={() => navigate("/dashboard")}
-                  className="flex items-center bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-medium transition"
+                <Link
+                  to="/dashboard/sub-centers"
+                  className="mt-4 flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to All Centers
-                </button>
+                  Back to Sub Centers
+                </Link>
               </div>
             </div>
           </div>
