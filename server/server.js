@@ -9,6 +9,7 @@ import adminRoutes from "./routes/admin.operations.route.js";
 import subCenterAdminRoutes from "./routes/subCenterAdmin.operation.route.js";
 import farmerRoutes from "./routes/farmer.route.js";
 import visitAgentRoutes from "./routes/visitAgent.route.js";
+import researchDivisionRoutes from "./routes/researchCenter.route.js";
 dotenv.config();
 
 const app = express();
@@ -20,6 +21,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/sub-center-admin", subCenterAdminRoutes);
 app.use("/api/farmer", farmerRoutes);
 app.use("/api/visit-agent", visitAgentRoutes);
+app.use("/api/research-division", researchDivisionRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

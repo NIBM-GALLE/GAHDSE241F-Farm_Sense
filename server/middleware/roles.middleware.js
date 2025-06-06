@@ -2,6 +2,7 @@ import { errorHandler } from "../utils/errorHandler.js";
 import { findUser } from "../utils/helperFunctions.js";
 import SubCenter from "../models/sub_center.model.js";
 import VisitAgent from "../models/visit_agent.model.js";
+import ResearchDivisionAdmin from "../models/research_admin.model.js";
 
 export const adminMiddleware = (req, res, next) => {
   try {
@@ -67,6 +68,30 @@ export const visitAgentMiddleware = async (req, res, next) => {
     next();
   } catch (error) {
     console.log("Error in visit agent middleware:", error);
+    next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const researchDivisionAdminMiddleware = async (req, res, next) => {
+  try {
+    const role = req.role;
+    if (role !== "ResearchDivisionAdmin") {
+      return next(errorHandler(401, "Unauthorized access"));
+    }
+
+    const researchDivisionId = await ResearchDivisionAdmin.findOne({
+      _id: req.userId,
+    }).select("researchDivisionId");
+
+    if (!researchDivisionId) {
+      return next(errorHandler(404, "Research Division ID not found"));
+    }
+
+    req.researchDivisionId = researchDivisionId.researchDivisionId;
+
+    next();
+  } catch (error) {
+    console.log("Error in research division admin middleware:", error);
     next(errorHandler(500, "Internal server error"));
   }
 };
