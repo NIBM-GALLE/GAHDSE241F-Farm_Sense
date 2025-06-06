@@ -18,16 +18,17 @@ const visitAgentSchema = new mongoose.Schema(
     },
     contactNumber: {
       type: String,
-      required: true,
-      validate: {
-        validator: function (v) {
-          return /\d{10}/.test(v); // Validate for 10-digit phone number
-        },
-        message: (props) => `${props.value} is not a valid phone number!`,
-      },
+
+      maxLength: [15, "Contact number cannot be more than 15 characters"],
+      minLength: [10, "Contact number must be at least 10 characters"],
     },
     isVerified: { type: Boolean, default: false },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "SubCenterAdmin" },
+    image: {
+      type: String,
+      default:
+        "https://img.freepik.com/free-vector/illustration-customer-service-concept_53876-5883.jpg?semt=ais_hybrid&w=740",
+    },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,

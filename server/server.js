@@ -7,6 +7,7 @@ import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
 import adminRoutes from "./routes/admin.operations.route.js";
 import subCenterAdminRoutes from "./routes/subCenterAdmin.operation.route.js";
+import farmerRoutes from "./routes/farmer.route.js";
 dotenv.config();
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/sub-center-admin", subCenterAdminRoutes);
+app.use("/api/farmer", farmerRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

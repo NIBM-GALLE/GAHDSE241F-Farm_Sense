@@ -7,7 +7,6 @@ const subCenterAdminSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     contactNumber: {
       type: String,
-      required: true,
       maxLength: [15, "Contact number cannot be more than 15 characters"],
       minLength: [10, "Contact number must be at least 10 characters"],
     },
@@ -32,6 +31,11 @@ const subCenterAdminSchema = new mongoose.Schema(
       required: true,
     },
     isVerified: { type: Boolean, default: false },
+    image: {
+      type: String,
+      default:
+        "https://img.freepik.com/free-vector/illustration-customer-service-concept_53876-5883.jpg?semt=ais_hybrid&w=740",
+    },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
