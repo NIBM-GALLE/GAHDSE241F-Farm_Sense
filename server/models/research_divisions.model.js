@@ -38,6 +38,13 @@ const researchDivisionSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "ResearchDivisionAdmin",
         required: true,
+        limit: 5,
+        validate: {
+          validator: function (v) {
+            return v.length <= 5;
+          },
+          message: "A research center can have a maximum of 5 admins.",
+        },
       },
     ],
   },

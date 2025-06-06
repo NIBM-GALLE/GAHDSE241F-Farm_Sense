@@ -1,8 +1,8 @@
 import { errorHandler } from "../utils/errorHandler.js";
-import SubCenterAdmin from "../models/sub_admin.model.js";
 import SubCenter from "../models/sub_center.model.js";
 import VisitAgent from "../models/visit_agent.model.js";
 import PlantCase from "../models/plant_case.model.js";
+import ResearchDivision from "../models/research_divisions.model.js";
 import {
   generateRandomPassword,
   generateOtp,
@@ -189,9 +189,10 @@ export const getPlantCaseById = async (req, res, next) => {
       )
       .populate("createdBy", "name address email phone")
       .populate("assignedVisitAgent", "name contactNumber email")
-      .populate("assignedBy", "name email contactNumber")
       .populate("assignedResearchDivision", "name location contactNumber email")
-      .populate("answeredBy", "name email contactNumber");
+      .populate("visitAgentAssignedBy", "name email contactNumber")
+      .populate("answeredBy", "name email contactNumber")
+      .populate("researchDivisionAssignedBy", "name email contactNumber");
 
     res.status(200).json({
       plantCase: populatedPlantCase,
@@ -204,8 +205,119 @@ export const getPlantCaseById = async (req, res, next) => {
 
 export const assignVisitAgentToPlantCase = async (req, res, next) => {
   try {
+    const plantCaseId = req.params.id;
+    const { visitAgentId } = req.body;
+    const subCenterId = req.subCenterId;
+
+    if (!plantCaseId || !visitAgentId) {
+      return next(
+        errorHandler(400, "Plant case ID and Visit Agent ID are required")
+      );
+    }
+
+    const plantCase = await PlantCase.findById(plantCaseId);
+    if (!plantCase) {
+      return next(errorHandler(404, "Plant case not found"));
+    }
+
+    const visitAgent = await VisitAgent.findById(visitAgentId);
+    if (!visitAgent) {
+      return next(errorHandler(404, "Visit agent not found"));
+    }
+
+    if (plantCase.assignedSubCenter.toString() !== subCenterId) {
+      return next(errorHandler(403, "Unauthorized access to this plant case"));
+    }
+
+    plantCase.assignedVisitAgent = visitAgentId;
+    plantCase.visitAgentAssignedBy = req.userId;
+    plantCase.status = "in-progress";
+
+    await plantCase.save();
+
+    const updatedPlantCase = await PlantCase.findById(plantCaseId)
+      .select(
+        "status plantName plantIssue images answerStatus  answer visitAgentComment createdAt"
+      )
+      .populate("createdBy", "name address email phone")
+      .populate("assignedVisitAgent", "name contactNumber email")
+      .populate("assignedResearchDivision", "name location contactNumber email")
+      .populate("visitAgentAssignedBy", "name email contactNumber")
+      .populate("answeredBy", "name email contactNumber")
+      .populate("researchDivisionAssignedBy", "name email contactNumber");
+
+    res.status(200).json({
+      message: "Visit agent assigned to plant case successfully",
+      plantCase: updatedPlantCase,
+    });
   } catch (error) {
     console.error("Error in assignVisitAgentToPlantCase:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const assignResearchCenterToPlantCase = async (req, res, next) => {
+  try {
+    const plantCaseId = req.params.id;
+    const { researchCenterId } = req.body;
+    const subCenterId = req.subCenterId;
+
+    if (!plantCaseId || !researchCenterId) {
+      return next(
+        errorHandler(400, "Plant case ID and Research Center ID are required")
+      );
+    }
+
+    const plantCase = await PlantCase.findById(plantCaseId);
+    if (!plantCase) {
+      return next(errorHandler(404, "Plant case not found"));
+    }
+
+    if (plantCase.assignedSubCenter.toString() !== subCenterId) {
+      return next(errorHandler(403, "Unauthorized access to this plant case"));
+    }
+
+    if (plantCase.visitAgentComment === null) {
+      return next(
+        errorHandler(
+          400,
+          "Plant case must be answered by visit agent before assigning to research center"
+        )
+      );
+    }
+
+    const researchDivision = await ResearchDivision.findById(researchCenterId);
+    if (!researchDivision) {
+      return next(errorHandler(404, "Research division not found"));
+    }
+
+    plantCase.assignedResearchDivision = researchCenterId;
+    plantCase.researchDivisionAssignedBy = req.userId;
+    console.log(
+      plantCase.researchDivisionAssignedBy,
+      "researchDivisionAssignedBy"
+    );
+    plantCase.answerStatus = "pending";
+
+    await plantCase.save();
+
+    const updatedPlantCase = await PlantCase.findById(plantCaseId)
+      .select(
+        "status plantName plantIssue images answerStatus  answer visitAgentComment createdAt"
+      )
+      .populate("createdBy", "name address email phone")
+      .populate("assignedVisitAgent", "name contactNumber email")
+      .populate("assignedResearchDivision", "name location contactNumber email")
+      .populate("visitAgentAssignedBy", "name email contactNumber")
+      .populate("answeredBy", "name email contactNumber")
+      .populate("researchDivisionAssignedBy", "name email contactNumber");
+
+    res.status(200).json({
+      message: "Research division assigned to plant case successfully",
+      plantCase: updatedPlantCase,
+    });
+  } catch (error) {
+    console.error("Error in assignResearchCenterToPlantCase:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };

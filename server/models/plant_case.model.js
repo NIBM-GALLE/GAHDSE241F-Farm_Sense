@@ -38,7 +38,7 @@ const plantCaseSchema = new mongoose.Schema(
       ref: "VisitAgent",
     },
 
-    assignedBy: {
+    visitAgentAssignedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubCenterAdmin",
     },
@@ -53,6 +53,10 @@ const plantCaseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "ResearchDivision",
     },
+    researchDivisionAssignedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubCenterAdmin",
+    },
 
     answeredBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -61,7 +65,7 @@ const plantCaseSchema = new mongoose.Schema(
     answerStatus: {
       type: String,
       enum: ["pending", "answered"],
-      default: "pending",
+      default: null,
     },
     answer: {
       type: String,
