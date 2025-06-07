@@ -23,6 +23,7 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import Chat from "./pages/Chat";
 import Verify_email from "./pages/Verify_email";
+import Cases from "./pages/Cases";
 
 // App component
 import Navbar from "./components/Navbar";
