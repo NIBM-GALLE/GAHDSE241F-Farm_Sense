@@ -22,8 +22,11 @@ import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import Chat from "./pages/Chat";
+import CreateCase from "./pages/CreateCase";
+import HowItWorks from "./pages/HowItWork";
 import Verify_email from "./pages/Verify_email";
 import Cases from "./pages/Cases";
+
 
 // App component
 import Navbar from "./components/Navbar";
@@ -109,6 +112,8 @@ function AppContent({ user, loading }) {
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/create-case" element={<CreateCase />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/verify-email" element={<Verify_email />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}

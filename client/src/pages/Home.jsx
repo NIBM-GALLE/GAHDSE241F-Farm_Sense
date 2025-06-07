@@ -3,7 +3,8 @@ import Hero from "../components/Hero";
 import Features from "@/components/Features";
 import FAQ from "@/components/FAQ";
 import About from "@/components/About";
-import CreateCase from "@/components/CreateCase";
+import CreateCase from "@/components/CreateCaseSection";
+import CreateCaseSection from "@/components/CreateCaseSection";
 
 function Home() {
   return (
@@ -11,7 +12,7 @@ function Home() {
       <Hero />
       <About />
       <Features />
-      <CreateCase />
+      <CreateCaseSection />
       <FAQ />
     </div>
   );
