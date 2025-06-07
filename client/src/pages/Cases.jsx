@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -75,6 +75,7 @@ const visitAgents = ["Tharindu Senanayake", "Ishara Fernando", "Ajith Kumara"];
 
 function Cases() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const currentCase = casesData[id];
 
@@ -88,12 +89,12 @@ function Cases() {
           <h2 className="text-2xl font-bold text-green-900 dark:text-white">
             Case Not Found
           </h2>
-          <Link
-            to="/dashboard/cases"
-            className="bg-green-600 hover:bg-green-700"
+          <Button
+            onClick={() => navigate("/dashboard/cases")}
+            className="bg-green-600 hover:bg-green-700 inline-flex items-center gap-2"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Cases
-          </Link>
+            <ArrowLeft className="w-4 h-4" /> Back to Cases
+          </Button>
         </div>
       </div>
     );
@@ -120,7 +121,7 @@ function Cases() {
   };
 
   return (
-    <div className="min-h-screen py-16 sm:py-20 px-4 bg-balck transition-colors">
+    <div className="min-h-screen py-16 sm:py-20 px-4 bg-black transition-colors">
       <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -263,12 +264,12 @@ function Cases() {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
-              <Link
-                to="/dashboard/cases"
-                className="bg-green-600 hover:bg-green-700"
+              <Button
+                onClick={() => navigate("/dashboard/cases")}
+                className="bg-green-600 hover:bg-green-700 inline-flex items-center gap-2"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back to All Cases
-              </Link>
+                <ArrowLeft className="w-4 h-4" /> Back to All Cases
+              </Button>
               {currentCase.status !== "resolved" && (
                 <Button
                   variant="outline"

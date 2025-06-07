@@ -19,32 +19,11 @@ const initialReports = [
 ];
 
 function ReportsTab() {
-  const [reports, setReports] = useState(initialReports);
+  const [reports] = useState(initialReports);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    division: "",
-    summary: "",
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleAdd = (e) => {
-    e.preventDefault();
-    if (!form.title.trim()) return;
-    const newId = form.title.toLowerCase().replace(/\s+/g, "-");
-    setReports([...reports, { ...form, id: newId }]);
-    setForm({ title: "", division: "", summary: "" });
-    setShowForm(false);
-    setTimeout(() => {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }, 100);
-  };
 
   return (
-    <div className="py-16 sm:py-20 px-4 bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5 dark:from-green-900/20 dark:to-green-900/5 transition-colors">
+    <div className="py-16 sm:py-20 px-4 bg-transparent transition-colors">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -94,66 +73,15 @@ function ReportsTab() {
           ))}
         </motion.div>
 
-        {/* Add New Report button below the reports grid */}
+        {/* Add New Report button (disabled, form removed) */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.6 }}
           className="flex justify-center mt-12"
-        >
-          <Button
-            variant="outline"
-            className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium transition-colors"
-            onClick={() => setShowForm(!showForm)}
-          >
-            <PlusCircle className="w-5 h-5 mr-2" />
-            {showForm ? "Close Form" : "Add New Report"}
-          </Button>
-        </motion.div>
+        ></motion.div>
 
-        {/* Show the form under the button */}
-        {showForm && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mt-8 max-w-2xl mx-auto shadow-md"
-          >
-            <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
-              Add Research Report
-            </h3>
-            <form onSubmit={handleAdd} className="space-y-4">
-              {[
-                { name: "title", type: "text", placeholder: "Report Title" },
-                {
-                  name: "division",
-                  type: "text",
-                  placeholder: "Division Name",
-                },
-                { name: "summary", type: "text", placeholder: "Short Summary" },
-              ].map((field) => (
-                <input
-                  key={field.name}
-                  name={field.name}
-                  type={field.type}
-                  value={form[field.name]}
-                  onChange={handleChange}
-                  placeholder={field.placeholder}
-                  required
-                  className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
-                />
-              ))}
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition"
-                >
-                  Add Report
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        )}
-
+        {/* Footer note */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
