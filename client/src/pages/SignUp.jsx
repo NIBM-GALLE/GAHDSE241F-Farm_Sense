@@ -17,8 +17,10 @@ import signupPng from "../assets/images/signup.png";
 import { IoEyeOff } from "react-icons/io5";
 import { useState } from "react";
 import { IoEye } from "react-icons/io5";
+import { useUserStore } from "@/stores/useUserStore";
 
 function SignUp() {
+  const { signup, loading } = useUserStore();
   const navigate = useNavigate();
   const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/; // Check for at least one special character
   const [showPassword, setShowPassword] = useState(false);
@@ -46,8 +48,9 @@ function SignUp() {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data) => {
+    await signup(data.email, data.password, navigate);
+    form.reset();
   };
   return (
     <div className="min-h-screen grid sm:grid-cols-2 mx-auto justify-center items-center px-4">
@@ -116,7 +119,7 @@ function SignUp() {
                 size="lg"
                 className="w-full"
               >
-                Register
+                {loading.registerLoading ? "Registering..." : "Register"}
               </Button>
             </form>
             <div className="flex mt-5 mb-4">
