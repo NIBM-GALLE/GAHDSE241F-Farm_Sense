@@ -1,78 +1,160 @@
 import React from "react";
+import { motion } from "framer-motion";
+import { Mail, MapPin, Phone, Send } from "lucide-react";
 
 const contactImage =
-  "https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=600&q=80";
+  "https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=800&q=80";
 
 function Contact() {
   return (
-    <div className="flex flex-col min-h-screen ">
-      <main className="flex-1 flex items-center justify-center mt-8">
-        <section className="bg-card dark:bg-gray-800 rounded-xl shadow-md p-8 flex flex-col items-center max-w-2xl w-full mx-auto px-4">
-          <img
-            src={contactImage}
-            alt="Contact Team"
-            className="w-32 h-32 rounded-full object-cover shadow-lg mb-6 border-4 border-primary/30"
-          />
-          <h1 className="text-3xl font-bold text-primary mb-4 font-poppins text-center">
-            Contact Us
-          </h1>
-          <p className="text-lg text-muted-foreground mb-8 text-center font-poppins">
-            Have questions or need support? Reach out to the FarmSense team!
-          </p>
-          <form className="space-y-6 w-full">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1 font-poppins">
-                Name
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-gray-900 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Your Name"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1 font-poppins">
-                Email
-              </label>
-              <input
-                type="email"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-gray-900 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="you@email.com"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1 font-poppins">
-                Message
-              </label>
-              <textarea
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-gray-900 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                rows={5}
-                placeholder="How can we help you?"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-primary text-white dark:text-black font-semibold py-2 rounded-lg shadow hover:bg-primary/90 transition-colors font-poppins"
-            >
-              Send Message
-            </button>
-          </form>
-          <div className="mt-8 text-center text-muted-foreground text-sm font-poppins">
-            Or email us directly at{" "}
-            <a
-              href="mailto:help@Farmsense.com"
-              className="text-primary underline"
-            >
-              help@Farmsense.com
-            </a>
-            <br />
-            Galle Road, Colombo 03
+    <div className="min-h-screen flex items-center justify-center py-16 sm:py-20 px-4 bg-balck transition-colors">
+      <div className="max-w-4xl w-full mx-auto">
+        {/* Header */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <div className="inline-flex items-center bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full mb-4">
+            <Mail className="w-5 h-5 text-green-600 dark:text-green-300 mr-2" />
+            <span className="text-green-700 dark:text-green-300 font-medium">
+              Get In Touch
+            </span>
           </div>
-        </section>
-      </main>
+          <h1 className="text-3xl sm:text-4xl font-bold text-green-900 dark:text-white mb-3">
+            <span className="bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent dark:from-green-300 dark:to-green-100">
+              Contact Our Support
+            </span>{" "}
+            Team
+          </h1>
+          <p className="text-green-700 dark:text-green-300 text-base max-w-2xl mx-auto">
+            We’re here to help with any questions about FarmSense or crop
+            disease assistance.
+          </p>
+        </motion.section>
+
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* Message Form */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white dark:bg-white/5 backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 shadow-lg p-8"
+          >
+            <h2 className="text-2xl font-semibold text-green-900 dark:text-white mb-6">
+              Send Your Message
+            </h2>
+            <form className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-green-800 dark:text-green-200 mb-2">
+                  Message
+                </label>
+                <textarea
+                  rows={6}
+                  className="w-full px-4 py-3 rounded-lg border border-green-200 dark:border-green-700 bg-green-50/50 dark:bg-green-900/20 text-green-900 dark:text-green-100 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Type your question or issue here..."
+                  required
+                />
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <Send className="w-5 h-5" />
+                Send Message
+              </motion.button>
+            </form>
+          </motion.div>
+
+          {/* Contact Info Section */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
+            <div className="bg-white dark:bg-white/5 backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 shadow-lg overflow-hidden">
+              <img
+                src={contactImage}
+                alt="FarmSense Team"
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6 space-y-5">
+                <div className="flex items-start gap-4">
+                  <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
+                    <Mail className="w-5 h-5 text-green-600 dark:text-green-300" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-green-900 dark:text-white">
+                      Email
+                    </h4>
+                    <a
+                      href="mailto:help@farmsense.com"
+                      className="text-green-600 dark:text-green-400 hover:underline"
+                    >
+                      help@farmsense.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
+                    <Phone className="w-5 h-5 text-green-600 dark:text-green-300" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-green-900 dark:text-white">
+                      Phone
+                    </h4>
+                    <a
+                      href="tel:+94112345678"
+                      className="text-green-600 dark:text-green-400 hover:underline"
+                    >
+                      +94 11 234 5678
+                    </a>
+                    <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                      Mon–Fri, 8:00 AM – 5:00 PM
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
+                    <MapPin className="w-5 h-5 text-green-600 dark:text-green-300" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-green-900 dark:text-white">
+                      Address
+                    </h4>
+                    <p className="text-green-700 dark:text-green-300">
+                      Galle Road, Colombo 03, Sri Lanka
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Friendly tip box */}
+            <div className="bg-green-50 dark:bg-green-900/30 rounded-xl border border-green-200 dark:border-green-700 p-6 flex items-center gap-3">
+              <span className="inline-flex items-center justify-center bg-green-200 dark:bg-green-800 rounded-full w-10 h-10">
+                <Mail className="w-6 h-6 text-green-700 dark:text-green-300" />
+              </span>
+              <div>
+                <h4 className="font-semibold text-green-900 dark:text-white mb-1">
+                  Quick Tip
+                </h4>
+                <p className="text-green-700 dark:text-green-300 text-sm">
+                  For the fastest response, please include your crop type and a
+                  brief description of your issue.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

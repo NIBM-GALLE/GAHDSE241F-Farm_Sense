@@ -11,19 +11,22 @@ export default function Hero() {
 
   const features = [
     {
-      icon: <Search className="w-5 h-5 text-green-600" />,
+      icon: <Search className="w-5 h-5 text-white-600" />,
       title: "AI-Based Detection",
       description: "Identify crop diseases instantly with our ML model",
+      border: "border-2 border-white",
     },
     {
-      icon: <BarChart3 className="w-5 h-5 text-green-600" />,
+      icon: <BarChart3 className="w-5 h-5 text-white-600" />,
       title: "Centralized Monitoring",
       description: "Track and manage reports from one place",
+      border: "border-2 border-white",
     },
     {
-      icon: <Leaf className="w-5 h-5 text-green-600" />,
+      icon: <Leaf className="w-5 h-5 text-white-600" />,
       title: "Farmer Friendly",
       description: "Designed for simplicity and quick use in the field",
+      border: "border-2 border-white",
     },
   ];
 
@@ -99,8 +102,11 @@ export default function Hero() {
           {features.map((f, i) => (
             <motion.div
               key={i}
-              whileHover={{ y: -5 }}
-              className="bg-white/80 dark:bg-white/5 p-6 rounded-xl border border-green-200 dark:border-white/10 hover:border-green-400/30 transition-all hover:shadow-lg hover:shadow-green-900/20"
+              whileHover={{
+                y: -5,
+                boxShadow: "0 8px 32px 0 rgba(34,197,94,0.15)",
+              }}
+              className={`bg-white/80 dark:bg-white/5 p-6 rounded-xl ${f.border} hover:border-green-400 transition-all hover:shadow-lg hover:shadow-green-900/20`}
             >
               <div className="flex items-center justify-center mb-4">
                 <div className="p-3 bg-green-100 dark:bg-green-600/10 rounded-full backdrop-blur-sm">
