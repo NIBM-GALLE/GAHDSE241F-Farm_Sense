@@ -14,7 +14,15 @@ export const useFarmerStore = create((set, get) => ({
     deletingCaseLoading: false,
     fetchingSubCentersLoading: false,
   },
-  pagination: {},
+  pagination: {
+    totalCases: 0,
+    totalPages: 0,
+    currentPage: 1,
+    hasNext: false,
+    hasPrevious: false,
+    nextPage: null,
+    previousPage: null,
+  },
 
   createPlantCase: async (
     plantName,
@@ -63,12 +71,37 @@ export const useFarmerStore = create((set, get) => ({
 
   getAllPlantCases: async () => {
     try {
-    } catch (error) {}
+      set({ loading: { fetchingCasesLoading: true } });
+      const response = await axiosInstance.get("/farmer/cases");
+      set({ loading: { fetchingCasesLoading: false } });
+      set({
+        plantCases: response.data.cases,
+        pagination: response.data.pagination,
+      });
+      console.log(
+        "Plant cases pagination successfully:",
+        response.data.pagination
+      );
+      console.log(get().pagination, "save pagination");
+    } catch (error) {
+      set({ loading: { fetchingCasesLoading: false } });
+      console.error("Error fetching plant cases:", error);
+    }
   },
 
-  getPlantCaseById: async () => {
+  getPlantCaseById: async (id) => {
     try {
-    } catch (error) {}
+      set({ loading: { fetchingCaseByIdLoading: true } });
+      const response = await axiosInstance.get(`/farmer/case/${id}`);
+      set({ loading: { fetchingCaseByIdLoading: false } });
+      set({ plantCase: response.data.case });
+    } catch (error) {
+      set({ loading: { fetchingCaseByIdLoading: false } });
+      console.error("Error fetching plant case by ID:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to fetch plant case"
+      );
+    }
   },
 
   createReport: async () => {

@@ -17,6 +17,7 @@ import userPng from "../assets/images/user.png";
 import { motion } from "framer-motion";
 import { useUserStore } from "@/stores/useUserStore";
 import { toast } from "react-hot-toast";
+import CasesList from "@/components/CasesList";
 
 function Profile() {
   const { user, updateProfile, updateProfileFarmer } = useUserStore();
@@ -387,6 +388,16 @@ function Profile() {
           FarmSense experience
         </motion.p>
       </div>
+
+      {/* Cases List Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-4xl mx-auto mt-16"
+      >
+        <CasesList />
+      </motion.div>
     </div>
   );
 }

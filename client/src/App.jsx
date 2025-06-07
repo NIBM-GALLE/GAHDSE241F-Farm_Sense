@@ -25,6 +25,7 @@ import Chat from "./pages/Chat";
 import CreateCase from "./pages/CreateCase";
 import HowItWorks from "./pages/HowItWork";
 import Verify_email from "./pages/Verify_email";
+import CaseDetails from "./pages/CaseDetails";
 
 // App component
 import Navbar from "./components/Navbar";
@@ -122,6 +123,16 @@ function AppContent({ user, loading }) {
         />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/verify-email" element={<Verify_email />} />
+        <Route
+          path="/case/:caseId"
+          element={
+            user && user.role === "user" ? (
+              <CaseDetails />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>
