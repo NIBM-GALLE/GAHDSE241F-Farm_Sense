@@ -1,11 +1,35 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { useFarmerStore } from "@/stores/useFarmerStore";
+import { useUserStore } from "@/stores/useUserStore";
 
 const contactImage =
   "https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=800&q=80";
 
 function Contact() {
+  const { createReport, loading } = useFarmerStore();
+  const { user } = useUserStore();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const message = form.message.value.trim();
+
+    if (!message) {
+      alert("Please enter a message.");
+      return;
+    }
+
+    if (message.length < 5 || message.length > 500) {
+      alert("Message must be between 5 and 500 characters.");
+      return;
+    }
+
+    await createReport(message);
+    form.reset();
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center py-16 sm:py-20 px-4 bg-balck transition-colors">
       <div className="max-w-4xl w-full mx-auto">
@@ -29,47 +53,59 @@ function Contact() {
             Team
           </h1>
           <p className="text-green-700 dark:text-green-300 text-base max-w-2xl mx-auto">
-            We’re here to help with any questions about FarmSense or crop
+            We're here to help with any questions about FarmSense or crop
             disease assistance.
           </p>
         </motion.section>
 
-        {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Message Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-white dark:bg-white/5 backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 shadow-lg p-8"
-          >
-            <h2 className="text-2xl font-semibold text-green-900 dark:text-white mb-6">
-              Send Your Message
-            </h2>
-            <form className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-green-800 dark:text-green-200 mb-2">
-                  Message
-                </label>
-                <textarea
-                  rows={6}
-                  className="w-full px-4 py-3 rounded-lg border border-green-200 dark:border-green-700 bg-green-50/50 dark:bg-green-900/20 text-green-900 dark:text-green-100 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="Type your question or issue here..."
-                  required
-                />
-              </div>
+          {user && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-white dark:bg-white/5 backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 shadow-lg p-8"
+            >
+              <h2 className="text-2xl font-semibold text-green-900 dark:text-white mb-6">
+                Send Your Message
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-green-800 dark:text-green-200 mb-2"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    className="w-full px-4 py-3 rounded-lg border border-green-200 dark:border-green-700 bg-green-50/50 dark:bg-green-900/20 text-green-900 dark:text-green-100 placeholder-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Type your question or issue here..."
+                    required
+                  />
+                </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <Send className="w-5 h-5" />
-                Send Message
-              </motion.button>
-            </form>
-          </motion.div>
+                <button
+                  type="submit"
+                  disabled={loading.createReportLoading}
+                  className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 relative overflow-hidden"
+                >
+                  {loading.createReportLoading && (
+                    <motion.span
+                      className="absolute left-0 top-0 h-full bg-green-700 opacity-20"
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                  )}
+                  <Send className="w-5 h-5" />
+                  {loading.createReportLoading ? "Sending..." : "Send Message"}
+                </button>
+              </form>
+            </motion.div>
+          )}
 
           {/* Contact Info Section */}
           <motion.div

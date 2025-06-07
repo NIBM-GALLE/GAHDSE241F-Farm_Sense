@@ -36,6 +36,15 @@ function Navbar() {
             <ModeToggle />
           </div>
 
+          {!user && (
+            <Link
+              to="/login"
+              className="hidden md:inline-flex items-center px-4 py-2 text-md font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:focus:ring-gray-300"
+            >
+              Sign In
+            </Link>
+          )}
+
           {user && (
             <>
               {/* User Menu Button */}
@@ -53,7 +62,6 @@ function Navbar() {
                   alt="User"
                 />
               </button>
-
               {/* Dropdown Menu */}
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg z-50 top-10">
