@@ -1,63 +1,94 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Leaf, ImagePlus, Send, X, ArrowLeft } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useFarmerStore } from "../stores/useFarmerStore";
 
 function CreateCase() {
+  const { createPlantCase, getAllSubCenters, loading, subCenters } =
+    useFarmerStore();
   const [form, setForm] = useState({
     plantName: "",
     symptoms: "",
-    location: "",
-    image: null,
+    subCenterId: "",
+    images: [],
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getAllSubCenters();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImage = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleImages = (e) => {
+    const files = Array.from(e.target.files);
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Please upload an image smaller than 5MB.");
+    // Check if adding these files would exceed 5 images
+    if (form.images.length + files.length > 5) {
+      alert("You can upload a maximum of 5 images.");
       return;
     }
 
-    if (!file.type.match("image.*")) {
-      alert("Please upload an image file (JPEG, PNG, etc.)");
-      return;
-    }
+    const validFiles = files.filter((file) => {
+      // Check file size
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`File ${file.name} is too large (max 5MB)`);
+        return false;
+      }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setForm((prev) => ({ ...prev, image: reader.result }));
-    };
-    reader.readAsDataURL(file);
+      // Check file type
+      if (!file.type.match("image.*")) {
+        alert(`File ${file.name} is not an image file`);
+        return false;
+      }
+
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    const readers = validFiles.map((file) => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    Promise.all(readers).then((newImages) => {
+      setForm((prev) => ({
+        ...prev,
+        images: [...prev.images, ...newImages],
+      }));
+    });
   };
 
-  const handleSubmit = (e) => {
+  const removeImage = (index) => {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Case Submitted", form);
-      alert("Your case has been submitted successfully!");
-      setForm({ plantName: "", symptoms: "", location: "", image: null });
-      setIsSubmitting(false);
-      navigate("/cases"); // Redirect after submission
-    }, 1500);
-  };
+    await createPlantCase(
+      form.plantName,
+      form.symptoms,
+      form.images,
+      form.subCenterId
+    );
 
-  const removeImage = () => {
-    setForm((prev) => ({ ...prev, image: null }));
-    fileRef.current.value = "";
+    setForm({ plantName: "", symptoms: "", subCenterId: "", images: [] });
   };
 
   return (
@@ -117,59 +148,75 @@ function CreateCase() {
 
             <div className="space-y-1">
               <label className="block text-sm font-medium text-green-800 dark:text-green-200">
-                Location
+                Sub-Center
                 <span className="text-red-500 ml-1">*</span>
               </label>
-              <input
-                name="location"
-                value={form.location}
+              <select
+                name="subCenterId"
+                value={form.subCenterId}
                 onChange={handleChange}
-                placeholder="e.g., Matale, Gampaha"
                 required
                 className="w-full px-4 py-3 rounded-lg border border-green-200 dark:border-green-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
-              />
+              >
+                <option value="">Select a sub-center</option>
+                {subCenters.map((center) => (
+                  <option key={center._id} value={center._id}>
+                    {center.location}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-green-800 dark:text-green-200">
-                Upload Crop Image
+                Upload Crop Images
               </label>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                (Optional, but helps with diagnosis. Max 5MB)
+                (Optional, but helps with diagnosis. Max 5 images, 5MB each)
               </p>
 
-              {form.image ? (
-                <div className="relative mt-2">
-                  <img
-                    src={form.image}
-                    alt="Plant preview"
-                    className="w-full max-w-xs rounded-lg border-2 border-green-200 dark:border-green-700"
-                  />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                    aria-label="Remove image"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+              {form.images.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
+                  {form.images.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={image}
+                        alt={`Plant preview ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border-2 border-green-200 dark:border-green-700"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        aria-label="Remove image"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ) : (
+              )}
+
+              {form.images.length < 5 && (
                 <div className="mt-2">
                   <button
                     type="button"
                     onClick={() => fileRef.current.click()}
+                    disabled={form.images.length >= 5}
                     className="flex items-center gap-2 bg-green-100 hover:bg-green-200 dark:bg-green-800/30 dark:hover:bg-green-800/50 text-green-700 dark:text-green-200 px-4 py-3 rounded-lg font-medium transition-all w-full sm:w-auto justify-center"
                   >
                     <ImagePlus className="w-5 h-5" />
-                    Choose Image
+                    {form.images.length === 0
+                      ? "Choose Images"
+                      : "Add More Images"}
                   </button>
                   <input
                     type="file"
                     ref={fileRef}
-                    onChange={handleImage}
+                    onChange={handleImages}
                     accept="image/*"
                     className="hidden"
+                    multiple
                   />
                 </div>
               )}
@@ -178,33 +225,14 @@ function CreateCase() {
             <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-between items-center">
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={loading.creatingCaseLoading}
                 className="w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium flex items-center gap-2 shadow-md hover:shadow-green-700/30 transition-all"
               >
-                {isSubmitting ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                {loading.creatingCaseLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
                     Submitting...
-                  </>
+                  </span>
                 ) : (
                   <>
                     <Send className="w-5 h-5" />

@@ -2,7 +2,7 @@ import Farmer from "../models/farmer.model.js";
 import { errorHandler } from "../utils/errorHandler.js";
 import PlantCase from "../models/plant_case.model.js";
 import Report from "../models/report.model.js";
-
+import SubCenter from "../models/sub_center.model.js";
 export const updateProfile = async (req, res, next) => {
   try {
     console.log("Updating farmer profile with data:", req.body);
@@ -107,7 +107,6 @@ export const getCases = async (req, res, next) => {
         )
         .populate("assignedSubCenter", "name location contactNumber")
         .populate("assignedVisitAgent", "name contactNumber email")
-        .populate("assignedBy", "name email contactNumber")
         .populate(
           "assignedResearchDivision",
           "name location contactNumber email"
@@ -159,7 +158,6 @@ export const getCaseById = async (req, res, next) => {
       )
       .populate("assignedSubCenter", "name location contactNumber")
       .populate("assignedVisitAgent", "name contactNumber email")
-      .populate("assignedBy", "name email contactNumber")
       .populate("assignedResearchDivision", "name location contactNumber email")
       .populate("answeredBy", "name email");
 
@@ -204,6 +202,24 @@ export const createReport = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error creating report:", error);
+    return next(errorHandler(500, "Internal Server Error", error));
+  }
+};
+
+export const getSubCenters = async (req, res, next) => {
+  try {
+    const subCenters = await SubCenter.find().select("name location");
+
+    if (!subCenters || subCenters.length === 0) {
+      return next(errorHandler(404, "No sub-centers found"));
+    }
+
+    return res.status(200).json({
+      message: "Sub-centers fetched successfully",
+      subCenters,
+    });
+  } catch (error) {
+    console.error("Error fetching sub-centers:", error);
     return next(errorHandler(500, "Internal Server Error", error));
   }
 };
