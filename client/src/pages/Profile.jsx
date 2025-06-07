@@ -390,14 +390,16 @@ function Profile() {
       </div>
 
       {/* Cases List Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto mt-16"
-      >
-        <CasesList />
-      </motion.div>
+      {user?.role === "user" && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto mt-16"
+        >
+          <CasesList />
+        </motion.div>
+      )}
     </div>
   );
 }
