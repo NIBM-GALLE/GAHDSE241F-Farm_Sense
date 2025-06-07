@@ -11,6 +11,9 @@ import {
   LOGIN_CREDENTIALS_FOR_ADMINS_RESEARCH_CENTER,
   LOGIN_CREDENTIALS_FOR_VISIT_AGENTS,
   VERIFICATION_EMAIL_TEMPLATE_VISIT_AGENTS,
+  PLANT_CASE_ASSIGNMENT_NOTIFICATION_VISIT_AGENTS,
+  PLANT_CASE_ASSIGNMENT_NOTIFICATION_RESEARCH_DIVISION,
+  PLANT_CASE_RESPONSE_NOTIFICATION_FARMER,
 } from "./mailTrapTemplates.js";
 
 export const sendPasswordResetEmail = async (email, resetUrl, next) => {
@@ -256,5 +259,115 @@ export const sendVisitAgentVerificationEmail = async (
   } catch (error) {
     console.error("Error sending visit agent verification email:", error);
     return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const sendPlantCaseAssignmentNotificationForVisitAgent = async (
+  agentEmail,
+  agentName,
+  plantName,
+  plantIssue,
+  location,
+  farmerName,
+  farmerContact
+) => {
+  try {
+    const recipient = [{ email: agentEmail }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "New Plant Case Assignment",
+      html: PLANT_CASE_ASSIGNMENT_NOTIFICATION_VISIT_AGENTS.replace(
+        "{agentName}",
+        agentName
+      )
+        .replace("{plantName}", plantName)
+        .replace("{plantIssue}", plantIssue)
+        .replace("{location}", location)
+        .replace("{farmerName}", farmerName)
+        .replace("{farmerContact}", farmerContact),
+      category: "plant-case-assignment",
+    });
+    console.log(
+      "Plant case assignment notification sent successfully:",
+      response
+    );
+  } catch (error) {
+    console.error(
+      "Error sending plant case assignment notification for visit agent:",
+      error
+    );
+  }
+};
+
+export const sendPlantCaseAssignmentNotificationForResearchDivision = async (
+  centerEmail,
+  centerName,
+  plantName,
+  plantIssue,
+  location,
+  farmerName,
+  farmerContact
+) => {
+  try {
+    const recipient = [{ email: centerEmail }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "New Plant Case Assignment",
+      html: PLANT_CASE_ASSIGNMENT_NOTIFICATION_RESEARCH_DIVISION.replace(
+        "{centerName}",
+        centerName
+      )
+        .replace("{plantName}", plantName)
+        .replace("{plantIssue}", plantIssue)
+        .replace("{location}", location)
+        .replace("{farmerName}", farmerName)
+        .replace("{farmerContact}", farmerContact),
+      category: "plant-case-assignment",
+    });
+    console.log(
+      "Plant case assignment notification for research division sent successfully:",
+      response
+    );
+  } catch (error) {
+    console.error(
+      "Error sending plant case assignment notification for research division:",
+      error
+    );
+  }
+};
+
+export const sendPlantCaseResponseNotificationToFarmer = async (
+  farmerEmail,
+  farmerName,
+  plantName,
+  plantIssue,
+  answer
+) => {
+  try {
+    const recipient = [{ email: farmerEmail }];
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Plant Case Response",
+      html: PLANT_CASE_RESPONSE_NOTIFICATION_FARMER.replace(
+        "{farmerName}",
+        farmerName
+      )
+        .replace("{plantName}", plantName)
+        .replace("{plantIssue}", plantIssue)
+        .replace("{answer}", answer),
+      category: "plant-case-response",
+    });
+    console.log(
+      "Plant case response notification sent successfully:",
+      response
+    );
+  } catch (error) {
+    console.error(
+      "Error sending plant case response notification to farmer:",
+      error
+    );
   }
 };

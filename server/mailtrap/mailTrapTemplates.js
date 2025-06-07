@@ -428,3 +428,180 @@ export const LOGIN_CREDENTIALS_FOR_VISIT_AGENTS = `
   </div>
 </body>
 </html>`;
+
+export const PLANT_CASE_ASSIGNMENT_NOTIFICATION_VISIT_AGENTS = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plant Case Assignment Notification</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #2E7D32); padding: 25px; text-align: center; border-radius: 5px 5px 0 0;">
+    <h1 style="color: white; margin: 0; font-weight: 300;">New Plant Case Assigned</h1>
+  </div>
+  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+    <p>Hello {agentName},</p>
+    <p>You have been assigned to a new plant case. Please review the case details below and proceed as necessary.</p>
+    
+    <!-- Case Information -->
+    <div style="margin: 30px 0;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #f0f7f0; border: 2px dashed #81C784; border-radius: 8px;">
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Plant Name:</td>
+          <td style="padding: 12px;">{plantName}</td>
+        </tr>
+         <tr>
+          <td style="padding: 12px; font-weight: bold;">Plant Issue:</td>
+          <td style="padding: 12px;">{plantIssue}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Location:</td>
+          <td style="padding: 12px;">{location}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Farmer Name:</td>
+          <td style="padding: 12px;">{farmerName}</td>
+        </tr>
+         <tr>
+          <td style="padding: 12px; font-weight: bold;">Farmer Contact:</td>
+          <td style="padding: 12px;">{farmerContact}</td>
+        </tr>
+      </table>
+    </div>
+
+    <p>Kindly log in to the Visit Agent Portal to view more details and update the status of this case as your visit progresses.</p>
+
+    <div style="margin-top: 30px; text-align: center;">
+      <a href="{portalLink}" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">View Case</a>
+    </div>
+
+    <p style="margin-top: 30px;">Thank you for your dedication.<br><span style="color: #2E7D32; font-weight: bold;">The Farmsense Team</span></p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
+    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">This is an automated message, please do not reply to this email.</p>
+    <p style="font-size: 12px;">If you believe this assignment was made in error, please contact your supervisor immediately.</p>
+    <div style="margin-top: 10px;">
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4CAF50; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #81C784; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #A5D6A7; margin: 0 4px;"></span>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+export const PLANT_CASE_ASSIGNMENT_NOTIFICATION_RESEARCH_DIVISION = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plant Case Assignment Notification</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #2E7D32); padding: 25px; text-align: center; border-radius: 5px 5px 0 0;">
+    <h1 style="color: white; margin: 0; font-weight: 300;">New Plant Case Assigned</h1>
+  </div>
+  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+    <p>Hello {centerName},</p>
+    <p>Your Research Center have been assigned to a new plant case. Please review the case details below and proceed as necessary.</p>
+    
+    <!-- Case Information -->
+    <div style="margin: 30px 0;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #f0f7f0; border: 2px dashed #81C784; border-radius: 8px;">
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Plant Name:</td>
+          <td style="padding: 12px;">{plantName}</td>
+        </tr>
+         <tr>
+          <td style="padding: 12px; font-weight: bold;">Plant Issue:</td>
+          <td style="padding: 12px;">{plantIssue}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Location:</td>
+          <td style="padding: 12px;">{location}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Farmer Name:</td>
+          <td style="padding: 12px;">{farmerName}</td>
+        </tr>
+         <tr>
+          <td style="padding: 12px; font-weight: bold;">Farmer Contact:</td>
+          <td style="padding: 12px;">{farmerContact}</td>
+        </tr>
+      </table>
+    </div>
+
+    <p>Kindly log in to the Dashboard Portal to view more details and update the status of this case as your center's progresses.</p>
+
+    <div style="margin-top: 30px; text-align: center;">
+      <a href="{portalLink}" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">View Case</a>
+    </div>
+
+    <p style="margin-top: 30px;">Thank you for your dedication.<br><span style="color: #2E7D32; font-weight: bold;">The Farmsense Team</span></p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
+    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">This is an automated message, please do not reply to this email.</p>
+    <p style="font-size: 12px;">If you believe this assignment was made in error, please contact your supervisor immediately.</p>
+    <div style="margin-top: 10px;">
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4CAF50; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #81C784; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #A5D6A7; margin: 0 4px;"></span>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+export const PLANT_CASE_RESPONSE_NOTIFICATION_FARMER = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plant Case Response Notification</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #2E7D32); padding: 25px; text-align: center; border-radius: 5px 5px 0 0;">
+    <h1 style="color: white; margin: 0; font-weight: 300;">Your Plant Case Has Been Answered</h1>
+  </div>
+  <div style="background-color: #f5f9f5; padding: 30px; border-radius: 0 0 5px 5px; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+    <p>Dear {farmerName},</p>
+    <p>We’re glad to inform you that your submitted plant case has been reviewed by our Research Division, and an expert response is now available.</p>
+    
+    <!-- Case Details -->
+    <div style="margin: 30px 0;">
+      <table style="width: 100%; border-collapse: collapse; background-color: #f0f7f0; border: 2px dashed #81C784; border-radius: 8px;">
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Plant Name:</td>
+          <td style="padding: 12px;">{plantName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 12px; font-weight: bold;">Issue Reported:</td>
+          <td style="padding: 12px;">{plantIssue}</td>
+        </tr>
+          <tr>
+          <td style="padding: 12px; font-weight: bold;">Answer:</td>
+          <td style="padding: 12px;">{answer}</td>
+        </tr>
+      </table>
+    </div>
+
+  
+
+    <p style="margin-top: 30px;">Thank you for using Farmsense. We hope the information provided helps you restore your plant’s health.<br><span style="color: #2E7D32; font-weight: bold;">The Farmsense Team</span></p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em; padding: 10px;">
+    <p style="border-top: 1px solid #e0e0e0; padding-top: 15px;">This is an automated message. Please do not reply directly to this email.</p>
+    <p style="font-size: 12px;">If you have additional questions or concerns, please contact your nearest support center.</p>
+    <div style="margin-top: 10px;">
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #4CAF50; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #81C784; margin: 0 4px;"></span>
+      <span style="display: inline-block; height: 8px; width: 8px; border-radius: 50%; background-color: #A5D6A7; margin: 0 4px;"></span>
+    </div>
+  </div>
+</body>
+</html>
+`;

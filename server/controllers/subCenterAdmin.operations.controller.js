@@ -296,10 +296,6 @@ export const assignResearchCenterToPlantCase = async (req, res, next) => {
 
     plantCase.assignedResearchDivision = researchCenterId;
     plantCase.researchDivisionAssignedBy = req.userId;
-    console.log(
-      plantCase.researchDivisionAssignedBy,
-      "researchDivisionAssignedBy"
-    );
     plantCase.answerStatus = "pending";
 
     await plantCase.save();
