@@ -43,11 +43,6 @@ export const getUser = async (req, res, next) => {
   }
 };
 
-export const updateUser = async (req, res, next) => {
-  try {
-  } catch (error) {}
-};
-
 export const forgetPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -167,7 +162,7 @@ export const signup = async (req, res, next) => {
     storeTokensAsCookies(res, accessToken, refreshToken);
     res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message: "Signup successful!, please verify your email",
       user: sanitizedUser,
     });
   } catch (error) {
@@ -221,7 +216,7 @@ export const verifyEmail = async (req, res, next) => {
 
     const { code } = req.body;
     if (!code) {
-      return next(errorHandler(400, "Please provide all fields"));
+      return next(errorHandler(400, "Please provide verification code"));
     }
 
     const user = await findUser({ _id: id, role: role });

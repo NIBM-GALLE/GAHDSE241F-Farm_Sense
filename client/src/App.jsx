@@ -1,6 +1,14 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import { ThemeProvider } from "./components/ui/ThemeProvider";
+import { Toaster } from "react-hot-toast";
+import { useUserStore } from "./stores/useUserStore";
+import { useEffect } from "react";
 
 // pages
 import Login from "./pages/Login";
@@ -16,22 +24,41 @@ import Services from "./pages/Services";
 import Chat from "./pages/Chat";
 import CreateCase from "./pages/CreateCase";
 import HowItWorks from "./pages/HowItWork";
+import Verify_email from "./pages/Verify_email";
+import Cases from "./pages/Cases";
+
 
 // App component
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 function App() {
+  const { user, checkingAuth, loading } = useUserStore();
+
+  useEffect(() => {
+    checkingAuth();
+  }, [checkingAuth]);
+
+  if (loading.checkingAuthLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+        <p className="ml-4 text-lg">Checking authentication...</p>
+      </div>
+    );
+  }
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <BrowserRouter>
-        <AppContent />
+        <AppContent user={user} loading={loading.checkingAuthLoading} />
+        <Toaster />
       </BrowserRouter>
     </ThemeProvider>
   );
 }
 
-function AppContent() {
+function AppContent({ user, loading }) {
   const location = useLocation();
 
   const hideNavbarPatterns = [
@@ -44,11 +71,19 @@ function AppContent() {
     /^\/signup$/,
     /^\/forget-password$/,
     /^\/reset-password$/,
+    /^\/verify-email$/,
   ];
 
   const shouldHideNavbar = hideNavbarPatterns.some((pattern) =>
     pattern.test(location.pathname)
   );
+
+  const adminRoles = [
+    "main-admin",
+    "ResearchDivisionAdmin",
+    "sub-center-admin",
+    "VisitAgent",
+  ];
 
   return (
     <>
@@ -59,14 +94,27 @@ function AppContent() {
         <Route path="/forget-password" element={<Forget_password />} />
         <Route path="/reset-password" element={<Reset_password />} />
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route
+          path="/profile"
+          element={user ? <Profile /> : <Navigate to="/" replace />}
+        />
+        <Route
+          path="/dashboard/*"
+          element={
+            user && adminRoles.includes(user.role) ? (
+              <Dashboard />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/create-case" element={<CreateCase />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/verify-email" element={<Verify_email />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

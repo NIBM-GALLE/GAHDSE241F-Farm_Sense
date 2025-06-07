@@ -5,6 +5,7 @@ import Report from "../models/report.model.js";
 
 export const updateProfile = async (req, res, next) => {
   try {
+    console.log("Updating farmer profile with data:", req.body);
     const { name, address, phone, plants, image } = req.body;
     const farmerId = req.userId;
 

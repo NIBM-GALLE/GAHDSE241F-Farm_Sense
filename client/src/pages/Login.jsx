@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import loginPng from "../assets/images/login.png";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,9 +15,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../components/ModeToggle";
+import { useUserStore } from "@/stores/useUserStore";
+import { IoEyeOff, IoEye } from "react-icons/io5";
 
 function Login() {
+  const { login, loading } = useUserStore();
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
+
   // schema for form validation
   const formSchema = z.object({
     email: z.string().email({
@@ -28,7 +34,6 @@ function Login() {
     }),
   });
 
-  // Initialize the form with react-hook-form and zod
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,9 +42,9 @@ function Login() {
     },
   });
 
-  // Handle submission
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data) => {
+    await login(data.email, data.password, navigate);
+    form.reset();
   };
 
   return (
@@ -54,7 +59,7 @@ function Login() {
             <ModeToggle />
           </div>
           <h1 className="font-purple-purse text-4xl mb-2">Oh, You're back!</h1>
-          <h2 className="font-poppins text-2xl ">
+          <h2 className="font-poppins text-2xl">
             Log in with your credentials
           </h2>
         </div>
@@ -74,6 +79,7 @@ function Login() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="password"
@@ -81,7 +87,23 @@ function Login() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your Password" {...field} />
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your Password"
+                          {...field}
+                        />
+                        <div
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                        >
+                          {showPassword ? (
+                            <IoEyeOff size={20} />
+                          ) : (
+                            <IoEye size={20} />
+                          )}
+                        </div>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -94,9 +116,10 @@ function Login() {
                 size="lg"
                 className="w-full"
               >
-                Login
+                {loading.loginLoading ? "Logging in..." : "Login"}
               </Button>
             </form>
+
             <div className="flex mt-5 gap-5 justify-between mb-4">
               <div className="flex">
                 <div>Not a member ?</div>
