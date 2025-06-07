@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 
 const initialSubCenters = [
@@ -20,6 +20,8 @@ function SubCentersTab() {
     email: "",
     phone: "",
     admin: "",
+    adminEmail: "",
+    adminPhone: "",
   });
 
   const handleChange = (e) => {
@@ -31,15 +33,27 @@ function SubCentersTab() {
     if (!form.name.trim()) return;
     const newId = form.name.toLowerCase().replace(/\s+/g, "-");
     setSubCenters([...subCenters, { ...form, id: newId }]);
-    setForm({ name: "", location: "", email: "", phone: "", admin: "" });
+    setForm({
+      name: "",
+      location: "",
+      email: "",
+      phone: "",
+      admin: "",
+      adminEmail: "",
+      adminPhone: "",
+    });
     setShowForm(false);
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
+  const handleDelete = (id) => {
+    setSubCenters(subCenters.filter((center) => center.id !== id));
+  };
+
   return (
-    <div className="py-16 sm:py-20 px-4 bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5 dark:from-green-900/20 dark:to-green-900/5 transition-colors">
+    <div className="py-10 px-4 bg-transparent transition-colors">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -72,11 +86,11 @@ function SubCentersTab() {
               key={center.id}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
+              className="relative"
             >
               <Link
                 to={`/dashboard/sub-centers/${center.id}`}
-                className="block bg-green-50 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all cursor-pointer group"
-                style={{ textDecoration: "none" }}
+                className="block bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all group"
               >
                 <div className="h-16 flex items-center justify-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">
@@ -103,12 +117,24 @@ function SubCentersTab() {
                 <p className="text-sm text-green-600 dark:text-green-400 mt-2">
                   Click to view details
                 </p>
+                {/* Delete button at the bottom */}
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDelete(center.id);
+                    }}
+                    className="bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-full p-2 transition"
+                    title="Delete Branch"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </Link>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Add New Sub Center Button at the bottom */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -117,7 +143,7 @@ function SubCentersTab() {
         >
           <Button
             variant="outline"
-            className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium transition-colors"
+            className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium"
             onClick={() => setShowForm(!showForm)}
           >
             <PlusCircle className="w-5 h-5 mr-2" />
@@ -125,7 +151,6 @@ function SubCentersTab() {
           </Button>
         </motion.div>
 
-        {/* Show the form under the button, user-friendly */}
         {showForm && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -137,29 +162,23 @@ function SubCentersTab() {
             </h3>
             <form onSubmit={handleAdd} className="space-y-4">
               {[
-                { name: "name", type: "text", placeholder: "Sub Center Name" },
-                { name: "location", type: "text", placeholder: "Location" },
-                { name: "email", type: "email", placeholder: "Email" },
-                { name: "phone", type: "text", placeholder: "Phone Number" },
-                { name: "admin", type: "text", placeholder: "Admin Name" },
-                {
-                  name: "adminEmail",
-                  type: "email",
-                  placeholder: "Admin Email",
-                },
-                {
-                  name: "adminPhone",
-                  type: "text",
-                  placeholder: "Admin Phone Number",
-                },
+                "name",
+                "location",
+                "email",
+                "phone",
+                "admin",
+                "adminEmail",
+                "adminPhone",
               ].map((field) => (
                 <input
-                  key={field.name}
-                  name={field.name}
-                  type={field.type}
-                  value={form[field.name] || ""}
+                  key={field}
+                  name={field}
+                  type={field.includes("email") ? "email" : "text"}
+                  value={form[field] || ""}
                   onChange={handleChange}
-                  placeholder={field.placeholder}
+                  placeholder={field
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^\w/, (c) => c.toUpperCase())}
                   required
                   className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
@@ -167,7 +186,7 @@ function SubCentersTab() {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium"
                 >
                   Add Sub Center
                 </button>

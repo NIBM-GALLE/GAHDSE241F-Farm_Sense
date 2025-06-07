@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom"; // Add this import
+import { Link } from "react-router-dom";
 
 const initialDivisions = [
   { id: "plant-pathology", name: "Plant Pathology Division" },
@@ -33,15 +33,27 @@ function ResearchDivisionsTab() {
     if (!form.name.trim()) return;
     const newId = form.name.toLowerCase().replace(/\s+/g, "-");
     setDivisions([...divisions, { ...form, id: newId }]);
-    setForm({ name: "", lead: "", email: "", phone: "", focus: "" });
+    setForm({
+      name: "",
+      lead: "",
+      email: "",
+      phone: "",
+      focus: "",
+      adminEmail: "",
+      adminContact: "",
+    });
     setShowForm(false);
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
+  const handleDelete = (id) => {
+    setDivisions(divisions.filter((division) => division.id !== id));
+  };
+
   return (
-    <div className="py-16 sm:py-20 px-4 bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5 dark:from-green-900/20 dark:to-green-900/5 transition-colors">
+    <div className="py-10 px-4 bg-transparent transition-colors">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -74,14 +86,31 @@ function ResearchDivisionsTab() {
               key={division.id}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
+              className="relative"
             >
               <Link
                 to={`/dashboard/research-divisions/${division.id}`}
-                className="block bg-green-50 dark:bg-[#1f2937] backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all cursor-pointer group"
-                style={{ textDecoration: "none" }}
+                className="block bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all group h-full"
+                style={{ minHeight: "260px", position: "relative" }}
               >
                 <div className="h-16 flex items-center justify-center mb-4">
-                  {/* ...icon code... */}
+                  <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-5 h-5 text-green-600 dark:text-green-400"
+                    >
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </div>
                 </div>
                 <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
                   {division.name}
@@ -90,12 +119,24 @@ function ResearchDivisionsTab() {
                   {division.focus ||
                     "Researching plant health and sustainability"}
                 </p>
+                {/* Delete button at the bottom right corner */}
+                <div className="absolute bottom-4 right-4">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDelete(division.id);
+                    }}
+                    className="bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-full p-2 transition"
+                    title="Delete Division"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </Link>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Add New Division Button at the bottom */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -104,7 +145,7 @@ function ResearchDivisionsTab() {
         >
           <Button
             variant="outline"
-            className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium transition-colors"
+            className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium"
             onClick={() => setShowForm(!showForm)}
           >
             <PlusCircle className="w-5 h-5 mr-2" />
@@ -112,7 +153,6 @@ function ResearchDivisionsTab() {
           </Button>
         </motion.div>
 
-        {/* Show the form under the button, user-friendly */}
         {showForm && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -124,33 +164,23 @@ function ResearchDivisionsTab() {
             </h3>
             <form onSubmit={handleAdd} className="space-y-4">
               {[
-                { name: "name", type: "text", placeholder: "Division Name" },
-                {
-                  name: "focus",
-                  type: "text",
-                  placeholder: "Research Focus Area",
-                },
-                { name: "email", type: "email", placeholder: "Email Address" },
-                { name: "phone", type: "text", placeholder: "Phone Number" },
-                { name: "lead", type: "text", placeholder: "Admin name" },
-                {
-                  name: "adminEmail",
-                  type: "email",
-                  placeholder: "Admin Email",
-                },
-                {
-                  name: "adminContact",
-                  type: "text",
-                  placeholder: "Admin Contact",
-                },
+                "name",
+                "focus",
+                "email",
+                "phone",
+                "lead",
+                "adminEmail",
+                "adminContact",
               ].map((field) => (
                 <input
-                  key={field.name}
-                  name={field.name}
-                  type={field.type}
-                  value={form[field.name]}
+                  key={field}
+                  name={field}
+                  type={field.includes("email") ? "email" : "text"}
+                  value={form[field] || ""}
                   onChange={handleChange}
-                  placeholder={field.placeholder}
+                  placeholder={field
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^\w/, (c) => c.toUpperCase())}
                   required
                   className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
@@ -158,7 +188,7 @@ function ResearchDivisionsTab() {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium transition"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium"
                 >
                   Add Division
                 </button>
