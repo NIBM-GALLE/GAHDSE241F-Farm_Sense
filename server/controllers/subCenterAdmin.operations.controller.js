@@ -1,8 +1,9 @@
 import { errorHandler } from "../utils/errorHandler.js";
-import SubCenterAdmin from "../models/sub_admin.model.js";
 import SubCenter from "../models/sub_center.model.js";
 import VisitAgent from "../models/visit_agent.model.js";
 import PlantCase from "../models/plant_case.model.js";
+import ResearchDivision from "../models/research_divisions.model.js";
+import SubCenterAdmin from "../models/sub_admin.model.js";
 import {
   generateRandomPassword,
   generateOtp,
@@ -11,6 +12,8 @@ import {
 import {
   sendVisitAgentLoginCredentialsEmail,
   sendVisitAgentVerificationEmail,
+  sendSubCenterVerificationEmail,
+  sendLoginCredentialsEmail,
 } from "../mailtrap/mailTrapEmail.js";
 
 const subCenterFindById = async (subCenterId) => {
@@ -189,9 +192,10 @@ export const getPlantCaseById = async (req, res, next) => {
       )
       .populate("createdBy", "name address email phone")
       .populate("assignedVisitAgent", "name contactNumber email")
-      .populate("assignedBy", "name email contactNumber")
       .populate("assignedResearchDivision", "name location contactNumber email")
-      .populate("answeredBy", "name email contactNumber");
+      .populate("visitAgentAssignedBy", "name email contactNumber")
+      .populate("answeredBy", "name email contactNumber")
+      .populate("researchDivisionAssignedBy", "name email contactNumber");
 
     res.status(200).json({
       plantCase: populatedPlantCase,
@@ -204,8 +208,187 @@ export const getPlantCaseById = async (req, res, next) => {
 
 export const assignVisitAgentToPlantCase = async (req, res, next) => {
   try {
+    const plantCaseId = req.params.id;
+    const { visitAgentId } = req.body;
+    const subCenterId = req.subCenterId;
+
+    if (!plantCaseId || !visitAgentId) {
+      return next(
+        errorHandler(400, "Plant case ID and Visit Agent ID are required")
+      );
+    }
+
+    const plantCase = await PlantCase.findById(plantCaseId);
+    if (!plantCase) {
+      return next(errorHandler(404, "Plant case not found"));
+    }
+
+    const visitAgent = await VisitAgent.findById(visitAgentId);
+    if (!visitAgent) {
+      return next(errorHandler(404, "Visit agent not found"));
+    }
+
+    if (plantCase.assignedSubCenter.toString() !== subCenterId) {
+      return next(errorHandler(403, "Unauthorized access to this plant case"));
+    }
+
+    plantCase.assignedVisitAgent = visitAgentId;
+    plantCase.visitAgentAssignedBy = req.userId;
+    plantCase.status = "in-progress";
+
+    await plantCase.save();
+
+    const updatedPlantCase = await PlantCase.findById(plantCaseId)
+      .select(
+        "status plantName plantIssue images answerStatus  answer visitAgentComment createdAt"
+      )
+      .populate("createdBy", "name address email phone")
+      .populate("assignedVisitAgent", "name contactNumber email")
+      .populate("assignedResearchDivision", "name location contactNumber email")
+      .populate("visitAgentAssignedBy", "name email contactNumber")
+      .populate("answeredBy", "name email contactNumber")
+      .populate("researchDivisionAssignedBy", "name email contactNumber");
+
+    res.status(200).json({
+      message: "Visit agent assigned to plant case successfully",
+      plantCase: updatedPlantCase,
+    });
   } catch (error) {
     console.error("Error in assignVisitAgentToPlantCase:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const assignResearchCenterToPlantCase = async (req, res, next) => {
+  try {
+    const plantCaseId = req.params.id;
+    const { researchCenterId } = req.body;
+    const subCenterId = req.subCenterId;
+
+    if (!plantCaseId || !researchCenterId) {
+      return next(
+        errorHandler(400, "Plant case ID and Research Center ID are required")
+      );
+    }
+
+    const plantCase = await PlantCase.findById(plantCaseId);
+    if (!plantCase) {
+      return next(errorHandler(404, "Plant case not found"));
+    }
+
+    if (plantCase.assignedSubCenter.toString() !== subCenterId) {
+      return next(errorHandler(403, "Unauthorized access to this plant case"));
+    }
+
+    if (plantCase.visitAgentComment === null) {
+      return next(
+        errorHandler(
+          400,
+          "Plant case must be answered by visit agent before assigning to research center"
+        )
+      );
+    }
+
+    const researchDivision = await ResearchDivision.findById(researchCenterId);
+    if (!researchDivision) {
+      return next(errorHandler(404, "Research division not found"));
+    }
+
+    plantCase.assignedResearchDivision = researchCenterId;
+    plantCase.researchDivisionAssignedBy = req.userId;
+    console.log(
+      plantCase.researchDivisionAssignedBy,
+      "researchDivisionAssignedBy"
+    );
+    plantCase.answerStatus = "pending";
+
+    await plantCase.save();
+
+    const updatedPlantCase = await PlantCase.findById(plantCaseId)
+      .select(
+        "status plantName plantIssue images answerStatus  answer visitAgentComment createdAt"
+      )
+      .populate("createdBy", "name address email phone")
+      .populate("assignedVisitAgent", "name contactNumber email")
+      .populate("assignedResearchDivision", "name location contactNumber email")
+      .populate("visitAgentAssignedBy", "name email contactNumber")
+      .populate("answeredBy", "name email contactNumber")
+      .populate("researchDivisionAssignedBy", "name email contactNumber");
+
+    res.status(200).json({
+      message: "Research division assigned to plant case successfully",
+      plantCase: updatedPlantCase,
+    });
+  } catch (error) {
+    console.error("Error in assignResearchCenterToPlantCase:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const createAdmins = async (req, res, next) => {
+  try {
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return next(errorHandler(400, "Name and email are required"));
+    }
+
+    const subCenter = await SubCenter.findById(req.subCenterId);
+    if (!subCenter) {
+      return next(errorHandler(404, "Sub Center not found"));
+    }
+
+    const checkIsAdminsFull = subCenter.admins.length >= 5;
+    if (checkIsAdminsFull) {
+      return next(errorHandler(400, "Sub Center already has 5 admins"));
+    }
+
+    const existingAdmin = await SubCenterAdmin.findOne({
+      email,
+      subCenterId: req.subCenterId,
+    });
+
+    if (existingAdmin) {
+      return next(errorHandler(400, "Admin with this email already exists"));
+    }
+
+    const rawPassword = generateRandomPassword();
+    const subCenterAdmin = new SubCenterAdmin({
+      name,
+      email,
+      password: rawPassword,
+      subCenterId: req.subCenterId,
+      createdBy: req.userId,
+      createdByModel: "SubCenterAdmin",
+      verificationToken: generateOtp(),
+      verificationTokenExpiresAt: new Date(Date.now() + 3600000), // 1 hour expiration
+    });
+
+    await subCenterAdmin.save();
+    subCenter.admins.push(subCenterAdmin._id);
+    await subCenter.save();
+
+    await sendLoginCredentialsEmail(
+      subCenterAdmin.name,
+      subCenterAdmin.email,
+      rawPassword,
+      subCenter.name,
+      next
+    );
+
+    await sendSubCenterVerificationEmail(
+      subCenterAdmin.email,
+      subCenterAdmin.verificationToken,
+      subCenterAdmin.name,
+      subCenter.name,
+      next
+    );
+
+    res.status(201).json({
+      message: "Sub Center Admin created successfully",
+      subCenterAdmin,
+    });
+  } catch (error) {
+    console.error("Error in createAdmins:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };

@@ -3,6 +3,7 @@ import SubCenterAdmin from "../models/sub_admin.model.js";
 import SubCenter from "../models/sub_center.model.js";
 import ResearchDivision from "../models/research_divisions.model.js";
 import ResearchDivisionAdmin from "../models/research_admin.model.js";
+import Report from "../models/report.model.js";
 import {
   generateRandomPassword,
   generateOtp,
@@ -366,6 +367,48 @@ export const deleteResearchCenter = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error in deleteResearchCenter:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getAllReports = async (req, res, next) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page)) || 1;
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit))) || 10;
+    const skip = (page - 1) * limit;
+
+    const [totalReports, reports] = await Promise.all([
+      Report.countDocuments(),
+      Report.find()
+        .skip(skip)
+        .limit(limit)
+        .populate("createdBy", "name address email phone")
+        .select("message createdAt")
+        .lean(),
+    ]);
+
+    const totalPages = Math.ceil(totalReports / limit);
+    const hasNext = page < totalPages;
+    const hasPrevious = page > 1;
+
+    res.status(200).json({
+      status: "success",
+      message: "Reports retrieved successfully",
+      data: {
+        reports,
+        pagination: {
+          itemsPerPage: limit,
+          totalItems: totalReports,
+          totalPages,
+          hasNext,
+          hasPrevious,
+          nextPage: hasNext ? page + 1 : null,
+          previousPage: hasPrevious ? page - 1 : null,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error in getAllReports:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };

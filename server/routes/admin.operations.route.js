@@ -8,6 +8,7 @@ import {
   getAllResearchCenters,
   deleteResearchCenter,
   deleteSubCenter,
+  getAllReports,
 } from "../controllers/admin.operations.controller.js";
 const router = express.Router();
 
@@ -52,4 +53,6 @@ router.delete(
   adminMiddleware,
   deleteResearchCenter
 );
+
+router.get("/get-all-reports", authMiddleware, adminMiddleware, getAllReports);
 export default router;

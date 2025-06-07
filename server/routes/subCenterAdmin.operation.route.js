@@ -6,6 +6,9 @@ import {
   getAllVisitAgents,
   getAllPlantCasesForCenter,
   getPlantCaseById,
+  assignVisitAgentToPlantCase,
+  assignResearchCenterToPlantCase,
+  createAdmins,
 } from "../controllers/subCenterAdmin.operations.controller.js";
 
 const router = express.Router();
@@ -35,6 +38,27 @@ router.get(
   authMiddleware,
   subCenterAdminMiddleware,
   getPlantCaseById
+);
+
+router.patch(
+  "/assign-visit-agent/:id",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  assignVisitAgentToPlantCase
+);
+
+router.patch(
+  "/assign-research-center/:id",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  assignResearchCenterToPlantCase
+);
+
+router.post(
+  "/create-admins",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  createAdmins
 );
 
 export default router;

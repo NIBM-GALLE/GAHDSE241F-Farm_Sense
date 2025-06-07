@@ -1,6 +1,7 @@
 import Farmer from "../models/farmer.model.js";
 import { errorHandler } from "../utils/errorHandler.js";
 import PlantCase from "../models/plant_case.model.js";
+import Report from "../models/report.model.js";
 
 export const updateProfile = async (req, res, next) => {
   try {
@@ -167,6 +168,41 @@ export const getCaseById = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error fetching case by ID:", error);
+    return next(errorHandler(500, "Internal Server Error", error));
+  }
+};
+
+export const createReport = async (req, res, next) => {
+  try {
+    const { message } = req.body;
+    if (!message) {
+      return next(errorHandler(400, "Message is required"));
+    }
+
+    if (message.length < 5 || message.length > 500) {
+      return next(
+        errorHandler(400, "Message must be between 5 and 500 characters")
+      );
+    }
+
+    const farmer = await Farmer.findById(req.userId);
+    if (!farmer) {
+      return next(errorHandler(404, "Farmer not found"));
+    }
+
+    const newReport = new Report({
+      createdBy: req.userId,
+      message,
+    });
+
+    await newReport.save();
+
+    return res.status(201).json({
+      message: "Report created successfully",
+      report: newReport,
+    });
+  } catch (error) {
+    console.error("Error creating report:", error);
     return next(errorHandler(500, "Internal Server Error", error));
   }
 };

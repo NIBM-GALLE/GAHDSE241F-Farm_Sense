@@ -16,6 +16,7 @@ const subCenterSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "SubCenterAdmin",
         required: true,
+        limit: 5,
       },
     ],
     contactNumber: {
