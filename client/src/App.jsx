@@ -14,6 +14,8 @@ import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import Chat from "./pages/Chat";
+import CreateCase from "./pages/CreateCase";
+import HowItWorks from "./pages/HowItWork";
 
 // App component
 import Navbar from "./components/Navbar";
@@ -63,6 +65,8 @@ function AppContent() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/services" element={<Services />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/create-case" element={<CreateCase />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
       </Routes>
       {!shouldHideNavbar && <Footer />}
     </>

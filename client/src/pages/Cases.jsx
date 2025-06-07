@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -75,7 +75,7 @@ const visitAgents = ["Tharindu Senanayake", "Ishara Fernando", "Ajith Kumara"];
 
 function Cases() {
   const { id } = useParams();
-  const navigate = useNavigate();
+
   const currentCase = casesData[id];
 
   // Always default to "" so "Select Agent" is shown unless user picks one
@@ -88,12 +88,12 @@ function Cases() {
           <h2 className="text-2xl font-bold text-green-900 dark:text-white">
             Case Not Found
           </h2>
-          <Button
-            onClick={() => navigate("/cases")}
+          <Link
+            to="/dashboard/cases"
             className="bg-green-600 hover:bg-green-700"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Cases
-          </Button>
+          </Link>
         </div>
       </div>
     );
@@ -263,12 +263,12 @@ function Cases() {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
-              <Button
-                onClick={() => navigate("/dashboard")}
+              <Link
+                to="/dashboard/cases"
                 className="bg-green-600 hover:bg-green-700"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to All Cases
-              </Button>
+              </Link>
               {currentCase.status !== "resolved" && (
                 <Button
                   variant="outline"
