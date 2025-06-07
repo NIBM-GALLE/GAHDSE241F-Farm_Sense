@@ -13,6 +13,7 @@ export const useFarmerStore = create((set, get) => ({
     updatingCaseLoading: false,
     deletingCaseLoading: false,
     fetchingSubCentersLoading: false,
+    createReportLoading: false,
   },
   pagination: {
     totalCases: 0,
@@ -104,8 +105,16 @@ export const useFarmerStore = create((set, get) => ({
     }
   },
 
-  createReport: async () => {
+  createReport: async (message) => {
     try {
-    } catch (error) {}
+      set({ loading: { createReportLoading: true } });
+      const response = await axiosInstance.post("/farmer/report", { message });
+      set({ loading: { createReportLoading: false } });
+      toast.success("Report created successfully");
+    } catch (error) {
+      set({ loading: { createReportLoading: false } });
+      console.error("Error creating report:", error);
+      toast.error(error.response?.data?.message || "Failed to create report");
+    }
   },
 }));
