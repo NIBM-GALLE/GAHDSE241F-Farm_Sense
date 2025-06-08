@@ -12,7 +12,9 @@ import {
   FileBarChart2,
   Users,
   Briefcase,
+  Eye,
   ShieldUser,
+  FolderSearch2,
 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import SubCentersTab from "../components/SubCentersTab";
@@ -24,6 +26,8 @@ import SubCenters from "./SubCenters";
 import ResearchDivisions from "./ResearchDividions";
 import Cases from "./Cases";
 import AdminsTab from "@/components/AdminsTab";
+import ResearchCaseTab from "@/components/ResearchCaseTab";
+import VisitCaseTab from "@/components/VisitCaseTab";
 import { useUserStore } from "@/stores/useUserStore";
 
 function Dashboard() {
@@ -47,10 +51,14 @@ function Dashboard() {
         },
         { title: "Reports", icon: FileBarChart2, path: "reports" },
       ],
-      "visit-agent": [{ title: "Cases", icon: Briefcase, path: "cases" }],
+      "visit-agent": [{ title: "Visit Cases", icon: Eye, path: "visit-cases" }],
       ResearchDivisionAdmin: [
-        { title: "Cases", icon: Briefcase, path: "cases" },
         { title: "Admins", icon: ShieldUser, path: "admins" },
+        {
+          title: "Research Cases",
+          icon: FolderSearch2,
+          path: "research-cases",
+        },
       ],
       "sub-center-admin": [
         { title: "Cases", icon: Briefcase, path: "cases" },
@@ -121,27 +129,34 @@ function Dashboard() {
             element={user?.role === "main-admin" && <ReportsTab />}
           />
 
-          {/* Visit Agent Route */}
+          {/* Visit Agent Route for sub center admins */}
           <Route
             path="visit-agents"
             element={user?.role === "sub-center-admin" && <VisitAgentsTab />}
           />
 
-          {/* Cases (for both ResearchDivisionAdmin and sub-center-admin) */}
+          {/* Cases for sub-center-admin) */}
           <Route
             path="cases"
-            element={
-              (user?.role === "ResearchDivisionAdmin" ||
-                user?.role === "sub-center-admin" ||
-                user.role === "visit-agent") && <CasesTab />
-            }
+            element={user?.role === "sub-center-admin" && <CasesTab />}
           />
           <Route
             path="cases/:id"
+            element={user?.role === "sub-center-admin" && <Cases />}
+          />
+
+          {/* Cases for research center admin) */}
+          <Route
+            path="research-cases"
             element={
-              (user?.role === "ResearchDivisionAdmin" ||
-                user?.role === "sub-center-admin") && <Cases />
+              user?.role === "ResearchDivisionAdmin" && <ResearchCaseTab />
             }
+          />
+
+          {/* Cases for visit agent) */}
+          <Route
+            path="visit-cases"
+            element={user?.role === "visit-agent" && <VisitCaseTab />}
           />
 
           {/* Admins Tab (only for sub center admin and search center admin) */}
