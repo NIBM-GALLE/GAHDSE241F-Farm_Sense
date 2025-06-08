@@ -1,40 +1,31 @@
-import React, { useState } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Leaf, MoreVertical } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Leaf, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useSubCenter } from "@/stores/useSubCenter";
 
 function CasesTab() {
-  const [cases] = useState([
-    {
-      id: "case-001",
-      plantName: "Tomato",
-      farmer: "Kamal Perera",
-      status: "In Progress",
-      date: "2025-06-01",
-      image:
-        "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=200&auto=format&fit=crop",
-    },
-    {
-      id: "case-002",
-      plantName: "Chili",
-      farmer: "Nirosha Silva",
-      status: "Pending",
-      date: "2025-06-03",
-      image:
-        "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=200&auto=format&fit=crop",
-    },
-    {
-      id: "case-003",
-      plantName: "Banana",
-      farmer: "Ajith Kumara",
-      status: "In Progress",
-      date: "2025-06-06",
-      image:
-        "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=200&auto=format&fit=crop",
-    },
-  ]);
+  const { cases, loading, fetchCases } = useSubCenter();
 
-  const navigate = useNavigate();
+  // Format date for display
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  // Fetch cases on mount
+  useEffect(() => {
+    fetchCases();
+  }, [fetchCases]);
+
+  if (loading.fetchCases) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-500"></div>
+        <p className="ml-4 text-lg">Loading cases...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 sm:py-20 px-4 bg-transparent transition-colors">
@@ -71,34 +62,51 @@ function CasesTab() {
               whileTap={{ scale: 0.98 }}
               className="flex items-center gap-4 bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-700 p-5 shadow hover:shadow-green-900/20 transition-all cursor-pointer group"
             >
-              {/* Plant Image */}
+              {/* Plant Image - showing first image if available */}
               <div className="w-16 h-16 rounded-lg overflow-hidden border border-green-100 dark:border-green-700">
-                <img
-                  src={item.image}
-                  alt={item.plantName}
-                  className="w-full h-full object-cover"
-                />
+                {item.images?.length > 0 ? (
+                  <img
+                    src={item.images[0]}
+                    alt={item.plantName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                    <Leaf className="w-6 h-6 text-green-500 dark:text-green-400" />
+                  </div>
+                )}
               </div>
 
               {/* Case Details */}
               <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-4">
-                  <Leaf className="w-5 h-5 text-green-500 dark:text-green-400" />
-                  <div>
+                <div className="flex-1 flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <Leaf className="w-4 h-4 text-green-500 dark:text-green-400" />
                     <div className="text-green-900 dark:text-green-100 font-semibold">
                       {item.plantName}
                     </div>
-                    <div className="text-green-700 dark:text-green-300 text-sm">
-                      Farmer: <span className="font-medium">{item.farmer}</span>
-                    </div>
+                  </div>
+
+                  <div className="text-green-700 dark:text-green-300 text-sm">
+                    Issue:{" "}
+                    <span className="font-medium">{item.plantIssue}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 mt-1">
+                    <Clock className="w-3 h-3" />
+                    <span>{formatDate(item.createdAt)}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <span
                     className={`inline-block px-4 py-1 rounded-full text-xs font-semibold shadow-sm ${
-                      item.status === "In Progress"
+                      item.status === "pending"
+                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200"
+                        : item.status === "in-progress"
                         ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200"
+                        : item.status === "resolved"
+                        ? "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200"
                         : "bg-gray-100 text-gray-700 dark:bg-gray-800/60 dark:text-gray-200"
                     }`}
                     style={{
@@ -110,14 +118,13 @@ function CasesTab() {
                   >
                     {item.status}
                   </span>
-                  <button
-                    onClick={() => navigate(`/dashboard/cases/${item.id}`)}
+                  <Link
+                    to={`/dashboard/cases/${item._id}`}
                     className="inline-flex items-center gap-1 px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium shadow transition"
                     title="View Details"
                   >
-                    <MoreVertical className="w-4 h-4" />
-                    View
-                  </button>
+                    View Details
+                  </Link>
                 </div>
               </div>
             </motion.div>

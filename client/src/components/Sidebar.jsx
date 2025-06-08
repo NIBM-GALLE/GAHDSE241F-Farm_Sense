@@ -5,7 +5,7 @@ import { useUserStore } from "@/stores/useUserStore";
 
 function Sidebar({ items, activeTab, setActiveTab, role }) {
   const navigate = useNavigate();
-  const { logout } = useUserStore();
+  const { logout, user } = useUserStore();
 
   const roleDisplayNames = {
     "main-admin": "Admin",
@@ -37,6 +37,16 @@ function Sidebar({ items, activeTab, setActiveTab, role }) {
             <span className="capitalize font-semibold">
               {roleDisplayNames[role] || role}
             </span>
+            {user.subCenter?.name && (
+              <span className="block text-xs font-normal text-muted-foreground">
+                {user.subCenter.name}
+              </span>
+            )}
+            {user.researchDivision?.name && (
+              <span className="block text-xs font-normal text-muted-foreground">
+                {user.researchDivision.name}
+              </span>
+            )}
           </span>
         </span>
         <ModeToggle />

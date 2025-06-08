@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
@@ -10,48 +10,50 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-const initialAgents = [
-  {
-    id: "agent-001",
-    name: "Tharindu Senanayake",
-    phoneNumber: "077-1234567",
-    email: "tharindu@farmsense.lk",
-  },
-  {
-    id: "agent-002",
-    name: "Ishara Fernando",
-    phoneNumber: "071-9876543",
-    email: "ishara@farmsense.lk",
-  },
-];
+import { useSubCenter } from "../stores/useSubCenter";
 
 function VisitAgentsTab() {
-  const [agents, setAgents] = useState(initialAgents);
+  const {
+    loading,
+    deleteVisitAgent,
+    fetchVisitAgents,
+    createVisitAgent,
+    visitAgents,
+  } = useSubCenter();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phoneNumber: "" });
   const [agentToDelete, setAgentToDelete] = useState(null);
+
+  useEffect(() => {
+    fetchVisitAgents();
+  }, [fetchVisitAgents]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.phoneNumber.trim())
       return;
 
-    const newId = `agent-${Math.floor(Math.random() * 10000)}`;
-    setAgents([...agents, { ...form, id: newId }]);
-
-    setForm({ name: "", email: "", phoneNumber: "" });
-    setShowForm(false);
+    try {
+      await createVisitAgent(form.name, form.email, form.phoneNumber);
+      setForm({ name: "", email: "", phoneNumber: "" });
+      setShowForm(false);
+    } catch (error) {
+      console.error("Failed to create agent:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    setAgents(agents.filter((agent) => agent.id !== id));
-    setAgentToDelete(null);
+  const handleDelete = async (id) => {
+    try {
+      await deleteVisitAgent(id);
+      setAgentToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete agent:", error);
+    }
   };
 
   return (
@@ -77,80 +79,89 @@ function VisitAgentsTab() {
           </div>
         </motion.div>
 
-        <motion.table
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-full text-left table-auto"
-        >
-          <thead className="bg-green-100 dark:bg-green-800 text-green-900 dark:text-green-100">
-            <tr>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Phone</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {agents.map((agent) => (
-              <tr
-                key={agent.id}
-                className="border-b border-green-200 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
-              >
-                <td className="px-4 py-3 font-medium text-green-900 dark:text-white">
-                  {agent.name}
-                </td>
-                <td className="px-4 py-3 text-green-700 dark:text-green-300">
-                  {agent.email}
-                </td>
-                <td className="px-4 py-3 text-green-700 dark:text-green-300">
-                  {agent.phoneNumber}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-2">
-                    <Dialog
-                      open={agentToDelete === agent.id}
-                      onOpenChange={(open) => !open && setAgentToDelete(null)}
-                    >
-                      <DialogTrigger asChild>
-                        <button
-                          onClick={() => setAgentToDelete(agent.id)}
-                          title="Delete"
-                          className="p-2 rounded-full bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Confirm Deletion</DialogTitle>
-                          <DialogDescription>
-                            Are you sure you want to delete this agent? This
-                            action cannot be undone.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="flex justify-end gap-4 mt-4">
-                          <Button
-                            variant="outline"
-                            onClick={() => setAgentToDelete(null)}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            onClick={() => handleDelete(agent.id)}
-                          >
-                            Delete Agent
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </td>
+        {loading.fetchVisitAgents && visitAgents.length === 0 ? (
+          <div className="text-center py-8 text-green-700 dark:text-green-300">
+            Loading agents...
+          </div>
+        ) : (
+          <motion.table
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="w-full text-left table-auto"
+          >
+            <thead className="bg-green-100 dark:bg-green-800 text-green-900 dark:text-green-100">
+              <tr>
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Email</th>
+                <th className="px-4 py-2">Phone</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </motion.table>
+            </thead>
+            <tbody>
+              {visitAgents.map((agent) => (
+                <tr
+                  key={agent._id}
+                  className="border-b border-green-200 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
+                >
+                  <td className="px-4 py-3 font-medium text-green-900 dark:text-white">
+                    {agent.name}
+                  </td>
+                  <td className="px-4 py-3 text-green-700 dark:text-green-300">
+                    {agent.email}
+                  </td>
+                  <td className="px-4 py-3 text-green-700 dark:text-green-300">
+                    {agent.contactNumber || "N/A"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <Dialog
+                        open={agentToDelete === agent._id}
+                        onOpenChange={(open) => !open && setAgentToDelete(null)}
+                      >
+                        <DialogTrigger asChild>
+                          <button
+                            onClick={() => setAgentToDelete(agent._id)}
+                            title="Delete"
+                            className="p-2 rounded-full bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Confirm Deletion</DialogTitle>
+                            <DialogDescription>
+                              Are you sure you want to delete this agent? This
+                              action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="flex justify-end gap-4 mt-4">
+                            <Button
+                              variant="outline"
+                              onClick={() => setAgentToDelete(null)}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              onClick={() => handleDelete(agent._id)}
+                              disabled={loading.deleteVisitAgent}
+                            >
+                              {loading.deleteVisitAgent
+                                ? "Deleting..."
+                                : "Delete Agent"}
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </motion.table>
+        )}
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -200,8 +211,9 @@ function VisitAgentsTab() {
                 <button
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition shadow hover:shadow-green-700/30"
+                  disabled={loading.createVisitAgent}
                 >
-                  Add Agent
+                  {loading.createVisitAgent ? "Adding..." : "Add Agent"}
                 </button>
                 <button
                   type="button"

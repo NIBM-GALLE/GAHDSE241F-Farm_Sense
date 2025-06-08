@@ -6,6 +6,7 @@ import {
   addCommentToPlantCaseForResearchCenter,
   updateResearchCenterDetails,
   createAdmin,
+  getResearchAdmins,
 } from "../controllers/researchCenter.controller.js";
 
 const router = express.Router();
@@ -37,4 +38,12 @@ router.post(
   researchDivisionAdminMiddleware,
   createAdmin
 );
+
+router.get(
+  "/get-admins",
+  authMiddleware,
+  researchDivisionAdminMiddleware,
+  getResearchAdmins
+);
+
 export default router;

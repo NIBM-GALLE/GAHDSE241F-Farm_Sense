@@ -62,6 +62,8 @@ function AppContent({ user, loading }) {
 
   const hideNavbarPatterns = [
     /^\/dashboard\/sub-centers(\/.*)?$/,
+    /^\/dashboard\/research-cases(\/.*)?$/,
+    /^\/dashboard\/visit-cases(\/.*)?$/,
     /^\/dashboard\/admins(\/.*)?$/,
     /^\/dashboard\/research-divisions(\/.*)?$/,
     /^\/dashboard\/reports$/,
