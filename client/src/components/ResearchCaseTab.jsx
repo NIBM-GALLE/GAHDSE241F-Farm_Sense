@@ -73,6 +73,7 @@ function ResearchCaseTab() {
         prev ? { ...prev, researchAnswer: answer } : prev
       );
       setAnswer("");
+      setSelectedCase(null); // Close the dialog after submitting
     } catch (error) {
       console.error("Failed to add answer:", error);
     }
