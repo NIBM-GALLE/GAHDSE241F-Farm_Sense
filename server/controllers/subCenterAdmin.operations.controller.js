@@ -14,6 +14,9 @@ import {
   sendVisitAgentVerificationEmail,
   sendSubCenterVerificationEmail,
   sendLoginCredentialsEmail,
+  sendPlantCaseAssignmentNotificationForVisitAgent,
+  sendPlantCaseAssignmentNotificationForResearchDivision,
+  sendPlantCaseResponseNotificationToFarmer,
 } from "../mailtrap/mailTrapEmail.js";
 import mongoose from "mongoose";
 
@@ -243,6 +246,16 @@ export const assignVisitAgentToPlantCase = async (req, res, next) => {
       .populate("answeredBy", "name email contactNumber")
       .populate("researchDivisionAssignedBy", "name email contactNumber");
 
+    await sendPlantCaseAssignmentNotificationForVisitAgent(
+      updatedPlantCase.assignedVisitAgent.email,
+      updatedPlantCase.assignedVisitAgent.name,
+      updatedPlantCase.plantName,
+      updatedPlantCase.plantIssue,
+      updatedPlantCase.createdBy.address,
+      updatedPlantCase.createdBy.name,
+      updatedPlantCase.createdBy.phone
+    );
+
     res.status(200).json({
       message: "Visit agent assigned to plant case successfully",
       plantCase: updatedPlantCase,
@@ -255,7 +268,6 @@ export const assignVisitAgentToPlantCase = async (req, res, next) => {
 
 export const assignResearchCenterToPlantCase = async (req, res, next) => {
   try {
-    console.log("Assigning research center to plant case with body:", req.body);
     const plantCaseId = req.params.id;
     const { researchCenterId } = req.body;
     const subCenterId = req.subCenterId;
@@ -305,6 +317,16 @@ export const assignResearchCenterToPlantCase = async (req, res, next) => {
       .populate("visitAgentAssignedBy", "name email contactNumber")
       .populate("answeredBy", "name email contactNumber")
       .populate("researchDivisionAssignedBy", "name email contactNumber");
+
+    await sendPlantCaseAssignmentNotificationForResearchDivision(
+      updatedPlantCase.assignedResearchDivision.email,
+      updatedPlantCase.assignedResearchDivision.name,
+      updatedPlantCase.plantName,
+      updatedPlantCase.plantIssue,
+      updatedPlantCase.createdBy.address,
+      updatedPlantCase.createdBy.name,
+      updatedPlantCase.createdBy.phone
+    );
 
     res.status(200).json({
       message: "Research division assigned to plant case successfully",
@@ -493,6 +515,72 @@ export const deleteVisitAgent = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error in deleteVisitAgent:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const markPlantCaseStatus = async (req, res, next) => {
+  try {
+    const plantCaseId = req.params.id;
+    const { status } = req.body;
+    if (!status || !["solved", "unsolved"].includes(status)) {
+      return next(errorHandler(400, "Status must be 'solved' or 'unsolved'"));
+    }
+    if (!plantCaseId) {
+      return next(errorHandler(400, "Plant case ID is required"));
+    }
+
+    const plantCase = await PlantCase.findById(plantCaseId);
+    if (!plantCase) {
+      return next(errorHandler(404, "Plant case not found"));
+    }
+
+    if (plantCase.assignedSubCenter.toString() !== req.subCenterId) {
+      return next(errorHandler(403, "Unauthorized access to this plant case"));
+    }
+
+    if (plantCase.status === "solved" || plantCase.status === "unsolved") {
+      return next(
+        errorHandler(400, "Plant case is already marked as solved or unsolved")
+      );
+    }
+
+    if (plantCase.visitAgentComment === null) {
+      return next(
+        errorHandler(
+          400,
+          "Plant case must be answered by visit agent before marking as solved or unsolved"
+        )
+      );
+    }
+
+    plantCase.status = status;
+    await plantCase.save();
+    const updatedPlantCase = await PlantCase.findById(plantCaseId)
+      .select(
+        "status plantName plantIssue images answerStatus  answer visitAgentComment createdAt"
+      )
+      .populate("createdBy", "name address email phone")
+      .populate("assignedVisitAgent", "name contactNumber email")
+      .populate("assignedResearchDivision", "name location contactNumber email")
+      .populate("visitAgentAssignedBy", "name email contactNumber")
+      .populate("answeredBy", "name email contactNumber")
+      .populate("researchDivisionAssignedBy", "name email contactNumber");
+
+    await sendPlantCaseResponseNotificationToFarmer(
+      updatedPlantCase.createdBy.email,
+      updatedPlantCase.createdBy.name,
+      updatedPlantCase.plantName,
+      updatedPlantCase.plantIssue,
+      updatedPlantCase.visitAgentComment
+    );
+
+    res.status(200).json({
+      message: `Plant case marked as ${status} successfully`,
+      plantCase: updatedPlantCase,
+    });
+  } catch (error) {
+    console.error("Error in markPlantCaseAsSolved:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };

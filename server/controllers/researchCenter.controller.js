@@ -9,6 +9,7 @@ import {
 import {
   sendResearchCenterVerificationEmail,
   sendResearchCenterLoginCredentialsEmail,
+  sendPlantCaseResponseNotificationToFarmer,
 } from "../mailtrap/mailTrapEmail.js";
 
 export const getAllPlantCasesForResearchCenter = async (req, res, next) => {
@@ -113,6 +114,14 @@ export const addCommentToPlantCaseForResearchCenter = async (
       .populate("assignedSubCenter", "name location email contactNumber")
       .populate("assignedVisitAgent", "name contactNumber email")
       .populate("answeredBy", "name email");
+
+    await sendPlantCaseResponseNotificationToFarmer(
+      updatedPlantCase.createdBy.email,
+      updatedPlantCase.createdBy.name,
+      updatedPlantCase.plantName,
+      updatedPlantCase.plantIssue,
+      updatedPlantCase.answer
+    );
 
     res.status(200).json({
       message: "Answer is  added to plant case successfully",

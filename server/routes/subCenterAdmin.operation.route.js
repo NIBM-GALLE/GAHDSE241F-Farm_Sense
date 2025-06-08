@@ -13,6 +13,7 @@ import {
   updateSubCenterDetails,
   getAdmins,
   deleteVisitAgent,
+  markPlantCaseStatus,
 } from "../controllers/subCenterAdmin.operations.controller.js";
 
 const router = express.Router();
@@ -86,5 +87,12 @@ router.delete(
   authMiddleware,
   subCenterAdminMiddleware,
   deleteVisitAgent
+);
+
+router.patch(
+  "/update-plant-case/:id",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  markPlantCaseStatus
 );
 export default router;
