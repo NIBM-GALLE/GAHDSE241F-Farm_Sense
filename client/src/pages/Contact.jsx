@@ -31,7 +31,7 @@ function Contact() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-16 sm:py-20 px-4 bg-balck transition-colors">
+    <div className="min-h-screen py-16 sm:py-20 px-4 bg-balck transition-colors">
       <div className="max-w-4xl w-full mx-auto">
         {/* Header */}
         <motion.section
@@ -59,16 +59,16 @@ function Contact() {
         </motion.section>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {user && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="bg-white dark:bg-white/5 backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 shadow-lg p-8"
-            >
-              <h2 className="text-2xl font-semibold text-green-900 dark:text-white mb-6">
-                Send Your Message
-              </h2>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white dark:bg-white/5 backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 shadow-lg p-8"
+          >
+            <h2 className="text-2xl font-semibold text-green-900 dark:text-white mb-6">
+              Send Your Message
+            </h2>
+            {user ? (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label
@@ -104,8 +104,24 @@ function Contact() {
                   {loading.createReportLoading ? "Sending..." : "Send Message"}
                 </button>
               </form>
-            </motion.div>
-          )}
+            ) : (
+              <div className="text-center py-10">
+                <p className="text-green-800 dark:text-green-100 mb-4">
+                  Please{" "}
+                  <a
+                    href="/login"
+                    className="text-green-600 underline hover:text-green-800"
+                  >
+                    sign in
+                  </a>{" "}
+                  to send us a message.
+                </p>
+                <p className="text-green-700 dark:text-green-300">
+                  Or contact us directly using the information on the right.
+                </p>
+              </div>
+            )}
+          </motion.div>
 
           {/* Contact Info Section */}
           <motion.div

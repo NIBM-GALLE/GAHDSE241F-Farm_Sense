@@ -29,20 +29,17 @@ function CreateCase() {
   const handleImages = (e) => {
     const files = Array.from(e.target.files);
 
-    // Check if adding these files would exceed 5 images
     if (form.images.length + files.length > 5) {
       alert("You can upload a maximum of 5 images.");
       return;
     }
 
     const validFiles = files.filter((file) => {
-      // Check file size
       if (file.size > 5 * 1024 * 1024) {
         alert(`File ${file.name} is too large (max 5MB)`);
         return false;
       }
 
-      // Check file type
       if (!file.type.match("image.*")) {
         alert(`File ${file.name} is not an image file`);
         return false;
@@ -80,43 +77,41 @@ function CreateCase() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     await createPlantCase(
       form.plantName,
       form.symptoms,
       form.images,
       form.subCenterId
     );
-
     setForm({ plantName: "", symptoms: "", subCenterId: "", images: [] });
   };
 
   return (
-    <div className="min-h-screen py-16 sm:py-20 px-4 bg-balck transition-colors">
+    <div className="min-h-screen py-16 sm:py-20 px-4 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-white/80 dark:bg-white/5 backdrop-blur-sm rounded-xl border border-green-200 dark:border-green-700 shadow-lg p-6 sm:p-8 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg p-6 sm:p-8 mb-6"
         >
           <div className="flex flex-col items-center mb-8">
             <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full mb-3">
               <Leaf className="w-8 h-8 text-green-600 dark:text-green-300" />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-center text-green-900 dark:text-white">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 dark:text-white">
               <span className="bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent dark:from-green-300 dark:to-green-100">
                 Report Plant Issue
               </span>
             </h2>
-            <p className="text-green-700 dark:text-green-300 text-center mt-2">
+            <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
               Get expert advice by submitting details about your crop problem
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-green-800 dark:text-green-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Plant Name
                 <span className="text-red-500 ml-1">*</span>
               </label>
@@ -126,12 +121,12 @@ function CreateCase() {
                 onChange={handleChange}
                 placeholder="e.g., Tomato, Rice, Banana"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-green-200 dark:border-green-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-green-800 dark:text-green-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Symptoms / Description
                 <span className="text-red-500 ml-1">*</span>
               </label>
@@ -142,12 +137,12 @@ function CreateCase() {
                 placeholder="Describe the issue in detail (e.g., yellow leaves, black spots, wilting)"
                 required
                 rows="4"
-                className="w-full px-4 py-3 rounded-lg border border-green-200 dark:border-green-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all resize-none"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
               ></textarea>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-sm font-medium text-green-800 dark:text-green-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Sub-Center
                 <span className="text-red-500 ml-1">*</span>
               </label>
@@ -156,7 +151,7 @@ function CreateCase() {
                 value={form.subCenterId}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-green-200 dark:border-green-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               >
                 <option value="">Select a sub-center</option>
                 {subCenters.map((center) => (
@@ -168,7 +163,7 @@ function CreateCase() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-green-800 dark:text-green-200">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Upload Crop Images
               </label>
               <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -182,7 +177,7 @@ function CreateCase() {
                       <img
                         src={image}
                         alt={`Plant preview ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg border-2 border-green-200 dark:border-green-700"
+                        className="w-full h-32 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600"
                       />
                       <button
                         type="button"
@@ -249,7 +244,7 @@ function CreateCase() {
           <Button
             type="button"
             onClick={() => navigate("/")}
-            className="flex items-center gap-2 bg-green-100 hover:bg-green-200 dark:bg-green-800/30 dark:hover:bg-green-800/50 text-green-700 dark:text-green-200 px-5 py-2 rounded-full font-medium shadow transition-all"
+            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-5 py-2 rounded-full font-medium shadow transition-all"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Previous Page
