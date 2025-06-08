@@ -28,6 +28,7 @@ function Cases() {
     fetchResearchCenters,
     assignVisitAgentToPlantCase,
     assignResearchCenterToPlantCase,
+    updatePlantCaseStatus,
   } = useSubCenter();
 
   const [selectedAgent, setSelectedAgent] = useState("");
@@ -71,8 +72,6 @@ function Cases() {
 
   const handleAssignCenter = async () => {
     if (selectedCenter && id) {
-      console.log("Case ID:", id);
-      console.log("Selected Center ID:", selectedCenter);
       await assignResearchCenterToPlantCase(id, selectedCenter);
       await fetchCase(id); // Refetch the case to update the UI
       setSelectedCenter("");
