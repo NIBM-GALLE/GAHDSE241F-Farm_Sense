@@ -7,8 +7,6 @@ function SubCenters() {
   const { id } = useParams();
   const location = useLocation();
   const centerData = location.state?.centerData;
-  console.log("Location state:", location.state);
-  console.log("Center Data:", centerData);
 
   if (!centerData) {
     return (
@@ -106,7 +104,7 @@ function SubCenters() {
                   <User className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
                   <div>
                     <h3 className="text-sm font-medium text-green-700 dark:text-green-300">
-                      Admin
+                      Admins
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
                       {centerData.admins && centerData.admins.length > 0
