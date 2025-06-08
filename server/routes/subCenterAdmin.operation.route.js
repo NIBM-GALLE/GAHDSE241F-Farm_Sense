@@ -11,6 +11,8 @@ import {
   createAdmins,
   getAllResearchCenters,
   updateSubCenterDetails,
+  getAdmins,
+  deleteVisitAgent,
 } from "../controllers/subCenterAdmin.operations.controller.js";
 
 const router = express.Router();
@@ -75,5 +77,14 @@ router.patch(
   authMiddleware,
   subCenterAdminMiddleware,
   updateSubCenterDetails
+);
+
+router.get("/get-admins", authMiddleware, subCenterAdminMiddleware, getAdmins);
+
+router.delete(
+  "/delete-visit-agent/:id",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  deleteVisitAgent
 );
 export default router;

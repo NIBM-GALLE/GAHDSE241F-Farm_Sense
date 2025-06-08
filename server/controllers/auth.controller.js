@@ -4,6 +4,8 @@ import Farmer from "../models/farmer.model.js";
 import VisitAgent from "../models/visit_agent.model.js";
 import SubCenterAdmin from "../models/sub_admin.model.js";
 import ResearchDivisionAdmin from "../models/research_admin.model.js";
+import ResearchDivision from "../models/research_divisions.model.js";
+import SubCenter from "../models/sub_center.model.js";
 import {
   sendPasswordResetEmail,
   sendResetSuccessEmail,
@@ -32,6 +34,27 @@ export const getUser = async (req, res, next) => {
     }
 
     const sanitizedUser = userWithoutPassword(user);
+    if (user.researchDivisionId) {
+      const researchDivision = await ResearchDivision.findById(
+        user.researchDivisionId
+      );
+      if (researchDivision) {
+        sanitizedUser.researchDivision = {
+          id: researchDivision._id,
+          name: researchDivision.name,
+        };
+      }
+    }
+
+    if (user.subCenterId) {
+      const subCenter = await SubCenter.findById(user.subCenterId);
+      if (subCenter) {
+        sanitizedUser.subCenter = {
+          id: subCenter._id,
+          name: subCenter.name,
+        };
+      }
+    }
 
     res.status(200).json({
       success: true,

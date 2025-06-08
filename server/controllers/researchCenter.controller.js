@@ -245,3 +245,23 @@ export const updateResearchCenterDetails = async (req, res, next) => {
     next(errorHandler(500, "Internal server error"));
   }
 };
+
+export const getResearchAdmins = async (req, res, next) => {
+  try {
+    const researchDivision = await ResearchDivision.findById(
+      req.researchDivisionId
+    ).populate("admins", "name email contactNumber");
+
+    if (!researchDivision) {
+      return next(errorHandler(404, "Research Division not found"));
+    }
+
+    res.status(200).json({
+      message: "Research Division admins retrieved successfully",
+      admins: researchDivision.admins,
+    });
+  } catch (error) {
+    console.error("Error in getResearchAdmins:", error);
+    next(errorHandler(500, "Internal server error"));
+  }
+};

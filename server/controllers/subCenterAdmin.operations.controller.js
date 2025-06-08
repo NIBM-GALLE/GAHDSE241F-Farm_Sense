@@ -15,6 +15,7 @@ import {
   sendSubCenterVerificationEmail,
   sendLoginCredentialsEmail,
 } from "../mailtrap/mailTrapEmail.js";
+import mongoose from "mongoose";
 
 const subCenterFindById = async (subCenterId) => {
   try {
@@ -134,13 +135,6 @@ export const getAllPlantCasesForCenter = async (req, res, next) => {
       PlantCase.countDocuments({ assignedSubCenter: req.subCenterId }),
       PlantCase.find({ assignedSubCenter: req.subCenterId })
         .select("status plantName plantIssue images createdAt")
-        // .populate("createdBy", "name address email phone")
-        // .populate("assignedVisitAgent", "name contactNumber email")
-        // .populate("assignedBy", "name email contactNumber")
-        // .populate(
-        //   "assignedResearchDivision",
-        //   "name location contactNumber email"
-        // )
         .populate("answeredBy", "name email contactNumber")
         .sort({ createdAt: -1 })
         .skip(skip)
@@ -381,7 +375,7 @@ export const createAdmins = async (req, res, next) => {
 
     res.status(201).json({
       message: "Sub Center Admin created successfully",
-      subCenterAdmin,
+      admin: subCenterAdmin,
     });
   } catch (error) {
     console.error("Error in createAdmins:", error);
@@ -447,6 +441,57 @@ export const updateSubCenterDetails = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error in updateSubCenterDetails:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getAdmins = async (req, res, next) => {
+  try {
+    const admins = await SubCenterAdmin.find({
+      subCenterId: req.subCenterId,
+    });
+
+    if (!admins || admins.length === 0) {
+      return next(errorHandler(404, "No admins found for this sub center"));
+    }
+
+    res.status(200).json({
+      message: "Admins fetched successfully",
+      admins,
+    });
+  } catch (error) {
+    console.error("Error in getAdmins:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const deleteVisitAgent = async (req, res, next) => {
+  try {
+    const visitAgentId = req.params.id;
+    if (!visitAgentId) {
+      return next(errorHandler(400, "Visit agent ID is required"));
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(visitAgentId)) {
+      return next(errorHandler(400, "Invalid visit agent ID"));
+    }
+
+    const visitAgent = await VisitAgent.findById(visitAgentId);
+    if (!visitAgent) {
+      return next(errorHandler(404, "Visit agent not found"));
+    }
+
+    if (visitAgent.subCenterId.toString() !== req.subCenterId) {
+      return next(errorHandler(403, "Unauthorized access to this visit agent"));
+    }
+
+    await visitAgent.deleteOne();
+
+    res.status(200).json({
+      message: "Visit agent deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error in deleteVisitAgent:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };
