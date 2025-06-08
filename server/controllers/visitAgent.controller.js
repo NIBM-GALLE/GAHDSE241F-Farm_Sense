@@ -12,7 +12,9 @@ export const getAllAssignedPlantCases = async (req, res, next) => {
     const [totalCases, assignedCases] = await Promise.all([
       PlantCase.countDocuments({ assignedVisitAgent: req.userId }),
       PlantCase.find({ assignedVisitAgent: req.userId })
-        .select("plantIssue images status visitAgentComment createdAt")
+        .select(
+          "plantName plantIssue images status visitAgentComment createdAt"
+        )
         .populate("createdBy", "name address phone email")
         .skip(skip)
         .limit(limit)

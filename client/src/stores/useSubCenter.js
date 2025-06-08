@@ -106,6 +106,7 @@ export const useSubCenter = create((set, get) => ({
           fetchCases: false,
         },
       });
+      console.log("Fetched cases:", response.data.plantCases);
     } catch (error) {
       set({
         loading: {

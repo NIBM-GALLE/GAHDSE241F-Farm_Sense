@@ -255,6 +255,7 @@ export const assignVisitAgentToPlantCase = async (req, res, next) => {
 
 export const assignResearchCenterToPlantCase = async (req, res, next) => {
   try {
+    console.log("Assigning research center to plant case with body:", req.body);
     const plantCaseId = req.params.id;
     const { researchCenterId } = req.body;
     const subCenterId = req.subCenterId;
