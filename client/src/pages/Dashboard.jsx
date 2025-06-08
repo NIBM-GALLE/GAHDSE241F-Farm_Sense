@@ -12,6 +12,7 @@ import {
   FileBarChart2,
   Users,
   Briefcase,
+  ShieldUser,
 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import SubCentersTab from "../components/SubCentersTab";
@@ -22,6 +23,7 @@ import CasesTab from "../components/CasesTab";
 import SubCenters from "./SubCenters";
 import ResearchDivisions from "./ResearchDividions";
 import Cases from "./Cases";
+import AdminsTab from "@/components/AdminsTab";
 import { useUserStore } from "@/stores/useUserStore";
 
 function Dashboard() {
@@ -48,10 +50,12 @@ function Dashboard() {
       "visit-agent": [{ title: "Cases", icon: Briefcase, path: "cases" }],
       ResearchDivisionAdmin: [
         { title: "Cases", icon: Briefcase, path: "cases" },
+        { title: "Admins", icon: ShieldUser, path: "admins" },
       ],
       "sub-center-admin": [
         { title: "Cases", icon: Briefcase, path: "cases" },
         { title: "Visit Agents", icon: Users, path: "visit-agents" },
+        { title: "Admins", icon: ShieldUser, path: "admins" },
       ],
     };
 
@@ -137,6 +141,15 @@ function Dashboard() {
             element={
               (user?.role === "ResearchDivisionAdmin" ||
                 user?.role === "sub-center-admin") && <Cases />
+            }
+          />
+
+          {/* Admins Tab (only for sub center admin and search center admin) */}
+          <Route
+            path="admins"
+            element={
+              (user?.role === "sub-center-admin" ||
+                user?.role === "ResearchDivisionAdmin") && <AdminsTab />
             }
           />
 
