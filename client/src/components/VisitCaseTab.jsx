@@ -18,88 +18,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-const dummyCases = [
-  {
-    _id: "1",
-    plantName: "Tomato",
-    plantIssue: "Leaf spot disease",
-    createdAt: new Date().toISOString(),
-    contactNumber: "0771234567",
-    farmerName: "Nimal Perera",
-    address: "No. 12, Main Street, Kandy",
-    farmerPhone: "0771234567",
-    status: "Open",
-    agentComment: "Initial inspection completed. Needs fungicide treatment.",
-    images: [
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-    ],
-  },
-  {
-    _id: "2",
-    plantName: "Chili",
-    plantIssue: "Wilting symptoms",
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    contactNumber: "0719876543",
-    farmerName: "Sunil Silva",
-    address: "No. 45, Lake Road, Galle",
-    farmerPhone: "0719876543",
-    status: "Closed",
-    agentComment: "Case resolved. Advised on proper watering techniques.",
-    images: [],
-  },
-  {
-    _id: "3",
-    plantName: "Brinjal",
-    plantIssue: "Aphid infestation",
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    contactNumber: "0755555555",
-    farmerName: "Kamal Fernando",
-    address: "No. 78, Temple Lane, Matara",
-    farmerPhone: "0755555555",
-    status: "Pending",
-    agentComment: "",
-    images: [
-      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
-    ],
-  },
-];
+import { useVisitAgentStore } from "../stores/useVisitAgentStore";
 
 function getStatusIcon(status) {
-  if (status === "Open")
+  if (status === "in-progress")
     return (
       <span title="Open">
         <AlertCircle className="w-4 h-4 text-yellow-500" />
       </span>
     );
-  if (status === "Closed")
+  if (status === "resolved")
     return (
       <span title="Closed">
         <Leaf className="w-4 h-4 text-green-500" />
       </span>
     );
-  return (
-    <span title="Pending">
-      <Calendar className="w-4 h-4 text-blue-500" />
-    </span>
-  );
 }
 
 function VisitCaseTab() {
-  const [visitCases, setVisitCases] = useState(dummyCases);
-  const [loading, setLoading] = useState({ fetchVisitCases: false });
+  const { cases, loading, fetchAssignedPlantCases, addCommentToPlantCase } =
+    useVisitAgentStore();
   const [selectedCase, setSelectedCase] = useState(null);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    setLoading({ fetchVisitCases: true });
-    setTimeout(() => {
-      setVisitCases(dummyCases);
-      setLoading({ fetchVisitCases: false });
-    }, 800);
-  }, []);
+    fetchAssignedPlantCases();
+  }, [fetchAssignedPlantCases]);
 
   const handleOpenCase = (visitCase) => {
     setSelectedCase(visitCase);
@@ -109,19 +54,19 @@ function VisitCaseTab() {
   const handleAddComment = async (e) => {
     e.preventDefault();
     if (!comment.trim() || !selectedCase) return;
+
     setSubmitting(true);
-    setTimeout(() => {
-      setVisitCases((prev) =>
-        prev.map((c) =>
-          c._id === selectedCase._id ? { ...c, agentComment: comment } : c
-        )
-      );
+    try {
+      await addCommentToPlantCase(selectedCase._id, comment);
       setSelectedCase((prev) =>
         prev ? { ...prev, agentComment: comment } : prev
       );
       setComment("");
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+    } finally {
       setSubmitting(false);
-    }, 600);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -159,7 +104,7 @@ function VisitCaseTab() {
           </p>
         </motion.div>
 
-        {loading?.fetchVisitCases && visitCases.length === 0 ? (
+        {loading.fetchingCases ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-600 mb-4"></div>
             <p className="text-green-700 dark:text-green-300">
@@ -186,10 +131,16 @@ function VisitCaseTab() {
                     <th className="px-6 py-3 text-left text-sm font-medium">
                       Date
                     </th>
+                    <th className="px-6 py-3 text-left text-sm font-medium">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-right text-sm font-medium">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {visitCases.map((visitCase) => (
+                  {cases.map((visitCase) => (
                     <tr
                       key={visitCase._id}
                       className="hover:bg-green-50/50 dark:hover:bg-green-900/10 transition-colors"
@@ -217,6 +168,14 @@ function VisitCaseTab() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500 dark:text-gray-400">
                           {formatDate(visitCase.createdAt)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          {getStatusIcon(visitCase.status)}
+                          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                            {visitCase.status}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -272,11 +231,11 @@ function VisitCaseTab() {
                                       Farmer Details
                                     </h4>
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                                      {visitCase.farmerName}
+                                      {visitCase.createdBy.name}
                                       <br />
-                                      {visitCase.address}
+                                      {visitCase.createdBy.address}
                                       <br />
-                                      Phone: {visitCase.farmerPhone}
+                                      Phone: {visitCase.createdBy.phone}
                                     </p>
                                   </div>
                                 </div>
@@ -322,9 +281,9 @@ function VisitCaseTab() {
                                       Agent Comments
                                     </h4>
                                     <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-3 mt-1">
-                                      {visitCase.agentComment ? (
+                                      {visitCase.visitAgentComment ? (
                                         <p className="text-sm text-gray-700 dark:text-gray-300">
-                                          {visitCase.agentComment}
+                                          {visitCase.visitAgentComment}
                                         </p>
                                       ) : (
                                         <p className="text-sm text-gray-400 dark:text-gray-500 italic">
@@ -364,36 +323,40 @@ function VisitCaseTab() {
                                 </div>
                               </div>
                             </div>
-
-                            <form onSubmit={handleAddComment} className="mt-6">
-                              <label className="block text-sm font-medium text-green-800 dark:text-green-200 mb-2">
-                                Add New Comment
-                              </label>
-                              <textarea
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                rows={3}
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                placeholder="Enter your observations and recommendations..."
-                                required
-                              />
-                              <div className="flex justify-end mt-3">
-                                <Button
-                                  type="submit"
-                                  className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-6 py-2 rounded-lg font-medium shadow transition"
-                                  disabled={submitting}
-                                >
-                                  {submitting ? (
-                                    <span className="flex items-center gap-2">
-                                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                                      Adding...
-                                    </span>
-                                  ) : (
-                                    "Save Comment"
-                                  )}
-                                </Button>
-                              </div>
-                            </form>
+                            {!visitCase.visitAgentComment && (
+                              <form
+                                onSubmit={handleAddComment}
+                                className="mt-6"
+                              >
+                                <label className="block text-sm font-medium text-green-800 dark:text-green-200 mb-2">
+                                  Add New Comment
+                                </label>
+                                <textarea
+                                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                  rows={3}
+                                  value={comment}
+                                  onChange={(e) => setComment(e.target.value)}
+                                  placeholder="Enter your observations and recommendations..."
+                                  required
+                                />
+                                <div className="flex justify-end mt-3">
+                                  <Button
+                                    type="submit"
+                                    className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-6 py-2 rounded-lg font-medium shadow transition"
+                                    disabled={submitting}
+                                  >
+                                    {submitting ? (
+                                      <span className="flex items-center gap-2">
+                                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                                        Adding...
+                                      </span>
+                                    ) : (
+                                      "Save Comment"
+                                    )}
+                                  </Button>
+                                </div>
+                              </form>
+                            )}
                           </DialogContent>
                         </Dialog>
                       </td>
@@ -411,8 +374,8 @@ function VisitCaseTab() {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="text-center text-green-700 dark:text-green-300 text-sm mt-8"
         >
-          Showing {visitCases.length} visit cases. Click on any case to view
-          details and add comments.
+          Showing {cases.length} visit cases. Click on any case to view details
+          and add comments.
         </motion.p>
       </div>
     </div>

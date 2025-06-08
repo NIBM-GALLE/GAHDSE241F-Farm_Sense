@@ -28,15 +28,13 @@ export const getAllAssignedPlantCases = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Assigned plant cases retrieved successfully",
-      data: {
-        assignedCases,
-        totalCases,
-        totalPages,
-        hasNext,
-        hasPrevious,
-        nextPage: hasNext ? page + 1 : null,
-        previousPage: hasPrevious ? page - 1 : null,
-      },
+      assignedCases,
+      totalCases,
+      totalPages,
+      hasNext,
+      hasPrevious,
+      nextPage: hasNext ? page + 1 : null,
+      previousPage: hasPrevious ? page - 1 : null,
     });
   } catch (error) {
     console.error("Error in getAllAssignedPlantCases:", error);
@@ -66,6 +64,12 @@ export const addCommentToPlantCase = async (req, res, next) => {
       );
     }
 
+    if (plantCase.visitAgentComment) {
+      return next(
+        errorHandler(400, "You have already added a comment to this plant case")
+      );
+    }
+
     plantCase.visitAgentComment = comment;
     await plantCase.save();
 
@@ -75,7 +79,7 @@ export const addCommentToPlantCase = async (req, res, next) => {
 
     res.status(200).json({
       message: "Comment added to plant case successfully",
-      data: updatedPlantCase,
+      updatedPlantCase,
     });
   } catch (error) {
     console.error("Error in addCommentToPlantCase:", error);
