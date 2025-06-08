@@ -393,17 +393,15 @@ export const getAllReports = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       message: "Reports retrieved successfully",
-      data: {
-        reports,
-        pagination: {
-          itemsPerPage: limit,
-          totalItems: totalReports,
-          totalPages,
-          hasNext,
-          hasPrevious,
-          nextPage: hasNext ? page + 1 : null,
-          previousPage: hasPrevious ? page - 1 : null,
-        },
+      reports,
+      pagination: {
+        itemsPerPage: limit,
+        totalItems: totalReports,
+        totalPages,
+        hasNext,
+        hasPrevious,
+        nextPage: hasNext ? page + 1 : null,
+        previousPage: hasPrevious ? page - 1 : null,
       },
     });
   } catch (error) {
