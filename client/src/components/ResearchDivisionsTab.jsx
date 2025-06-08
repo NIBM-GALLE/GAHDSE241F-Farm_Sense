@@ -1,56 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
-
-const initialDivisions = [
-  { id: "plant-pathology", name: "Plant Pathology Division" },
-  { id: "entomology", name: "Entomology Division" },
-  { id: "soil-science", name: "Soil Science Division" },
-  { id: "data-analysis", name: "Agro Data Analysis Unit" },
-];
+import { useAdminStore } from "../stores/useAdminStore";
+import { useNavigate } from "react-router-dom";
 
 function ResearchDivisionsTab() {
-  const [divisions, setDivisions] = useState(initialDivisions);
+  const navigate = useNavigate();
+  const {
+    fetchReserachCenters,
+    researchCenters,
+    loading,
+    createResearchCenter,
+    deleteResearchCenter,
+  } = useAdminStore();
+
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     name: "",
-    lead: "",
+    location: "",
     email: "",
-    phone: "",
-    focus: "",
+    admin: "",
     adminEmail: "",
-    adminContact: "",
+    adminPhone: "",
   });
+
+  useEffect(() => {
+    fetchReserachCenters();
+  }, [fetchReserachCenters]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) return;
-    const newId = form.name.toLowerCase().replace(/\s+/g, "-");
-    setDivisions([...divisions, { ...form, id: newId }]);
+
+    await createResearchCenter(
+      form.admin,
+      form.adminEmail,
+      form.adminPhone,
+      form.name,
+      form.location,
+      form.email
+    );
+
     setForm({
       name: "",
-      lead: "",
+      location: "",
       email: "",
-      phone: "",
-      focus: "",
+      admin: "",
       adminEmail: "",
-      adminContact: "",
+      adminPhone: "",
     });
     setShowForm(false);
+
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
-  const handleDelete = (id) => {
-    setDivisions(divisions.filter((division) => division.id !== id));
+  const handleDelete = async (id) => {
+    await deleteResearchCenter(id);
   };
+
+  if (loading.researchCenters) {
+    return (
+      <div className="py-10 px-4 bg-transparent transition-colors">
+        <div className="max-w-6xl mx-auto text-center">
+          <p>Loading research centers...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-10 px-4 bg-transparent transition-colors">
@@ -81,15 +105,19 @@ function ResearchDivisionsTab() {
           transition={{ duration: 0.8 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {divisions.map((division) => (
+          {researchCenters.map((center) => (
             <motion.div
-              key={division.id}
+              key={center._id}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
               className="relative"
             >
-              <Link
-                to={`/dashboard/research-divisions/${division.id}`}
+              <div
+                onClick={() =>
+                  navigate(`/dashboard/research-divisions/${center._id}`, {
+                    state: { centerData: center },
+                  })
+                }
                 className="block bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all group h-full"
                 style={{ minHeight: "260px", position: "relative" }}
               >
@@ -113,26 +141,26 @@ function ResearchDivisionsTab() {
                   </div>
                 </div>
                 <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
-                  {division.name}
+                  {center.name}
                 </h3>
                 <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                  {division.focus ||
-                    "Researching plant health and sustainability"}
+                  {center.location || "Research division location"}
                 </p>
                 {/* Delete button at the bottom right corner */}
                 <div className="absolute bottom-4 right-4">
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      handleDelete(division.id);
+                      handleDelete(center._id);
                     }}
                     className="bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-full p-2 transition"
                     title="Delete Division"
+                    disabled={loading.deleteResearchCenter}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </motion.div>
@@ -165,12 +193,11 @@ function ResearchDivisionsTab() {
             <form onSubmit={handleAdd} className="space-y-4">
               {[
                 "name",
-                "focus",
+                "location",
                 "email",
-                "phone",
-                "lead",
+                "admin",
                 "adminEmail",
-                "adminContact",
+                "adminPhone",
               ].map((field) => (
                 <input
                   key={field}
@@ -189,8 +216,11 @@ function ResearchDivisionsTab() {
                 <button
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium"
+                  disabled={loading.createResearchCenter}
                 >
-                  Add Division
+                  {loading.createResearchCenter
+                    ? "Creating..."
+                    : "Create Research Division"}
                 </button>
               </div>
             </form>

@@ -6,8 +6,6 @@ export const useAdminStore = create((set, get) => ({
   subCenters: [],
   researchCenters: [],
   reports: [],
-  subCenter: null,
-  researchCenter: null,
 
   loading: {
     subCenters: false,
