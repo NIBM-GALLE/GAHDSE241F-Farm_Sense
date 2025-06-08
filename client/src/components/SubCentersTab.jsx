@@ -1,56 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-
-const initialSubCenters = [
-  { id: "gampaha", name: "Gampaha Regional Center" },
-  { id: "matara", name: "Matara Sub-Center" },
-  { id: "anuradhapura", name: "Anuradhapura Field Office" },
-  { id: "jaffna", name: "Jaffna District Branch" },
-];
+import { useAdminStore } from "@/stores/useAdminStore";
+import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function SubCentersTab() {
-  const [subCenters, setSubCenters] = useState(initialSubCenters);
+  const navigate = useNavigate();
+  const {
+    fetchSubCenters,
+    subCenters,
+    loading,
+    createSubCenter,
+    deleteSubCenter,
+  } = useAdminStore();
+
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     name: "",
     location: "",
     email: "",
-    phone: "",
     admin: "",
     adminEmail: "",
     adminPhone: "",
   });
 
+  useEffect(() => {
+    fetchSubCenters();
+  }, [fetchSubCenters]);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    if (!form.name.trim()) return;
-    const newId = form.name.toLowerCase().replace(/\s+/g, "-");
-    setSubCenters([...subCenters, { ...form, id: newId }]);
+
+    await createSubCenter(
+      form.admin,
+      form.adminEmail,
+      form.adminPhone,
+      form.name,
+      form.location,
+      form.email
+    );
+
     setForm({
       name: "",
       location: "",
       email: "",
-      phone: "",
       admin: "",
       adminEmail: "",
       adminPhone: "",
     });
     setShowForm(false);
+
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
-  const handleDelete = (id) => {
-    setSubCenters(subCenters.filter((center) => center.id !== id));
+  const handleDelete = async (id) => {
+    console.log("Deleting sub-center with ID:", id);
+    await deleteSubCenter(id);
   };
+
+  if (loading.subCenters) {
+    return (
+      <div className="py-10 px-4 bg-transparent transition-colors">
+        <div className="max-w-6xl mx-auto text-center">
+          <p>Loading sub-centers...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-10 px-4 bg-transparent transition-colors">
@@ -88,9 +112,16 @@ function SubCentersTab() {
               whileTap={{ scale: 0.98 }}
               className="relative"
             >
-              <Link
-                to={`/dashboard/sub-centers/${center.id}`}
-                className="block bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all group"
+              <div
+                onClick={() =>
+                  navigate(`/dashboard/sub-centers/${center._id}`, {
+                    state: { centerData: center },
+                  })
+                }
+                className="cursor-pointer bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all group relative"
+                tabIndex={0}
+                role="button"
+                aria-label={`View details for ${center.name}`}
               >
                 <div className="h-16 flex items-center justify-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">
@@ -117,20 +148,20 @@ function SubCentersTab() {
                 <p className="text-sm text-green-600 dark:text-green-400 mt-2">
                   Click to view details
                 </p>
-                {/* Delete button at the bottom */}
                 <div className="flex justify-end mt-4">
                   <button
                     onClick={(e) => {
-                      e.preventDefault();
-                      handleDelete(center.id);
+                      e.stopPropagation();
+                      handleDelete(center._id);
                     }}
                     className="bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-full p-2 transition"
                     title="Delete Branch"
+                    tabIndex={0}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </motion.div>
@@ -165,7 +196,6 @@ function SubCentersTab() {
                 "name",
                 "location",
                 "email",
-                "phone",
                 "admin",
                 "adminEmail",
                 "adminPhone",
@@ -188,7 +218,9 @@ function SubCentersTab() {
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium"
                 >
-                  Add Sub Center
+                  {loading.createSubCenter
+                    ? "Creating..."
+                    : "Create Sub Center"}
                 </button>
               </div>
             </form>

@@ -104,13 +104,15 @@ export const createSubCenter = async (req, res, next) => {
       next
     );
 
+    const subCenterNew = await SubCenter.findById(subCenter._id).populate(
+      "admins",
+      "name email contactNumber"
+    );
+
     res.status(201).json({
       status: "success",
       message: "Sub center created successfully",
-      data: {
-        subCenter,
-        subCenterAdmin,
-      },
+      subCenter: subCenterNew,
     });
   } catch (error) {
     console.log("Error in createSubCenter:", error);
@@ -212,13 +214,14 @@ export const createResearchCenter = async (req, res, next) => {
       next
     );
 
+    const researchCenterNew = await ResearchDivision.findById(
+      researchCenter._id
+    ).populate("admins", "name email contactNumber");
+
     res.status(201).json({
       status: "success",
       message: "Research center created successfully",
-      data: {
-        researchCenter,
-        researchCenterAdmin,
-      },
+      researchCenter: researchCenterNew,
     });
   } catch (error) {
     console.log("Error in createResearchCenter:", error);
@@ -251,17 +254,15 @@ export const getAllSubCenters = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       message: "Sub centers retrieved successfully",
-      data: {
-        subCenters,
-        pagination: {
-          itemsPerPage: limit,
-          totalItems: totalSubCenters,
-          totalPages,
-          hasNext,
-          hasPrevious,
-          nextPage: hasNext ? page + 1 : null,
-          previousPage: hasPrevious ? page - 1 : null,
-        },
+      subCenters,
+      pagination: {
+        itemsPerPage: limit,
+        totalItems: totalSubCenters,
+        totalPages,
+        hasNext,
+        hasPrevious,
+        nextPage: hasNext ? page + 1 : null,
+        previousPage: hasPrevious ? page - 1 : null,
       },
     });
   } catch (error) {
@@ -291,18 +292,16 @@ export const getAllResearchCenters = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       message: "Research centers retrieved successfully",
-      data: {
-        researchCenters,
-        pagination: {
-          currentPage: page,
-          itemsPerPage: limit,
-          totalItems: totalResearchCenters,
-          totalPages,
-          hasNext,
-          hasPrevious,
-          nextPage: hasNext ? page + 1 : null,
-          previousPage: hasPrevious ? page - 1 : null,
-        },
+      researchCenters,
+      pagination: {
+        currentPage: page,
+        itemsPerPage: limit,
+        totalItems: totalResearchCenters,
+        totalPages,
+        hasNext,
+        hasPrevious,
+        nextPage: hasNext ? page + 1 : null,
+        previousPage: hasPrevious ? page - 1 : null,
       },
     });
   } catch (error) {

@@ -1,52 +1,16 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Phone, Mail, User } from "lucide-react";
 
-const subCenters = {
-  gampaha: {
-    name: "Gampaha Regional Center",
-    location: "No. 12, Yakkala Road, Gampaha",
-    email: "gampaha@farmsense.lk",
-    phone: "033-2223344",
-    admin: "Nimal Perera",
-    image:
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-  },
-  matara: {
-    name: "Matara Sub-Center",
-    location: "45 Weligama Road, Matara",
-    email: "matara@farmsense.lk",
-    phone: "041-2224455",
-    admin: "Sunil Silva",
-    image:
-      "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
-  },
-  anuradhapura: {
-    name: "Anuradhapura Field Office",
-    location: "Near Thissa Wewa, New Town, Anuradhapura",
-    email: "anuradhapura@farmsense.lk",
-    phone: "025-2233445",
-    admin: "Kamal Jayasuriya",
-    image:
-      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=400&q=80",
-  },
-  jaffna: {
-    name: "Jaffna District Branch",
-    location: "KKS Road, Jaffna",
-    email: "jaffna@farmsense.lk",
-    phone: "021-2255889",
-    admin: "Sivakumar Rajan",
-    image:
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-  },
-};
-
 function SubCenters() {
   const { id } = useParams();
-  const center = subCenters[id];
+  const location = useLocation();
+  const centerData = location.state?.centerData;
+  console.log("Location state:", location.state);
+  console.log("Center Data:", centerData);
 
-  if (!center) {
+  if (!centerData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5 dark:from-green-900/20 dark:to-green-900/5 transition-colors">
         <motion.div
@@ -85,8 +49,8 @@ function SubCenters() {
               className="md:w-1/3 bg-green-900/20 flex items-center justify-center p-6"
             >
               <img
-                src={center.image}
-                alt={center.name}
+                src={centerData.image || "https://via.placeholder.com/300"}
+                alt={centerData.name}
                 className="w-full h-64 md:h-auto object-cover rounded-lg shadow-md"
               />
             </motion.div>
@@ -98,7 +62,7 @@ function SubCenters() {
                 transition={{ delay: 0.2 }}
                 className="text-2xl md:text-3xl font-bold text-green-900 dark:text-white mb-6"
               >
-                {center.name}
+                {centerData.name || "Sub Center Name"}
               </motion.h1>
 
               <div className="space-y-4">
@@ -109,7 +73,7 @@ function SubCenters() {
                       Location
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {center.location}
+                      {centerData.location || "No location provided"}
                     </p>
                   </div>
                 </div>
@@ -121,7 +85,7 @@ function SubCenters() {
                       Phone
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {center.phone}
+                      {centerData.contactNumber || "No phone number provided"}
                     </p>
                   </div>
                 </div>
@@ -133,7 +97,7 @@ function SubCenters() {
                       Email
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {center.email}
+                      {centerData.email || "No email provided"}
                     </p>
                   </div>
                 </div>
@@ -145,7 +109,13 @@ function SubCenters() {
                       Admin
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {center.admin}
+                      {centerData.admins && centerData.admins.length > 0
+                        ? centerData.admins.map((admin) => (
+                            <span key={admin._id} className="block">
+                              {admin.name} ({admin.email})
+                            </span>
+                          ))
+                        : "No admins assigned"}
                     </p>
                   </div>
                 </div>
@@ -153,7 +123,6 @@ function SubCenters() {
 
               {/* Back button under the card */}
               <div className="flex justify-center mt-8">
-
                 <Link
                   to="/dashboard/sub-centers"
                   className="mt-4 flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"

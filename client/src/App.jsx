@@ -81,7 +81,7 @@ function AppContent({ user, loading }) {
     "main-admin",
     "ResearchDivisionAdmin",
     "sub-center-admin",
-    "VisitAgent",
+    "visit-agent",
   ];
 
   return (
