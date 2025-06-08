@@ -71,9 +71,13 @@ function Dashboard() {
   }, [user, location.pathname, accessibleTabs, navigate]);
 
   // Current active tab from URL
+  // Current active tab from URL
   const currentTab =
-    accessibleTabs.find((item) => location.pathname.endsWith(item.path))
-      ?.title || accessibleTabs[0]?.title;
+    accessibleTabs.find((item) => {
+      // Split the pathname and check if the tab's path exists as a segment
+      const segments = location.pathname.split("/");
+      return segments.includes(item.path);
+    })?.title || accessibleTabs[0]?.title;
 
   const handleTabChange = (tabTitle) => {
     const tab = accessibleTabs.find((i) => i.title === tabTitle);
