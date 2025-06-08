@@ -75,7 +75,6 @@ function Dashboard() {
   }, [user, location.pathname, accessibleTabs, navigate]);
 
   // Current active tab from URL
-  // Current active tab from URL
   const currentTab =
     accessibleTabs.find((item) => {
       // Split the pathname and check if the tab's path exists as a segment
@@ -96,6 +95,7 @@ function Dashboard() {
         items={accessibleTabs}
         activeTab={currentTab}
         setActiveTab={handleTabChange}
+        role={user.role}
       />
       <main className="flex-1 p-8">
         <Routes>

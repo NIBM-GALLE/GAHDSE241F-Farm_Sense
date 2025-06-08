@@ -1,15 +1,32 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
-
-function Sidebar({ items, activeTab, setActiveTab }) {
+import { useUserStore } from "@/stores/useUserStore";
+function Sidebar({ items, activeTab, setActiveTab, role }) {
   const navigate = useNavigate();
+  const { logout } = useUserStore();
+
+  const roleDisplayNames = {
+    "main-admin": "Admin",
+    "sub-center-admin": "Center Admin",
+    ResearchDivisionAdmin: "Research Admin",
+    "visit-agent": "Visit Agent",
+    // add more as needed
+  };
+
+  const handleLogout = async () => {
+    await logout(navigate);
+  };
 
   return (
     <aside className="w-64 h-screen bg-background border-r flex flex-col shadow-lg dark:bg-gray-900 dark:border-gray-800">
       <div className="flex items-center justify-between px-6 py-4 border-b dark:border-gray-800">
-        <span className="font-poppins text-xl font-semibold tracking-tight text-foreground">
+        <span className="font-poppins text-xl font-semibold tracking-tight text-foreground block">
           Navigate
+          <span className="block text-sm font-normal text-muted-foreground mt-1">
+            You are logged in as:{" "}
+            <span className="capitalize">{roleDisplayNames[role] || role}</span>
+          </span>
         </span>
         <ModeToggle />
       </div>
@@ -45,6 +62,14 @@ function Sidebar({ items, activeTab, setActiveTab }) {
               className="flex items-center w-full px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-muted transition-colors"
             >
               <span>← Back to Main Site</span>
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full px-4 py-2 rounded-lg text-red-600 hover:bg-muted transition-colors"
+            >
+              <span>Logout</span>
             </button>
           </li>
         </ul>
