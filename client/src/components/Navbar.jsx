@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ModeToggle } from "./ModeToggle";
 import userPng from "../assets/images/user.png";
 import { useUserStore } from "@/stores/useUserStore";
@@ -10,6 +10,7 @@ function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await logout(navigate);
@@ -17,8 +18,11 @@ function Navbar() {
     setIsMobileMenuOpen(false);
   };
 
+  // Helper to check if a path is active
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="bg-white/70 border-gray-200 dark:bg-gray-900">
+    <nav className="bg-white/70 border-b border-gray-300 shadow-sm dark:bg-gray-900 dark:border-none">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo */}
         <Link
@@ -77,7 +81,8 @@ function Navbar() {
                     <li>
                       <Link
                         to="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:text-green-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
+                        onClick={() => setIsDropdownOpen(false)}
                       >
                         Profile
                       </Link>
@@ -91,7 +96,8 @@ function Navbar() {
                       <li>
                         <Link
                           to="/dashboard"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:text-green-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
+                          onClick={() => setIsDropdownOpen(false)}
                         >
                           Dashboard
                         </Link>
@@ -101,7 +107,7 @@ function Navbar() {
                     <li>
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:text-green-700 hover:bg-gray-100 dark:hover:bg-green-700 dark:text-gray-700 dark:hover:text-white"
                       >
                         Sign out
                       </button>
@@ -150,7 +156,11 @@ function Navbar() {
             <li>
               <Link
                 to="/"
-                className="block py-2 px-3 text-white bg-green-800 rounded-sm md:bg-transparent md:text-green-800/80 md:p-0 md:dark:text-green-400/80"
+                className={`block py-2 px-3 rounded-sm md:p-0 font-semibold ${
+                  isActive("/")
+                    ? "text-green-700 dark:text-green-400 underline underline-offset-4"
+                    : "text-gray-900 md:bg-transparent md:text-green-800/80 md:dark:text-green-400/80"
+                }`}
               >
                 Home
               </Link>
@@ -158,7 +168,11 @@ function Navbar() {
             <li>
               <Link
                 to="/about"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                className={`block py-2 px-3 rounded-sm md:p-0 font-semibold ${
+                  isActive("/about")
+                    ? "text-green-700 dark:text-green-400 underline underline-offset-4"
+                    : "text-gray-900 md:bg-transparent md:text-green-800/80 md:dark:text-green-400/80"
+                }`}
               >
                 About
               </Link>
@@ -166,7 +180,11 @@ function Navbar() {
             <li>
               <Link
                 to="/services"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                className={`block py-2 px-3 rounded-sm md:p-0 font-semibold ${
+                  isActive("/services")
+                    ? "text-green-700 dark:text-green-400 underline underline-offset-4"
+                    : "text-gray-900 md:bg-transparent md:text-green-800/80 md:dark:text-green-400/80"
+                }`}
               >
                 Services
               </Link>
@@ -174,7 +192,11 @@ function Navbar() {
             <li>
               <Link
                 to="/contact"
-                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 dark:text-white md:dark:hover:text-green-700 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                className={`block py-2 px-3 rounded-sm md:p-0 font-semibold ${
+                  isActive("/contact")
+                    ? "text-green-700 dark:text-green-400 underline underline-offset-4"
+                    : "text-gray-900 md:bg-transparent md:text-green-800/80 md:dark:text-green-400/80"
+                }`}
               >
                 Contact
               </Link>

@@ -159,7 +159,8 @@ function SubCentersTab() {
                   </p>
                 </div>
 
-                <div className="absolute top-4 right-4">
+                {/* Delete button moved to bottom end corner */}
+                <div className="absolute bottom-4 right-4">
                   <Dialog>
                     <DialogTrigger asChild>
                       <button
@@ -261,6 +262,24 @@ function SubCentersTab() {
                   {loading.createSubCenter
                     ? "Creating..."
                     : "Create Sub Center"}
+                </button>
+                <button
+                  type="button"
+                  className="border border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 px-6 py-2 rounded font-medium hover:bg-green-50 dark:hover:bg-green-900/30 transition"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowForm(false);
+                    setForm({
+                      name: "",
+                      location: "",
+                      email: "",
+                      admin: "",
+                      adminEmail: "",
+                      adminPhone: "",
+                    });
+                  }}
+                >
+                  Cancel
                 </button>
               </div>
             </form>

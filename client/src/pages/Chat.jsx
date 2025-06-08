@@ -18,7 +18,6 @@ function Chat() {
   const chatEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Auto-scroll to bottom when chats update
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chats]);
@@ -26,7 +25,6 @@ function Chat() {
   const handleSendImage = async () => {
     if (!image) return;
 
-    // Add user's image to chat
     setChats((prev) => [
       ...prev,
       {
@@ -38,14 +36,9 @@ function Chat() {
 
     try {
       setIsTyping(true);
-
-      // Get prediction from model
       const result = await getPrediction(image);
-
-      // Format the bot's response
       const botResponse = `Cause: ${result.cause}\n\nTreatment: ${result.cure}`;
 
-      // Add bot's response to chat
       setChats((prev) => [
         ...prev,
         {
@@ -75,17 +68,16 @@ function Chat() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Please upload an image smaller than 5MB");
       return;
     }
+
     if (!file.type.match("image.*")) {
       toast.error("Please upload an image file (JPEG, PNG, etc.)");
       return;
     }
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => setImage(reader.result);
     reader.readAsDataURL(file);
@@ -95,9 +87,8 @@ function Chat() {
   const handleBack = () => window.history.back();
 
   return (
-    <div className="min-h-screen py-16 sm:py-20 px-4 bg-black transition-colors">
+    <div className="min-h-screen py-16 sm:py-20 px-4 bg-white dark:bg-black transition-colors">
       <div className="max-w-3xl w-full mx-auto flex flex-col flex-1">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -115,13 +106,11 @@ function Chat() {
           </p>
         </motion.div>
 
-        {/* Main chat container */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="flex-1 flex flex-col bg-white dark:bg-gray-800 rounded-2xl border border-green-100 dark:border-green-700 shadow-xl min-h-[75vh] h-[85vh]"
         >
-          {/* Chat header */}
           <div className="p-4 border-b border-green-100 dark:border-green-900/50 bg-green-50 dark:bg-green-900/20 rounded-t-2xl flex justify-between items-center">
             <div>
               <h3 className="text-base font-semibold text-green-900 dark:text-white">
@@ -143,7 +132,6 @@ function Chat() {
             </div>
           </div>
 
-          {/* Messages area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-green-50/30 dark:bg-gray-900/30 rounded-b-2xl">
             {chats.map((msg, i) => (
               <motion.div
@@ -166,7 +154,7 @@ function Chat() {
                     <div className="flex flex-col gap-1">
                       <img
                         src={msg.content}
-                        alt="Uploaded crop photo"
+                        alt="Uploaded crop"
                         className="max-w-[180px] max-h-[180px] object-contain rounded border border-green-200 dark:border-green-800"
                       />
                       <span className="text-xs text-green-100 dark:text-green-300">
@@ -187,7 +175,7 @@ function Chat() {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Image upload area */}
+          {/* Upload & Send Section */}
           <div className="p-4 border-t border-green-100 dark:border-green-900/50 bg-green-50/60 dark:bg-gray-700/20 rounded-b-2xl">
             {image && (
               <motion.div
@@ -247,15 +235,11 @@ function Chat() {
               </button>
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-              <span>
-                Only image upload is enabled • Maximum file size: 5MB •
-                Supported formats: JPEG, PNG
-              </span>
+              Only image upload is enabled • Max file size: 5MB • JPEG/PNG
             </div>
           </div>
         </motion.div>
 
-        {/* Back Button */}
         <div className="flex justify-end mt-6">
           <button
             onClick={handleBack}
@@ -278,7 +262,6 @@ function Chat() {
           </button>
         </div>
 
-        {/* Footer */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -287,7 +270,7 @@ function Chat() {
         >
           <p>FarmSense support team available 24/7</p>
           <p className="mt-1">
-            Average response time: 15-30 minutes during business hours
+            Average response time: 15–30 minutes during business hours
           </p>
         </motion.div>
       </div>
