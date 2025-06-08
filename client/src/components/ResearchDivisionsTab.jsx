@@ -160,7 +160,8 @@ function ResearchDivisionsTab() {
                   </p>
                 </div>
 
-                <div className="absolute top-4 right-4">
+                {/* Delete button moved to bottom end corner */}
+                <div className="absolute bottom-4 right-4">
                   <Dialog>
                     <DialogTrigger asChild>
                       <button
@@ -254,7 +255,7 @@ function ResearchDivisionsTab() {
                   className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
               ))}
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-4">
                 <button
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium"
@@ -263,6 +264,23 @@ function ResearchDivisionsTab() {
                   {loading.createResearchCenter
                     ? "Creating..."
                     : "Create Research Division"}
+                </button>
+                <button
+                  type="button"
+                  className="border border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 px-6 py-2 rounded font-medium hover:bg-green-50 dark:hover:bg-green-900/30 transition"
+                  onClick={() => {
+                    setShowForm(false);
+                    setForm({
+                      name: "",
+                      location: "",
+                      email: "",
+                      admin: "",
+                      adminEmail: "",
+                      adminPhone: "",
+                    });
+                  }}
+                >
+                  Cancel
                 </button>
               </div>
             </form>

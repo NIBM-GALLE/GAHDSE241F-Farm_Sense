@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { PlusCircle, Edit2, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const initialAgents = [
   {
@@ -22,7 +30,7 @@ function VisitAgentsTab() {
   const [agents, setAgents] = useState(initialAgents);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phoneNumber: "" });
-  const [editId, setEditId] = useState(null);
+  const [agentToDelete, setAgentToDelete] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,36 +42,16 @@ function VisitAgentsTab() {
     if (!form.name.trim() || !form.email.trim() || !form.phoneNumber.trim())
       return;
 
-    if (editId) {
-      setAgents(
-        agents.map((agent) =>
-          agent.id === editId ? { ...agent, ...form } : agent
-        )
-      );
-    } else {
-      const newId = `agent-${Math.floor(Math.random() * 10000)}`;
-      setAgents([...agents, { ...form, id: newId }]);
-    }
+    const newId = `agent-${Math.floor(Math.random() * 10000)}`;
+    setAgents([...agents, { ...form, id: newId }]);
 
     setForm({ name: "", email: "", phoneNumber: "" });
-    setEditId(null);
     setShowForm(false);
   };
 
-  const handleEdit = (agent) => {
-    setForm({
-      name: agent.name,
-      email: agent.email,
-      phoneNumber: agent.phoneNumber,
-    });
-    setEditId(agent.id);
-    setShowForm(true);
-  };
-
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this agent?")) {
-      setAgents(agents.filter((agent) => agent.id !== id));
-    }
+    setAgents(agents.filter((agent) => agent.id !== id));
+    setAgentToDelete(null);
   };
 
   return (
@@ -120,13 +108,43 @@ function VisitAgentsTab() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => handleDelete(agent.id)}
-                      title="Delete"
-                      className="p-2 rounded-full bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300"
+                    <Dialog
+                      open={agentToDelete === agent.id}
+                      onOpenChange={(open) => !open && setAgentToDelete(null)}
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                      <DialogTrigger asChild>
+                        <button
+                          onClick={() => setAgentToDelete(agent.id)}
+                          title="Delete"
+                          className="p-2 rounded-full bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Confirm Deletion</DialogTitle>
+                          <DialogDescription>
+                            Are you sure you want to delete this agent? This
+                            action cannot be undone.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex justify-end gap-4 mt-4">
+                          <Button
+                            variant="outline"
+                            onClick={() => setAgentToDelete(null)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            onClick={() => handleDelete(agent.id)}
+                          >
+                            Delete Agent
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </td>
               </tr>
@@ -145,7 +163,6 @@ function VisitAgentsTab() {
             className="border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 px-8 py-3 rounded-lg font-medium transition-colors"
             onClick={() => {
               setShowForm(!showForm);
-              setEditId(null);
               setForm({ name: "", email: "", phoneNumber: "" });
             }}
           >
@@ -161,7 +178,7 @@ function VisitAgentsTab() {
             className="bg-white dark:bg-[#1f2937] border border-green-200 dark:border-green-700 rounded-xl p-6 sm:p-8 mt-8 max-w-2xl mx-auto shadow-md"
           >
             <h3 className="text-xl font-bold mb-4 text-green-900 dark:text-green-100 text-center">
-              {editId ? "Edit Visit Agent" : "Add Visit Agent"}
+              Add Visit Agent
             </h3>
             <form onSubmit={handleAdd} className="space-y-4">
               {["name", "email", "phoneNumber"].map((field) => (
@@ -184,13 +201,12 @@ function VisitAgentsTab() {
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition shadow hover:shadow-green-700/30"
                 >
-                  {editId ? "Update Agent" : "Add Agent"}
+                  Add Agent
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     setShowForm(false);
-                    setEditId(null);
                     setForm({ name: "", email: "", phoneNumber: "" });
                   }}
                   className="border border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 px-6 py-2 rounded-lg font-medium transition hover:bg-green-50 dark:hover:bg-green-900/30"
