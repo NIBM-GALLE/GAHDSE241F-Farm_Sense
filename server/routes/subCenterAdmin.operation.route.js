@@ -9,6 +9,8 @@ import {
   assignVisitAgentToPlantCase,
   assignResearchCenterToPlantCase,
   createAdmins,
+  getAllResearchCenters,
+  updateSubCenterDetails,
 } from "../controllers/subCenterAdmin.operations.controller.js";
 
 const router = express.Router();
@@ -61,4 +63,17 @@ router.post(
   createAdmins
 );
 
+router.get(
+  "/get-all-research-centers",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  getAllResearchCenters
+);
+
+router.patch(
+  "/update-sub-center-details",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  updateSubCenterDetails
+);
 export default router;

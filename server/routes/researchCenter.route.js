@@ -4,6 +4,8 @@ import { researchDivisionAdminMiddleware } from "../middleware/roles.middleware.
 import {
   getAllPlantCasesForResearchCenter,
   addCommentToPlantCaseForResearchCenter,
+  updateResearchCenterDetails,
+  createAdmin,
 } from "../controllers/researchCenter.controller.js";
 
 const router = express.Router();
@@ -22,4 +24,17 @@ router.patch(
   addCommentToPlantCaseForResearchCenter
 );
 
+router.patch(
+  "/update-research-center",
+  authMiddleware,
+  researchDivisionAdminMiddleware,
+  updateResearchCenterDetails
+);
+
+router.post(
+  "/create-admin",
+  authMiddleware,
+  researchDivisionAdminMiddleware,
+  createAdmin
+);
 export default router;

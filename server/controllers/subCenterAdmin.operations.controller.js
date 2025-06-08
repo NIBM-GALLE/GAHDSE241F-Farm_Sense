@@ -296,10 +296,6 @@ export const assignResearchCenterToPlantCase = async (req, res, next) => {
 
     plantCase.assignedResearchDivision = researchCenterId;
     plantCase.researchDivisionAssignedBy = req.userId;
-    console.log(
-      plantCase.researchDivisionAssignedBy,
-      "researchDivisionAssignedBy"
-    );
     plantCase.answerStatus = "pending";
 
     await plantCase.save();
@@ -389,6 +385,68 @@ export const createAdmins = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error in createAdmins:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getAllResearchCenters = async (req, res, next) => {
+  try {
+    const researchCenters = await ResearchDivision.find()
+      .select("name location contactNumber email")
+      .sort({ createdAt: -1 });
+
+    if (researchCenters.length === 0) {
+      return next(errorHandler(404, "No research centers found"));
+    }
+
+    res.status(200).json({
+      message: "Research centers fetched successfully",
+      researchCenters,
+    });
+  } catch (error) {
+    console.error("Error in getAllResearchCenters:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const updateSubCenterDetails = async (req, res, next) => {
+  try {
+    const { email, contactNumber } = req.body;
+    if (!email && !contactNumber) {
+      return next(
+        errorHandler(
+          400,
+          "At least one field (email or contact number) is required"
+        )
+      );
+    }
+
+    const subCenter = await SubCenter.findById(req.subCenterId);
+    if (!subCenter) {
+      return next(errorHandler(404, "Sub Center not found"));
+    }
+
+    if (!subCenter.admins.includes(req.userId)) {
+      return next(
+        errorHandler(403, "Unauthorized access to update sub center details")
+      );
+    }
+
+    subCenter.email = email || subCenter.email;
+    subCenter.contactNumber = contactNumber || subCenter.contactNumber;
+
+    await subCenter.save();
+    const updatedSubCenter = await SubCenter.findById(req.subCenterId).populate(
+      "admins",
+      "name email contactNumber"
+    );
+
+    res.status(200).json({
+      message: "Sub Center details updated successfully",
+      subCenter: updatedSubCenter,
+    });
+  } catch (error) {
+    console.error("Error in updateSubCenterDetails:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };
