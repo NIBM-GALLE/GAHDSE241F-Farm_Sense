@@ -1,56 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
-
-const initialDivisions = [
-  { id: "plant-pathology", name: "Plant Pathology Division" },
-  { id: "entomology", name: "Entomology Division" },
-  { id: "soil-science", name: "Soil Science Division" },
-  { id: "data-analysis", name: "Agro Data Analysis Unit" },
-];
+import { useAdminStore } from "../stores/useAdminStore";
+import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 function ResearchDivisionsTab() {
-  const [divisions, setDivisions] = useState(initialDivisions);
+  const navigate = useNavigate();
+  const {
+    fetchReserachCenters,
+    researchCenters,
+    loading,
+    createResearchCenter,
+    deleteResearchCenter,
+  } = useAdminStore();
+
   const [showForm, setShowForm] = useState(false);
+  const [centerToDelete, setCenterToDelete] = useState(null);
   const [form, setForm] = useState({
     name: "",
-    lead: "",
+    location: "",
     email: "",
-    phone: "",
-    focus: "",
+    admin: "",
     adminEmail: "",
-    adminContact: "",
+    adminPhone: "",
   });
+
+  useEffect(() => {
+    fetchReserachCenters();
+  }, [fetchReserachCenters]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) return;
-    const newId = form.name.toLowerCase().replace(/\s+/g, "-");
-    setDivisions([...divisions, { ...form, id: newId }]);
+
+    await createResearchCenter(
+      form.admin,
+      form.adminEmail,
+      form.adminPhone,
+      form.name,
+      form.location,
+      form.email
+    );
+
     setForm({
       name: "",
-      lead: "",
+      location: "",
       email: "",
-      phone: "",
-      focus: "",
+      admin: "",
       adminEmail: "",
-      adminContact: "",
+      adminPhone: "",
     });
     setShowForm(false);
+
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
-  const handleDelete = (id) => {
-    setDivisions(divisions.filter((division) => division.id !== id));
+  const handleDelete = async (id) => {
+    await deleteResearchCenter(id);
+    setCenterToDelete(null);
   };
+
+  if (loading.researchCenters) {
+    return (
+      <div className="py-10 px-4 bg-transparent transition-colors">
+        <div className="max-w-6xl mx-auto text-center">
+          <p>Loading research centers...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-10 px-4 bg-transparent transition-colors">
@@ -81,58 +114,95 @@ function ResearchDivisionsTab() {
           transition={{ duration: 0.8 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {divisions.map((division) => (
+          {researchCenters.map((center) => (
             <motion.div
-              key={division.id}
+              key={center._id}
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.98 }}
-              className="relative"
+              className="relative bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-800/50 hover:shadow-lg hover:shadow-green-900/20 transition-all"
             >
-              <Link
-                to={`/dashboard/research-divisions/${division.id}`}
-                className="block bg-green-50 dark:bg-[#1f2937] rounded-xl border border-green-200 dark:border-green-800/50 p-6 text-center hover:shadow-lg hover:shadow-green-900/20 transition-all group h-full"
-                style={{ minHeight: "260px", position: "relative" }}
-              >
-                <div className="h-16 flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-5 h-5 text-green-600 dark:text-green-400"
-                    >
-                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
+              <div className="flex flex-col h-full">
+                <div
+                  onClick={() =>
+                    navigate(`/dashboard/research-divisions/${center._id}`, {
+                      state: { centerData: center },
+                    })
+                  }
+                  className="cursor-pointer p-6 text-center flex-grow"
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`View details for ${center.name}`}
+                >
+                  <div className="h-16 flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-800 transition-colors">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-5 h-5 text-green-600 dark:text-green-400"
+                      >
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                    </div>
                   </div>
+                  <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
+                    {center.name}
+                  </h3>
+                  <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                    {center.location || "Research division location"}
+                  </p>
                 </div>
-                <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
-                  {division.name}
-                </h3>
-                <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                  {division.focus ||
-                    "Researching plant health and sustainability"}
-                </p>
-                {/* Delete button at the bottom right corner */}
-                <div className="absolute bottom-4 right-4">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleDelete(division.id);
-                    }}
-                    className="bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-full p-2 transition"
-                    title="Delete Division"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+
+                <div className="absolute top-4 right-4">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button
+                        className="bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-full p-2 transition"
+                        title="Delete Division"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCenterToDelete(center._id);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to delete this research
+                          division? This action cannot be undone.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex justify-end gap-4 mt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => setCenterToDelete(null)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDelete(centerToDelete)}
+                          disabled={loading.deleteResearchCenter}
+                        >
+                          {loading.deleteResearchCenter
+                            ? "Deleting..."
+                            : "Delete Division"}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </motion.div>
@@ -165,12 +235,11 @@ function ResearchDivisionsTab() {
             <form onSubmit={handleAdd} className="space-y-4">
               {[
                 "name",
-                "focus",
+                "location",
                 "email",
-                "phone",
-                "lead",
+                "admin",
                 "adminEmail",
-                "adminContact",
+                "adminPhone",
               ].map((field) => (
                 <input
                   key={field}
@@ -189,8 +258,11 @@ function ResearchDivisionsTab() {
                 <button
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-medium"
+                  disabled={loading.createResearchCenter}
                 >
-                  Add Division
+                  {loading.createResearchCenter
+                    ? "Creating..."
+                    : "Create Research Division"}
                 </button>
               </div>
             </form>

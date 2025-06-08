@@ -86,7 +86,7 @@ function Navbar() {
                       "main-admin",
                       "ResearchDivisionAdmin",
                       "sub-center-admin",
-                      "VisitAgent",
+                      "visit-agent",
                     ].includes(user.role) && (
                       <li>
                         <Link

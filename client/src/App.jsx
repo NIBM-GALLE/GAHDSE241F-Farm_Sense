@@ -62,6 +62,7 @@ function AppContent({ user, loading }) {
 
   const hideNavbarPatterns = [
     /^\/dashboard\/sub-centers(\/.*)?$/,
+    /^\/dashboard\/admins(\/.*)?$/,
     /^\/dashboard\/research-divisions(\/.*)?$/,
     /^\/dashboard\/reports$/,
     /^\/dashboard\/visit-agents$/,
@@ -81,7 +82,7 @@ function AppContent({ user, loading }) {
     "main-admin",
     "ResearchDivisionAdmin",
     "sub-center-admin",
-    "VisitAgent",
+    "visit-agent",
   ];
 
   return (

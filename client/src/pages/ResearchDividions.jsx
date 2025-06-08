@@ -1,48 +1,14 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin, Phone, Mail, User } from "lucide-react";
 
-const researchDivisions = {
-  "plant-pathology": {
-    name: "Plant Pathology Division",
-    focus: "Detection and control of plant diseases in tropical crops",
-    email: "pathology@farmsense.lk",
-    phone: "011-2345678",
-    lead: "Dr. Malika Fernando",
-    image: "https://picsum.photos/400/300?random=1",
-  },
-  entomology: {
-    name: "Entomology Division",
-    focus: "Study and control of insect-related crop threats",
-    email: "entomology@farmsense.lk",
-    phone: "011-2356789",
-    lead: "Dr. K. Seneviratne",
-    image: "https://picsum.photos/400/300?random=2",
-  },
-  "soil-science": {
-    name: "Soil Science Division",
-    focus: "Research on soil health and sustainable fertilizer use",
-    email: "soilscience@farmsense.lk",
-    phone: "011-2367890",
-    lead: "Dr. Ruwan Jayawardena",
-    image: "https://picsum.photos/400/300?random=3",
-  },
-  "data-analysis": {
-    name: "Agro Data Analysis Unit",
-    focus: "AI-driven analytics for disease trends and forecasting",
-    email: "analytics@farmsense.lk",
-    phone: "011-2378901",
-    lead: "Dr. Chamari Abeykoon",
-    image: "https://picsum.photos/400/300?random=4",
-  },
-};
-
 function ResearchDivisions() {
   const { id } = useParams();
-  const division = researchDivisions[id];
+  const location = useLocation();
+  const centerData = location.state?.centerData || [];
 
-  if (!division) {
+  if (!centerData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#111827] bg-gradient-to-b from-green-900/10 to-green-900/5">
         <motion.div
@@ -79,8 +45,8 @@ function ResearchDivisions() {
               className="md:w-1/3 bg-green-900/20 flex items-center justify-center p-6"
             >
               <img
-                src={division.image}
-                alt={division.name}
+                src={centerData.name}
+                alt={centerData.name}
                 className="w-full h-64 md:h-auto object-cover rounded-lg shadow-md"
                 onError={(e) => {
                   e.target.onerror = null;
@@ -97,7 +63,7 @@ function ResearchDivisions() {
                 transition={{ delay: 0.2 }}
                 className="text-2xl md:text-3xl font-bold text-green-900 dark:text-white mb-6"
               >
-                {division.name}
+                {centerData.name || "Research Division Name"}
               </motion.h1>
 
               <div className="space-y-4">
@@ -105,10 +71,10 @@ function ResearchDivisions() {
                   <MapPin className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
                   <div>
                     <h3 className="text-sm font-medium text-green-700 dark:text-green-300">
-                      Research Focus
+                      Location
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {division.focus}
+                      {centerData.location || "No location provided"}
                     </p>
                   </div>
                 </div>
@@ -120,7 +86,7 @@ function ResearchDivisions() {
                       Phone
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {division.phone}
+                      {centerData.contactNumber || "No phone number provided"}
                     </p>
                   </div>
                 </div>
@@ -132,7 +98,7 @@ function ResearchDivisions() {
                       Email
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {division.email}
+                      {centerData.email || "No email provided"}
                     </p>
                   </div>
                 </div>
@@ -141,10 +107,18 @@ function ResearchDivisions() {
                   <User className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
                   <div>
                     <h3 className="text-sm font-medium text-green-700 dark:text-green-300">
-                      Lead Researcher
+                      Admins
                     </h3>
                     <p className="text-green-800 dark:text-green-100">
-                      {division.lead}
+                      <p className="text-green-800 dark:text-green-100">
+                        {centerData.admins && centerData.admins.length > 0
+                          ? centerData.admins.map((admin) => (
+                              <span key={admin._id} className="block">
+                                {admin.name} ({admin.email})
+                              </span>
+                            ))
+                          : "No admins assigned"}
+                      </p>
                     </p>
                   </div>
                 </div>
