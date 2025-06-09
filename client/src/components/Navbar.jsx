@@ -61,8 +61,8 @@ function Navbar() {
               >
                 <span className="sr-only">Open user menu</span>
                 <img
-                  className="w-10 h-10 rounded-full"
-                  src={userPng}
+                  className="w-15 h-10 rounded-full"
+                  src={user.image || userPng}
                   alt="User"
                 />
               </button>

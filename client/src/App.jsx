@@ -61,7 +61,9 @@ function AppContent({ user, loading }) {
   const location = useLocation();
 
   const hideNavbarPatterns = [
-    /^\/dashboard\/sub-centers(\/.*)?$/,
+    /^\/dashboard\/sub-center(\/.*)?$/,
+    /^\/dashboard\/research-center(\/.*)?$/,
+    /^\/dashboard\/sub-centers\/\d+$/,
     /^\/dashboard\/research-cases(\/.*)?$/,
     /^\/dashboard\/visit-cases(\/.*)?$/,
     /^\/dashboard\/admins(\/.*)?$/,
@@ -72,7 +74,7 @@ function AppContent({ user, loading }) {
     /^\/login$/,
     /^\/signup$/,
     /^\/forget-password$/,
-    /^\/reset-password$/,
+    /^\/reset-password\/[^/]+$/,
     /^\/verify-email$/,
   ];
 
@@ -94,7 +96,7 @@ function AppContent({ user, loading }) {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forget-password" element={<Forget_password />} />
-        <Route path="/reset-password" element={<Reset_password />} />
+        <Route path="/reset-password/:token" element={<Reset_password />} />
         <Route path="/" element={<Home />} />
         <Route
           path="/profile"

@@ -68,7 +68,7 @@ function Contact() {
             <h2 className="text-2xl font-semibold text-green-900 dark:text-white mb-6">
               Send Your Message
             </h2>
-            {user ? (
+            {user && user.role === "user" ? (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label
@@ -105,18 +105,19 @@ function Contact() {
                 </button>
               </form>
             ) : (
-              <div className="text-center py-10">
-                <p className="text-green-800 dark:text-green-100 mb-4">
+              <div className="text-center py-10 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-200 dark:border-green-700 shadow-sm p-2">
+                <p className="text-lg text-green-800 dark:text-green-100 mb-4 font-medium">
                   Please{" "}
                   <a
                     href="/login"
-                    className="text-green-600 underline hover:text-green-800"
+                    className="text-green-600 underline hover:text-green-800 font-semibold transition-colors"
                   >
                     sign in
                   </a>{" "}
-                  to send us a message.
+                  as a <span className="font-semibold">Farmer</span> to send us
+                  a message about your crop concerns.
                 </p>
-                <p className="text-green-700 dark:text-green-300">
+                <p className="text-green-700 dark:text-green-300 text-base">
                   Or contact us directly using the information on the right.
                 </p>
               </div>

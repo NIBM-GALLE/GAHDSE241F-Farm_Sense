@@ -33,6 +33,7 @@ function Cases() {
 
   const [selectedAgent, setSelectedAgent] = useState("");
   const [selectedCenter, setSelectedCenter] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -41,6 +42,12 @@ function Cases() {
       fetchResearchCenters();
     }
   }, [id, fetchCase, fetchVisitAgents, fetchResearchCenters]);
+
+  useEffect(() => {
+    if (currentCase) {
+      setSelectedStatus(currentCase.status);
+    }
+  }, [currentCase]);
 
   const getStatusBadge = (status) => {
     const statusMap = {
@@ -75,6 +82,20 @@ function Cases() {
       await assignResearchCenterToPlantCase(id, selectedCenter);
       await fetchCase(id); // Refetch the case to update the UI
       setSelectedCenter("");
+    }
+  };
+
+  const handleStatusUpdate = async () => {
+    if (!id || !selectedStatus) {
+      console.error("No case ID or status provided");
+      return;
+    }
+
+    try {
+      await updatePlantCaseStatus(id, selectedStatus);
+      await fetchCase(id); // Refetch to get updated status
+    } catch (error) {
+      console.error("Failed to update status:", error);
     }
   };
 
@@ -305,7 +326,8 @@ function Cases() {
               </div>
             ) : (
               !!currentCase.assignedVisitAgent &&
-              currentCase.visitAgentComment != null && (
+              currentCase.visitAgentComment != null &&
+              currentCase.status !== "resolved" && (
                 <div className="pt-6 border-t border-green-200 dark:border-green-800">
                   <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
                     <div className="flex-1">
@@ -350,14 +372,32 @@ function Cases() {
               >
                 <ArrowLeft className="w-4 h-4" /> Back to All Cases
               </Button>
-              {currentCase.status !== "resolved" && (
-                <Button
-                  variant="outline"
-                  className="border-green-600 text-green-700 dark:text-green-300"
-                >
-                  Mark as Solved <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
-              )}
+              {currentCase.status !== "resolved" &&
+                !currentCase.assignedResearchDivision &&
+                currentCase.assignedVisitAgent &&
+                currentCase.visitAgentComment && (
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={selectedStatus}
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                      className="border border-green-600 text-green-700 dark:text-green-300 bg-white dark:bg-[#1f2937] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                      <option value="">Select Status</option>
+                      <option value="unsolved">Unsolved</option>
+                      <option value="resolved">Resolved</option>
+                    </select>
+                    <Button
+                      variant="outline"
+                      className="border-green-600 text-green-700 dark:text-green-300"
+                      onClick={handleStatusUpdate}
+                      disabled={
+                        !selectedStatus || selectedStatus === currentCase.status
+                      }
+                    >
+                      Update Status <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                )}
             </div>
           </div>
         </motion.div>

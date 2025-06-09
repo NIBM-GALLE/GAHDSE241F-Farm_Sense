@@ -16,16 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../components/ModeToggle";
-
-// Google logo image (public CDN)
-const googleLogo =
-  "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg";
-
-// Import or define verifyEmailPng
-// If you have the image file, use the import below:
-// import verifyEmailPng from "../assets/images/verify_email.png";
-// If you don't have the image, use a placeholder:
-const verifyEmailPng = "https://placehold.co/400x400?text=Verify+Email";
+import verifyEmailPng from "../assets/images/verify_email.png"; // Adjust the path as necessary
 
 function VerifyEmail() {
   const [loading, setLoading] = useState(false);
@@ -71,14 +62,6 @@ function VerifyEmail() {
       <div className="mx-auto hidden sm:block">
         <img src={verifyEmailPng} alt="verify_email_img" />
         {/* Google Logo below the main image */}
-        <div className="flex justify-center mt-6">
-          <img
-            src={googleLogo}
-            alt="Google"
-            className="w-14 h-14 rounded-full shadow border"
-            title="Google"
-          />
-        </div>
       </div>
       <div className="mx-auto">
         <ModeToggle />
@@ -121,9 +104,9 @@ function VerifyEmail() {
               variant="default"
               size="lg"
               className="w-full"
-              disabled={loading}
+              disabled={loading.verifyEmailLoading}
             >
-              {loading ? "Verifying..." : "Verify Email"}
+              {loading.verifyEmailLoading ? "Verifying..." : "Verify Email"}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">

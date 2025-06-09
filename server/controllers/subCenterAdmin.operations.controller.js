@@ -523,7 +523,7 @@ export const markPlantCaseStatus = async (req, res, next) => {
   try {
     const plantCaseId = req.params.id;
     const { status } = req.body;
-    if (!status || !["solved", "unsolved"].includes(status)) {
+    if (!status || !["resolved", "unsolved"].includes(status)) {
       return next(errorHandler(400, "Status must be 'solved' or 'unsolved'"));
     }
     if (!plantCaseId) {
