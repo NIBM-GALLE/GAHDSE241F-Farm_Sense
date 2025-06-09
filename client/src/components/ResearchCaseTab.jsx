@@ -22,94 +22,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-// Dummy data for research cases
-const dummyCases = [
-  {
-    _id: "1",
-    plantName: "Tomato",
-    plantIssue: "Leaf spot disease",
-    createdAt: new Date().toISOString(),
-    farmerName: "Nimal Perera",
-    farmerAddress: "No. 12, Main Street, Kandy",
-    farmerPhone: "0771234567",
-    subCenter: {
-      name: "Kandy Sub Center",
-      location: "Kandy",
-      contactNo: "0812223344",
-    },
-    assignedAgent: {
-      name: "Agent A",
-      email: "agenta@email.com",
-    },
-    status: "Open",
-    images: [
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-    ],
-  },
-  {
-    _id: "2",
-    plantName: "Chili",
-    plantIssue: "Wilting symptoms",
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    farmerName: "Sunil Silva",
-    farmerAddress: "No. 45, Lake Road, Galle",
-    farmerPhone: "0719876543",
-    subCenter: {
-      name: "Galle Sub Center",
-      location: "Galle",
-      contactNo: "0911234567",
-    },
-    assignedAgent: {
-      name: "Agent B",
-      email: "agentb@email.com",
-    },
-    status: "Closed",
-    images: [],
-  },
-  {
-    _id: "3",
-    plantName: "Brinjal",
-    plantIssue: "Aphid infestation",
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    farmerName: "Kamal Fernando",
-    farmerAddress: "No. 78, Temple Lane, Matara",
-    farmerPhone: "0755555555",
-    subCenter: {
-      name: "Matara Sub Center",
-      location: "Matara",
-      contactNo: "0413344556",
-    },
-    assignedAgent: {
-      name: "Agent C",
-      email: "agentc@email.com",
-    },
-    status: "Pending",
-    images: [
-      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80",
-    ],
-  },
-];
+import { useResearchCenterStore } from "../stores/useResearchCenterStore";
 
 function getStatusIcon(status) {
-  if (status === "Open")
+  if (status === "in-progress")
     return (
       <span title="Open">
         <AlertCircle className="w-4 h-4 text-yellow-500" />
       </span>
     );
-  if (status === "Closed")
+  if (status === "resolved")
     return (
       <span title="Closed">
         <Leaf className="w-4 h-4 text-green-500" />
       </span>
     );
-  return (
-    <span title="Pending">
-      <Calendar className="w-4 h-4 text-blue-500" />
-    </span>
-  );
 }
 
 function formatDate(dateString) {
@@ -122,19 +49,35 @@ function formatDate(dateString) {
 }
 
 function ResearchCaseTab() {
-  const [cases, setCases] = useState(dummyCases);
-  const [loading, setLoading] = useState(false);
+  const { cases, researchLoading, fetchCases, addAnswerToCase } =
+    useResearchCenterStore();
   const [selectedCase, setSelectedCase] = useState(null);
+  const [answer, setAnswer] = useState("");
 
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setCases(dummyCases);
-      setLoading(false);
-    }, 800);
-  }, []);
+    fetchCases();
+  }, [fetchCases]);
 
-  const handleOpenCase = (caseObj) => setSelectedCase(caseObj);
+  const handleOpenCase = (caseObj) => {
+    setSelectedCase(caseObj);
+    setAnswer("");
+  };
+
+  const handleAddAnswer = async (e) => {
+    e.preventDefault();
+    if (!answer.trim() || !selectedCase) return;
+
+    try {
+      await addAnswerToCase(selectedCase._id, answer);
+      setSelectedCase((prev) =>
+        prev ? { ...prev, researchAnswer: answer } : prev
+      );
+      setAnswer("");
+      setSelectedCase(null); // Close the dialog after submitting
+    } catch (error) {
+      console.error("Failed to add answer:", error);
+    }
+  };
 
   return (
     <div className="py-10 px-4 bg-transparent transition-colors">
@@ -162,7 +105,7 @@ function ResearchCaseTab() {
           </p>
         </motion.div>
 
-        {loading ? (
+        {researchLoading.fetchCases ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-600 mb-4"></div>
             <p className="text-green-700 dark:text-green-300">
@@ -192,6 +135,12 @@ function ResearchCaseTab() {
                     <th className="px-6 py-3 text-left text-sm font-medium">
                       Sub Center
                     </th>
+                    <th className="px-6 py-3 text-left text-sm font-medium">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-right text-sm font-medium">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -209,6 +158,9 @@ function ResearchCaseTab() {
                             <div className="text-sm font-medium text-gray-900 dark:text-white">
                               {caseObj.plantName}
                             </div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {caseObj.farmerName}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -224,7 +176,15 @@ function ResearchCaseTab() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900 dark:text-gray-200">
-                          {caseObj.subCenter.name}
+                          {caseObj.assignedSubCenter?.name}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          {getStatusIcon(caseObj.status)}
+                          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                            {caseObj.status}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -265,11 +225,13 @@ function ResearchCaseTab() {
                                       Sub Center
                                     </h4>
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                                      {caseObj.subCenter.name}
+                                      {caseObj.assignedSubCenter?.name}
                                       <br />
-                                      Location: {caseObj.subCenter.location}
+                                      Location:{" "}
+                                      {caseObj.assignedSubCenter?.location}
                                       <br />
-                                      Contact: {caseObj.subCenter.contactNo}
+                                      Contact:{" "}
+                                      {caseObj.assignedSubCenter?.contactNumber}
                                     </p>
                                   </div>
                                 </div>
@@ -282,11 +244,11 @@ function ResearchCaseTab() {
                                       Farmer
                                     </h4>
                                     <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                                      {caseObj.farmerName}
+                                      {caseObj.createdBy?.name}
                                       <br />
-                                      {caseObj.farmerAddress}
+                                      {caseObj.createdBy?.address}
                                       <br />
-                                      Phone: {caseObj.farmerPhone}
+                                      Phone: {caseObj.createdBy?.phone}
                                     </p>
                                   </div>
                                 </div>
@@ -316,8 +278,7 @@ function ResearchCaseTab() {
                                       Images
                                     </h4>
                                     <div className="flex flex-wrap gap-2 mt-2">
-                                      {caseObj.images &&
-                                      caseObj.images.length > 0 ? (
+                                      {caseObj.images?.length > 0 ? (
                                         caseObj.images.map((img, idx) => (
                                           <img
                                             key={idx}
@@ -336,23 +297,18 @@ function ResearchCaseTab() {
                                 </div>
                                 <div className="flex items-start gap-3">
                                   <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
-                                    {getStatusIcon(caseObj.status)}
+                                    <User className="w-5 h-5 text-green-600 dark:text-green-300" />
                                   </div>
                                   <div>
                                     <h4 className="font-semibold text-green-800 dark:text-green-200">
-                                      Status
+                                      Assigned Agent
                                     </h4>
-                                    <span
-                                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                        caseObj.status === "Open"
-                                          ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200"
-                                          : caseObj.status === "Closed"
-                                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200"
-                                          : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
-                                      }`}
-                                    >
-                                      {caseObj.status}
-                                    </span>
+                                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                                      {caseObj.assignedVisitAgent?.name}
+                                      <br />
+                                      <Mail className="inline w-4 h-4 mr-1" />
+                                      {caseObj.assignedVisitAgent?.email}
+                                    </p>
                                   </div>
                                 </div>
                                 <div className="flex items-start gap-3">
@@ -370,23 +326,87 @@ function ResearchCaseTab() {
                                     </p>
                                   </div>
                                 </div>
-                                <div className="flex items-start gap-3">
-                                  <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
-                                    <User className="w-5 h-5 text-green-600 dark:text-green-300" />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-semibold text-green-800 dark:text-green-200">
-                                      Assigned Agent
-                                    </h4>
-                                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                                      {caseObj.assignedAgent.name}
-                                      <br />
-                                      <Mail className="inline w-4 h-4 mr-1" />
-                                      {caseObj.assignedAgent.email}
-                                    </p>
+                              </div>
+                            </div>
+
+                            {/* Research Answer Section */}
+                            <div className="mt-6 space-y-4">
+                              <div className="flex items-start gap-3">
+                                <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
+                                  <FileText className="w-5 h-5 text-green-600 dark:text-green-300" />
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-green-800 dark:text-green-200">
+                                    Research Answer
+                                  </h4>
+                                  <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-3 mt-1">
+                                    {selectedCase?.answerStatus ===
+                                    "answered" ? (
+                                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                                        {selectedCase.answer}
+                                      </p>
+                                    ) : (
+                                      <p className="text-sm text-gray-400 dark:text-gray-500 italic">
+                                        No research answer provided yet
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
+
+                              {(!selectedCase?.answerStatus === "answered" ||
+                                !selectedCase?.answer) && (
+                                <form
+                                  onSubmit={handleAddAnswer}
+                                  className="mt-4"
+                                >
+                                  <label className="block text-sm font-medium text-green-800 dark:text-green-200 mb-2">
+                                    Add Your Research Findings
+                                  </label>
+                                  <textarea
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                    rows={4}
+                                    value={answer}
+                                    onChange={(e) => setAnswer(e.target.value)}
+                                    placeholder="Enter your research findings and recommendations..."
+                                    required
+                                  />
+                                  <div className="flex justify-end mt-3">
+                                    <Button
+                                      type="submit"
+                                      className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-6 py-2 rounded-lg font-medium shadow transition"
+                                      disabled={researchLoading.addAnswerToCase}
+                                    >
+                                      {researchLoading.addAnswerToCase ? (
+                                        <span className="flex items-center gap-2">
+                                          <svg
+                                            className="animate-spin h-5 w-5 text-white"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <circle
+                                              className="opacity-25"
+                                              cx="12"
+                                              cy="12"
+                                              r="10"
+                                              stroke="currentColor"
+                                              strokeWidth="4"
+                                              fill="none"
+                                            />
+                                            <path
+                                              className="opacity-75"
+                                              fill="currentColor"
+                                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                            />
+                                          </svg>
+                                          Submitting...
+                                        </span>
+                                      ) : (
+                                        "Submit Answer"
+                                      )}
+                                    </Button>
+                                  </div>
+                                </form>
+                              )}
                             </div>
                           </DialogContent>
                         </Dialog>
@@ -406,7 +426,7 @@ function ResearchCaseTab() {
           className="text-center text-green-700 dark:text-green-300 text-sm mt-8"
         >
           Showing {cases.length} research cases. Click on any case to view
-          details.
+          details and provide answers.
         </motion.p>
       </div>
     </div>

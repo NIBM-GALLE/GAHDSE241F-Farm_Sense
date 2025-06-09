@@ -15,6 +15,7 @@ import {
   Eye,
   ShieldUser,
   FolderSearch2,
+  Building,
 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import SubCentersTab from "../components/SubCentersTab";
@@ -28,6 +29,8 @@ import Cases from "./Cases";
 import AdminsTab from "@/components/AdminsTab";
 import ResearchCaseTab from "@/components/ResearchCaseTab";
 import VisitCaseTab from "@/components/VisitCaseTab";
+import SubCenterDetails from "@/components/SubCenterDetails";
+import ResearchCenterDetails from "@/components/ResearchCenterDetails";
 import { useUserStore } from "@/stores/useUserStore";
 
 function Dashboard() {
@@ -59,11 +62,17 @@ function Dashboard() {
           icon: FolderSearch2,
           path: "research-cases",
         },
+        {
+          title: "Research Center",
+          icon: Building,
+          path: "research-center",
+        },
       ],
       "sub-center-admin": [
         { title: "Cases", icon: Briefcase, path: "cases" },
         { title: "Visit Agents", icon: Users, path: "visit-agents" },
         { title: "Admins", icon: ShieldUser, path: "admins" },
+        { title: "Sub Center", icon: Building, path: "sub-center" },
       ],
     };
 
@@ -165,6 +174,20 @@ function Dashboard() {
             element={
               (user?.role === "sub-center-admin" ||
                 user?.role === "ResearchDivisionAdmin") && <AdminsTab />
+            }
+          />
+          {/* Sub Center Details tab for sub admin */}
+          <Route
+            path="sub-center"
+            element={user?.role === "sub-center-admin" && <SubCenterDetails />}
+          />
+          {/* Research Center Details tab for research admin */}
+          <Route
+            path="research-center"
+            element={
+              user?.role === "ResearchDivisionAdmin" && (
+                <ResearchCenterDetails />
+              )
             }
           />
 

@@ -8,6 +8,7 @@ import {
   MapPin,
   Database,
 } from "lucide-react";
+import { Link } from "react-router";
 
 const serviceImages = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", // 24/7 Support
@@ -202,9 +203,12 @@ function Services() {
             crop diseases, app usage, or agricultural best practices.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-green-600 text-white hover:bg-green-700 px-6 py-3 rounded-lg font-medium shadow-md transition-colors">
+            <Link
+              to="/contact"
+              className="bg-green-600 text-white hover:bg-green-700 px-6 py-3 rounded-lg font-medium shadow-md transition-colors"
+            >
               Contact Support
-            </button>
+            </Link>
           </div>
         </motion.section>
       </div>

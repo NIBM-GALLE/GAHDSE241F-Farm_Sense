@@ -10,10 +10,10 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-
+import { useUserStore } from "@/stores/useUserStore";
+import { Link } from "react-router";
 const HowItWorks = () => {
-  const navigate = useNavigate();
+  const { user } = useUserStore();
 
   const steps = [
     {
@@ -174,14 +174,19 @@ const HowItWorks = () => {
           <p className="text-green-700 dark:text-green-300 mb-6 max-w-2xl mx-auto">
             Submit your plant case now and receive expert advice within hours
           </p>
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-            <Button
-              onClick={() => navigate("/create-case")}
-              className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-8 py-3 rounded-lg font-medium shadow-md hover:shadow-green-700/30 transition-all flex items-center gap-2 mx-auto"
-            >
-              Start Your Case <ArrowRight className="w-5 h-5" />
-            </Button>
-          </motion.div>
+          {user && user.role === "user" ? (
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                to="/create-case"
+                className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-5 py-2 rounded-lg font-medium shadow-md hover:shadow-green-700/30 transition-all flex items-center gap-2 mx-auto w-fit"
+              >
+                Start Your Case <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
+          ) : (
+            <span></span>
+          )}
+
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
             Average response time: 2-4 hours during business days
           </p>

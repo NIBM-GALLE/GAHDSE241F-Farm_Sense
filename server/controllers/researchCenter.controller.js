@@ -9,6 +9,7 @@ import {
 import {
   sendResearchCenterVerificationEmail,
   sendResearchCenterLoginCredentialsEmail,
+  sendPlantCaseResponseNotificationToFarmer,
 } from "../mailtrap/mailTrapEmail.js";
 
 export const getAllPlantCasesForResearchCenter = async (req, res, next) => {
@@ -22,7 +23,9 @@ export const getAllPlantCasesForResearchCenter = async (req, res, next) => {
         assignedResearchDivision: req.researchDivisionId,
       }),
       PlantCase.find({ assignedResearchDivision: req.researchDivisionId })
-        .select("plantName plantIssue images status createdAt")
+        .select(
+          "plantName plantIssue images status createdAt answer answerStatus"
+        )
         .populate("createdBy", "name address phone email")
         .populate("assignedSubCenter", "name location email contactNumber")
         .populate("assignedVisitAgent", "name contactNumber email")
@@ -37,16 +40,14 @@ export const getAllPlantCasesForResearchCenter = async (req, res, next) => {
 
     res.status(200).json({
       message: "Plant cases retrieved successfully",
-      data: {
-        plantCases,
-        pagination: {
-          totalCases,
-          totalPages,
-          hasNext,
-          hasPrevious,
-          nextPage: hasNext ? page + 1 : null,
-          previousPage: hasPrevious ? page - 1 : null,
-        },
+      plantCases,
+      pagination: {
+        totalCases,
+        totalPages,
+        hasNext,
+        hasPrevious,
+        nextPage: hasNext ? page + 1 : null,
+        previousPage: hasPrevious ? page - 1 : null,
       },
     });
   } catch (error) {
@@ -108,15 +109,25 @@ export const addCommentToPlantCaseForResearchCenter = async (
     await plantCase.save();
 
     const updatedPlantCase = await PlantCase.findById(plantCaseId)
-      .select("plantName plantIssue images status answer createdAt")
+      .select(
+        "plantName plantIssue images status answer createdAt answer answerStatus"
+      )
       .populate("createdBy", "name address phone email")
       .populate("assignedSubCenter", "name location email contactNumber")
       .populate("assignedVisitAgent", "name contactNumber email")
       .populate("answeredBy", "name email");
 
+    await sendPlantCaseResponseNotificationToFarmer(
+      updatedPlantCase.createdBy.email,
+      updatedPlantCase.createdBy.name,
+      updatedPlantCase.plantName,
+      updatedPlantCase.plantIssue,
+      updatedPlantCase.answer
+    );
+
     res.status(200).json({
       message: "Answer is  added to plant case successfully",
-      data: updatedPlantCase,
+      updatedPlantCase,
     });
   } catch (error) {
     console.error("Error in addCommentToPlantCaseForResearchCenter:", error);

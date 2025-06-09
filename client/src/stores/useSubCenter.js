@@ -21,6 +21,7 @@ export const useSubCenter = create((set, get) => ({
     assignVisitAgentToPlantCase: false,
     assignResearchCenterToPlantCase: false,
     deleteVisitAgent: false,
+    updatePlantCaseStatus: false,
   },
 
   getAdmins: async () => {
@@ -394,6 +395,47 @@ export const useSubCenter = create((set, get) => ({
       });
       console.error("Error deleting visit agent:", error);
       toast.error("Failed to delete Visit Agent. Please try again.");
+    }
+  },
+
+  updatePlantCaseStatus: async (caseId, status) => {
+    try {
+      set({
+        loading: {
+          ...get().loading,
+          updatePlantCaseStatus: true,
+        },
+      });
+
+      const response = await axiosInstance.patch(
+        `sub-center-admin/update-plant-case/${caseId}`,
+        { status }
+      );
+      set({
+        loading: {
+          ...get().loading,
+          updatePlantCaseStatus: false,
+        },
+      });
+      set((state) => ({
+        cases: state.cases.map((plantCase) =>
+          plantCase._id === caseId
+            ? { ...plantCase, ...response.data.plantCase }
+            : plantCase
+        ),
+      }));
+      toast.success("Plant case status updated successfully!");
+    } catch (error) {
+      set({
+        loading: {
+          ...get().loading,
+          updatePlantCaseStatus: false,
+        },
+      });
+      console.error("Error updating plant case status:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to update plant case status"
+      );
     }
   },
 }));
