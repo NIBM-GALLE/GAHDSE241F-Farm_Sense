@@ -45,7 +45,10 @@ function ResearchDivisions() {
               className="md:w-1/3 bg-green-900/20 flex items-center justify-center p-6"
             >
               <img
-                src={centerData.name}
+                src={
+                  centerData.image ||
+                  "https://media.istockphoto.com/id/519278869/vector/green-urban-development-concept.jpg?s=612x612&w=0&k=20&c=BnSpTtDTm4MMqo_DdOketqdirIeQpxSDCX_d7ASaS2g="
+                }
                 alt={centerData.name}
                 className="w-full h-64 md:h-auto object-cover rounded-lg shadow-md"
                 onError={(e) => {

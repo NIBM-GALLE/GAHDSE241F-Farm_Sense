@@ -47,7 +47,10 @@ function SubCenters() {
               className="md:w-1/3 bg-green-900/20 flex items-center justify-center p-6"
             >
               <img
-                src={centerData.image || "https://via.placeholder.com/300"}
+                src={
+                  centerData.image ||
+                  "https://media.istockphoto.com/id/1468606418/vector/green-electricity-outline-landscape.jpg?s=612x612&w=0&k=20&c=N3nPBdta3dFksuke4eP0JHGUQI30WSBkw5J0Nsm91AQ="
+                }
                 alt={centerData.name}
                 className="w-full h-64 md:h-auto object-cover rounded-lg shadow-md"
               />
