@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUserStore } from "@/stores/useUserStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,9 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../components/ModeToggle";
 import verifyEmailPng from "../assets/images/verify_email.png";
+import { useUserStore } from "../stores/useUserStore";
 
 function VerifyEmail() {
-  const [loading, setLoading] = useState(false);
+  const { verifyEmail, loading } = useUserStore();
   const [digits, setDigits] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
   const navigate = useNavigate();
@@ -43,23 +43,8 @@ function VerifyEmail() {
     form.setValue("code", code);
   }, [digits, form]);
 
-  const verifyEmail = async (code, navigate) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        alert("Email verified with code: " + code);
-        navigate("/dashboard");
-        resolve();
-      }, 1000);
-    });
-  };
-
   const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      await verifyEmail(data.code, navigate);
-    } finally {
-      setLoading(false);
-    }
+    await verifyEmail(data.code, navigate);
   };
 
   const handleDigitChange = (index, value) => {
@@ -153,20 +138,14 @@ function VerifyEmail() {
               variant="default"
               size="lg"
               className="w-full"
-              disabled={loading}
+              disabled={loading.verifyEmailLoading}
             >
-              {loading ? "Verifying..." : "Verify Email"}
+              {loading.verifyEmailLoading ? "Verifying..." : "Verify Email"}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">
               Didn't receive a code?{" "}
-              <button
-                type="button"
-                className="text-primary hover:underline"
-                onClick={() =>
-                  alert("Resend code functionality not implemented")
-                }
-              >
+              <button type="button" className="text-primary hover:underline">
                 Resend code
               </button>
             </div>

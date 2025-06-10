@@ -4,11 +4,19 @@ import {
   Route,
   useLocation,
   Navigate,
+  Link,
 } from "react-router-dom";
 import { ThemeProvider } from "./components/ui/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 import { useUserStore } from "./stores/useUserStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // pages
 import Login from "./pages/Login";
@@ -59,6 +67,7 @@ function App() {
 
 function AppContent({ user, loading }) {
   const location = useLocation();
+  const [openVerifyDialog, setOpenVerifyDialog] = useState(true);
 
   const hideNavbarPatterns = [
     /^\/dashboard\/sub-center(\/.*)?$/,
@@ -92,6 +101,32 @@ function AppContent({ user, loading }) {
   return (
     <>
       {!shouldHideNavbar && <Navbar />}
+      {/* Dialog for unverified users */}
+      {user &&
+        user.isVerified === false &&
+        user.role !== "user" &&
+        openVerifyDialog && (
+          <Dialog open={openVerifyDialog} onOpenChange={setOpenVerifyDialog}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Email Verification Required</DialogTitle>
+                <DialogDescription>
+                  Please verify your email address to access all features of
+                  FarmSense.
+                  <br />
+                  Check your inbox for a verification link.
+                  <br />
+                  <Link
+                    to="/verify-email"
+                    className="inline-block mt-4 text-green-600 underline hover:text-green-800 font-semibold transition-colors"
+                  >
+                    Go to verification page
+                  </Link>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        )}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />

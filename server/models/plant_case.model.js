@@ -24,7 +24,7 @@ const plantCaseSchema = new mongoose.Schema(
     plantIssue: {
       type: String,
       required: true,
-      maxLength: [100, "Plant issue cannot be more than 100 characters"],
+      maxLength: [1000, "Plant issue cannot be more than 1000 characters"],
       minLength: [5, "Plant issue must be at least 5 characters"],
     },
 
