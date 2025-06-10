@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import {
   Form,
   FormControl,
@@ -14,53 +14,64 @@ import {
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { Pencil } from "lucide-react";
-import { toast } from "react-hot-toast";
-
-// Dummy research center details
-const dummyResearchCenter = {
-  name: "Peradeniya Research Division",
-  location: "Peradeniya",
-  email: "peradeniya.research@email.com",
-  contactNo: "0811234567",
-};
+import { useResearchCenterStore } from "@/stores/useResearchCenterStore";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  contactNo: z
+  contactNumber: z
     .string()
     .min(9, { message: "Contact number must be at least 9 digits" }),
 });
 
 function ResearchCenterDetails() {
+  const { researchLoading, centerData, updateCenterData, fetchingCenterData } =
+    useResearchCenterStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [researchCenter, setResearchCenter] = useState(dummyResearchCenter);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    fetchingCenterData();
+  }, []);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: researchCenter.email,
-      contactNo: researchCenter.contactNo,
+      email: centerData?.email || "",
+      contactNumber: centerData?.contactNumber || "",
     },
     mode: "onChange",
   });
 
+  // Reset form when centerData changes
+  useEffect(() => {
+    if (centerData) {
+      form.reset({
+        email: centerData.email,
+        contactNumber: centerData.contactNumber,
+      });
+    }
+  }, [centerData]);
+
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
+    console.log("Submitting data:", data);
     try {
-      setResearchCenter((prev) => ({
-        ...prev,
-        email: data.email,
-        contactNo: data.contactNo,
-      }));
+      await updateCenterData(data.email, data.contactNumber);
       setIsEditing(false);
-      toast.success("Research center details updated!");
     } catch (error) {
-      toast.error("Failed to update details");
-    } finally {
-      setIsSubmitting(false);
+      console.error("Failed to update center data:", error);
+      form.setError("root", {
+        type: "manual",
+        message: error.message || "Failed to update details",
+      });
     }
   };
+
+  if (researchLoading.fetchCenterData) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-green-700 dark:text-green-100">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 sm:py-20 px-4 bg-transparent transition-colors">
@@ -76,10 +87,10 @@ function ResearchCenterDetails() {
             <span className="bg-gradient-to-r from-green-400 to-green-200 bg-clip-text text-transparent dark:from-green-300 dark:to-green-100">
               FarmSense
             </span>{" "}
-            Research Division Details
+            Research Center Details
           </h2>
           <p className="text-lg text-green-800 dark:text-green-100 max-w-2xl mx-auto mt-2">
-            View and manage your research division's contact information
+            View and manage your research center's contact information
           </p>
         </motion.div>
 
@@ -93,14 +104,14 @@ function ResearchCenterDetails() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Research Division Name (read-only) */}
+                {/* Research Center Name (read-only) */}
                 <FormItem>
                   <FormLabel className="text-green-800 dark:text-green-200">
-                    Research Division Name
+                    Research Center Name
                   </FormLabel>
                   <FormControl>
                     <Input
-                      value={researchCenter.name}
+                      value={centerData?.name || ""}
                       disabled
                       className="dark:bg-[#1f2937] dark:border-green-800 focus-visible:ring-green-500"
                     />
@@ -114,7 +125,7 @@ function ResearchCenterDetails() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      value={researchCenter.location}
+                      value={centerData?.location || ""}
                       disabled
                       className="dark:bg-[#1f2937] dark:border-green-800 focus-visible:ring-green-500"
                     />
@@ -146,7 +157,7 @@ function ResearchCenterDetails() {
                 {/* Contact Number (editable) */}
                 <FormField
                   control={form.control}
-                  name="contactNo"
+                  name="contactNumber"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-green-800 dark:text-green-200">
@@ -189,8 +200,8 @@ function ResearchCenterDetails() {
                       onClick={() => {
                         setIsEditing(false);
                         form.reset({
-                          email: researchCenter.email,
-                          contactNo: researchCenter.contactNo,
+                          email: centerData?.email || "",
+                          contactNumber: centerData?.contactNumber || "",
                         });
                       }}
                     >
@@ -201,9 +212,14 @@ function ResearchCenterDetails() {
                       variant="default"
                       size="lg"
                       className="flex-1 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800 transition-colors"
-                      disabled={isSubmitting}
+                      disabled={
+                        researchLoading.updateCenterDataLoading ||
+                        !form.formState.isValid
+                      }
                     >
-                      {isSubmitting ? "Saving..." : "Save Changes"}
+                      {researchLoading.updateCenterDataLoading
+                        ? "Saving..."
+                        : "Save Changes"}
                     </Button>
                   </>
                 )}
@@ -219,7 +235,7 @@ function ResearchCenterDetails() {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="text-center text-green-700 dark:text-green-100/70 text-sm mt-10"
         >
-          Research division details are managed by regional administrators
+          Research center details are managed by regional administrators
         </motion.p>
       </div>
     </div>

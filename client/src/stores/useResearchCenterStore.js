@@ -12,7 +12,7 @@ export const useResearchCenterStore = create((set, get) => ({
     fetchCases: false,
     addAnswerToCase: false,
     fetchCenterData: false,
-    updateCenterData: false,
+    updateCenterDataLoading: false,
   },
 
   getResearchAdmins: async () => {
@@ -142,7 +142,7 @@ export const useResearchCenterStore = create((set, get) => ({
     }
   },
 
-  fetchCenterData: async () => {
+  fetchingCenterData: async () => {
     try {
       set({
         researchLoading: {
@@ -171,12 +171,12 @@ export const useResearchCenterStore = create((set, get) => ({
     }
   },
 
-  updateCenterData: async (contactNumber, email) => {
+  updateCenterData: async (email, contactNumber) => {
     try {
       set({
         researchLoading: {
           ...get().researchLoading,
-          updateCenterData: true,
+          updateCenterDataLoading: true,
         },
       });
       const response = await axiosInstance.patch(
@@ -187,7 +187,7 @@ export const useResearchCenterStore = create((set, get) => ({
         centerData: response.data.researchCenter,
         researchLoading: {
           ...get().researchLoading,
-          updateCenterData: false,
+          updateCenterDataLoading: false,
         },
       });
       toast.success("Research center data updated successfully!");
@@ -195,7 +195,7 @@ export const useResearchCenterStore = create((set, get) => ({
       set({
         researchLoading: {
           ...get().researchLoading,
-          updateCenterData: false,
+          updateCenterDataLoading: false,
         },
       });
       console.error("Error updating research center data:", error);
