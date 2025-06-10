@@ -14,6 +14,7 @@ import {
   getAdmins,
   deleteVisitAgent,
   markPlantCaseStatus,
+  getSubCenterDetails,
 } from "../controllers/subCenterAdmin.operations.controller.js";
 
 const router = express.Router();
@@ -94,5 +95,12 @@ router.patch(
   authMiddleware,
   subCenterAdminMiddleware,
   markPlantCaseStatus
+);
+
+router.get(
+  "/get-sub-center-details",
+  authMiddleware,
+  subCenterAdminMiddleware,
+  getSubCenterDetails
 );
 export default router;

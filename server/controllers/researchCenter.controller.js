@@ -245,7 +245,7 @@ export const updateResearchCenterDetails = async (req, res, next) => {
     await researchDivision.save();
     const updatedResearchDivision = await ResearchDivision.findById(
       req.researchDivisionId
-    ).populate("admins", "name email contactNumber");
+    ).select("name location contactNumber email");
 
     res.status(200).json({
       message: "Research center details updated successfully",
@@ -273,6 +273,26 @@ export const getResearchAdmins = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error in getResearchAdmins:", error);
+    next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getResearchCenterDetails = async (req, res, next) => {
+  try {
+    const researchDivision = await ResearchDivision.findById(
+      req.researchDivisionId
+    ).select("name location contactNumber email ");
+
+    if (!researchDivision) {
+      return next(errorHandler(404, "Research Division not found"));
+    }
+
+    res.status(200).json({
+      message: "Research center details retrieved successfully",
+      researchCenter: researchDivision,
+    });
+  } catch (error) {
+    console.error("Error in getResearchCenterDetails:", error);
     next(errorHandler(500, "Internal server error"));
   }
 };

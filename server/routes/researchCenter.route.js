@@ -7,6 +7,7 @@ import {
   updateResearchCenterDetails,
   createAdmin,
   getResearchAdmins,
+  getResearchCenterDetails,
 } from "../controllers/researchCenter.controller.js";
 
 const router = express.Router();
@@ -46,4 +47,10 @@ router.get(
   getResearchAdmins
 );
 
+router.get(
+  "/get-research-center-details",
+  authMiddleware,
+  researchDivisionAdminMiddleware,
+  getResearchCenterDetails
+);
 export default router;

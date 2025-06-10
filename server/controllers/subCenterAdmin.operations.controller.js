@@ -453,9 +453,8 @@ export const updateSubCenterDetails = async (req, res, next) => {
     subCenter.contactNumber = contactNumber || subCenter.contactNumber;
 
     await subCenter.save();
-    const updatedSubCenter = await SubCenter.findById(req.subCenterId).populate(
-      "admins",
-      "name email contactNumber"
+    const updatedSubCenter = await SubCenter.findById(req.subCenterId).select(
+      "name email contactNumber location"
     );
 
     res.status(200).json({
@@ -581,6 +580,26 @@ export const markPlantCaseStatus = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error in markPlantCaseAsSolved:", error);
+    return next(errorHandler(500, "Internal server error"));
+  }
+};
+
+export const getSubCenterDetails = async (req, res, next) => {
+  try {
+    const subCenter = await SubCenter.findById(req.subCenterId).select(
+      "name email contactNumber location"
+    );
+
+    if (!subCenter) {
+      return next(errorHandler(404, "Sub Center not found"));
+    }
+
+    res.status(200).json({
+      message: "Sub Center details fetched successfully",
+      subCenter,
+    });
+  } catch (error) {
+    console.error("Error in getSubCenterDetails:", error);
     return next(errorHandler(500, "Internal server error"));
   }
 };
