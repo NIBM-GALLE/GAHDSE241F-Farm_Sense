@@ -5,11 +5,14 @@ import toast from "react-hot-toast";
 export const useResearchCenterStore = create((set, get) => ({
   researchAdmins: [],
   cases: [],
+  centerData: null,
   researchLoading: {
     fetchResearchAdmins: false,
     createResearchAdmin: false,
     fetchCases: false,
     addAnswerToCase: false,
+    fetchCenterData: false,
+    updateCenterData: false,
   },
 
   getResearchAdmins: async () => {
@@ -136,6 +139,69 @@ export const useResearchCenterStore = create((set, get) => ({
       });
       console.error("Error adding answer to plant case:", error);
       toast.error("Failed to add answer to plant case.");
+    }
+  },
+
+  fetchCenterData: async () => {
+    try {
+      set({
+        researchLoading: {
+          ...get().researchLoading,
+          fetchCenterData: true,
+        },
+      });
+      const response = await axiosInstance.get(
+        "research-division/get-research-center-details"
+      );
+      set({
+        centerData: response.data.researchCenter,
+        researchLoading: {
+          ...get().researchLoading,
+          fetchCenterData: false,
+        },
+      });
+    } catch (error) {
+      set({
+        researchLoading: {
+          ...get().researchLoading,
+          fetchCenterData: false,
+        },
+      });
+      console.error("Error fetching research center data:", error);
+    }
+  },
+
+  updateCenterData: async (contactNumber, email) => {
+    try {
+      set({
+        researchLoading: {
+          ...get().researchLoading,
+          updateCenterData: true,
+        },
+      });
+      const response = await axiosInstance.patch(
+        "research-division/update-research-center",
+        { contactNumber, email }
+      );
+      set({
+        centerData: response.data.researchCenter,
+        researchLoading: {
+          ...get().researchLoading,
+          updateCenterData: false,
+        },
+      });
+      toast.success("Research center data updated successfully!");
+    } catch (error) {
+      set({
+        researchLoading: {
+          ...get().researchLoading,
+          updateCenterData: false,
+        },
+      });
+      console.error("Error updating research center data:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to update center data."
+      );
     }
   },
 }));

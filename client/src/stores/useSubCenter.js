@@ -8,6 +8,7 @@ export const useSubCenter = create((set, get) => ({
   case: null,
   visitAgents: [],
   researchCenters: [],
+  centerData: null,
 
   loading: {
     createAdmin: false,
@@ -22,6 +23,7 @@ export const useSubCenter = create((set, get) => ({
     assignResearchCenterToPlantCase: false,
     deleteVisitAgent: false,
     updatePlantCaseStatus: false,
+    fetchCenterData: false,
   },
 
   getAdmins: async () => {
@@ -285,6 +287,9 @@ export const useSubCenter = create((set, get) => ({
         },
       });
       console.error("Error updating sub center details:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to update sub center details"
+      );
     }
   },
 
@@ -436,6 +441,37 @@ export const useSubCenter = create((set, get) => ({
       toast.error(
         error.response?.data?.message || "Failed to update plant case status"
       );
+    }
+  },
+
+  fetchCenterData: async () => {
+    try {
+      set({
+        loading: {
+          ...get().loading,
+          fetchCenterData: true,
+        },
+      });
+
+      const response = await axiosInstance.get(
+        "sub-center-admin/get-sub-center-details"
+      );
+
+      set({
+        centerData: response.data.subCenter,
+        loading: {
+          ...get().loading,
+          fetchCenterData: false,
+        },
+      });
+    } catch (error) {
+      set({
+        loading: {
+          ...get().loading,
+          fetchCenterData: false,
+        },
+      });
+      console.error("Error fetching sub center data:", error);
     }
   },
 }));
