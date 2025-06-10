@@ -444,7 +444,7 @@ export const useSubCenter = create((set, get) => ({
     }
   },
 
-  fetchCenterData: async () => {
+  fetchingCenterData: async () => {
     try {
       set({
         loading: {
@@ -464,6 +464,8 @@ export const useSubCenter = create((set, get) => ({
           fetchCenterData: false,
         },
       });
+
+      console.log("Fetched center data:", response.data.subCenter);
     } catch (error) {
       set({
         loading: {

@@ -219,6 +219,11 @@ export const createAdmin = async (req, res, next) => {
 export const updateResearchCenterDetails = async (req, res, next) => {
   try {
     const { contactNumber, email } = req.body;
+    console.log("req body in updateResearchCenterDetails:", req.body);
+    console.log("Updating research center details:", {
+      contactNumber,
+      email,
+    });
     if (!contactNumber && !email) {
       return next(errorHandler(400, "Contact number or email is required"));
     }

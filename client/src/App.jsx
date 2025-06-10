@@ -95,8 +95,14 @@ function AppContent({ user, loading }) {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/forget-password" element={<Forget_password />} />
-        <Route path="/reset-password/:token" element={<Reset_password />} />
+        <Route
+          path="/forget-password"
+          element={user ? <Navigate to="/" replace /> : <Forget_password />}
+        />
+        <Route
+          path="/reset-password/:token"
+          element={user ? <Navigate to="/" replace /> : <Reset_password />}
+        />
         <Route path="/" element={<Home />} />
         <Route
           path="/profile"
@@ -127,7 +133,16 @@ function AppContent({ user, loading }) {
           }
         />
         <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/verify-email" element={<Verify_email />} />
+        <Route
+          path="/verify-email"
+          element={
+            user && !user.isVerified ? (
+              <Verify_email />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
         <Route
           path="/case/:caseId"
           element={

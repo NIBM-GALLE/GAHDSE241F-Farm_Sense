@@ -21,7 +21,6 @@ const subCenterSchema = new mongoose.Schema(
     ],
     contactNumber: {
       type: String,
-
       maxLength: [15, "Contact number cannot be more than 15 characters"],
       minLength: [10, "Contact number must be at least 10 characters"],
     },
