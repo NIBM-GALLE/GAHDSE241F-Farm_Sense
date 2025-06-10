@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router";
 import {
   Form,
   FormControl,
@@ -16,9 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../components/ModeToggle";
+import { useUserStore } from "@/stores/useUserStore";
 
 function Forget_password() {
-  const navigate = useNavigate();
+  const { forgetPassword, loading } = useUserStore();
 
   const formSchema = z.object({
     email: z.string().email({
@@ -33,8 +33,9 @@ function Forget_password() {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const onSubmit = async (data) => {
+    await forgetPassword(data.email);
+    form.reset();
   };
 
   return (
@@ -73,8 +74,9 @@ function Forget_password() {
               variant="default"
               size="lg"
               className="w-full"
+              disabled={loading.forgetPasswordLoading}
             >
-              Send the reset link
+              {loading.forgetPasswordLoading ? "Sending..." : "Send Reset Link"}
             </Button>
           </form>
         </Form>

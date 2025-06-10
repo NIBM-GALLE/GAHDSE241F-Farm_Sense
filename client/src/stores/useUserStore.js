@@ -12,6 +12,8 @@ export const useUserStore = create((set, get) => ({
     updatingProfileFarmerLoading: false,
     updatingProfileLoading: false,
     logoutLoading: false,
+    forgetPasswordLoading: false,
+    resetPasswordLoading: false,
   },
 
   signup: async (email, password, navigate) => {
@@ -189,6 +191,57 @@ export const useUserStore = create((set, get) => ({
       });
       toast.error(
         error.response?.data?.message || "Logout failed, please try again"
+      );
+    }
+  },
+
+  forgetPassword: async (email) => {
+    try {
+      set({ loading: { ...get().loading, forgetPasswordLoading: true } });
+      const response = await axiosInstance.post("/auth/forget-password", {
+        email,
+      });
+
+      set({
+        loading: { ...get().loading, forgetPasswordLoading: false },
+      });
+      toast.success(
+        response.data.message || "Check your email for reset link!"
+      );
+    } catch (error) {
+      set({
+        loading: { ...get().loading, forgetPasswordLoading: false },
+      });
+      console.error("Error during forget password:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Forget password failed, please try again"
+      );
+    }
+  },
+
+  resetPassword: async (password, token, navigate) => {
+    try {
+      set({ loading: { ...get().loading, resetPasswordLoading: true } });
+      const response = await axiosInstance.post(
+        `/auth/reset-password/${token}`,
+        {
+          password,
+        }
+      );
+
+      set({
+        loading: { ...get().loading, resetPasswordLoading: false },
+      });
+      toast.success(response.data.message || "Password reset successfully!");
+    } catch (error) {
+      console.error("Error during reset password:", error);
+      set({
+        loading: { ...get().loading, resetPasswordLoading: false },
+      });
+      toast.error(
+        error.response?.data?.message ||
+          "Reset password failed, please try again"
       );
     }
   },
