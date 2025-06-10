@@ -102,6 +102,7 @@ export const resetPassword = async (req, res, next) => {
   try {
     const { password } = req.body;
     const { token } = req.params;
+    console.log("Reset password token:", token);
     if (!token) {
       return next(errorHandler(400, "Something went wrong"));
     }
