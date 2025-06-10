@@ -1,180 +1,225 @@
 import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { Pencil } from "lucide-react";
-import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { toast } from "react-hot-toast";
 
 // Dummy research center details
 const dummyResearchCenter = {
-  name: "Peradeniya Research Center",
+  name: "Peradeniya Research Division",
   location: "Peradeniya",
   email: "peradeniya.research@email.com",
   contactNo: "0811234567",
 };
 
+const formSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  contactNo: z
+    .string()
+    .min(9, { message: "Contact number must be at least 9 digits" }),
+});
+
 function ResearchCenterDetails() {
-  const [editOpen, setEditOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [researchCenter, setResearchCenter] = useState(dummyResearchCenter);
-  const [editForm, setEditForm] = useState({
-    email: dummyResearchCenter.email,
-    contactNo: dummyResearchCenter.contactNo,
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: researchCenter.email,
+      contactNo: researchCenter.contactNo,
+    },
+    mode: "onChange",
   });
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleEditSubmit = (e) => {
-    e.preventDefault();
-    setResearchCenter((prev) => ({
-      ...prev,
-      email: editForm.email,
-      contactNo: editForm.contactNo,
-    }));
-    setEditOpen(false);
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    try {
+      setResearchCenter((prev) => ({
+        ...prev,
+        email: data.email,
+        contactNo: data.contactNo,
+      }));
+      setIsEditing(false);
+      toast.success("Research center details updated!");
+    } catch (error) {
+      toast.error("Failed to update details");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="py-16 sm:py-20 px-4 bg-transparent transition-colors">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-12 text-center"
         >
-          <div className="flex flex-col justify-center items-center text-center gap-4 mb-6">
-            <h2 className="text-3xl sm:text-4xl font-bold text-green-900 dark:text-white">
-              <span className="bg-gradient-to-r from-green-400 to-green-200 bg-clip-text text-transparent dark:from-green-300 dark:to-green-100">
-                FarmSense
-              </span>{" "}
-              Research Center Details
-            </h2>
-            <p className="text-lg text-green-800 dark:text-green-100 max-w-2xl">
-              View and manage your research center's contact information
-            </p>
-          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-green-900 dark:text-white">
+            <span className="bg-gradient-to-r from-green-400 to-green-200 bg-clip-text text-transparent dark:from-green-300 dark:to-green-100">
+              FarmSense
+            </span>{" "}
+            Research Division Details
+          </h2>
+          <p className="text-lg text-green-800 dark:text-green-100 max-w-2xl mx-auto mt-2">
+            View and manage your research division's contact information
+          </p>
         </motion.div>
 
-        <motion.table
+        {/* Card */}
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="w-full text-left table-auto"
+          className="bg-white dark:bg-[#1f2937] rounded-xl shadow border border-green-200 dark:border-green-700 p-6 sm:p-8"
         >
-          <thead className="bg-green-100 dark:bg-green-800 text-green-900 dark:text-green-100">
-            <tr>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Location</th>
-              <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Contact No</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-green-200 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20">
-              <td className="px-4 py-3 font-medium text-green-900 dark:text-white">
-                {researchCenter.name}
-              </td>
-              <td className="px-4 py-3 text-green-700 dark:text-green-300">
-                {researchCenter.location}
-              </td>
-              <td className="px-4 py-3 text-green-700 dark:text-green-300">
-                {researchCenter.email}
-              </td>
-              <td className="px-4 py-3 text-green-700 dark:text-green-300">
-                {researchCenter.contactNo}
-              </td>
-              <td className="px-4 py-3">
-                <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="flex items-center gap-1 border-green-600 text-green-700 dark:text-green-300 dark:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/30"
-                      onClick={() => setEditOpen(true)}
-                    >
-                      <Pencil className="w-4 h-4" />
-                      Edit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="rounded-lg">
-                    <DialogHeader>
-                      <DialogTitle className="text-green-900 dark:text-green-100">
-                        Edit Research Center Contact
-                      </DialogTitle>
-                      <DialogDescription className="text-green-700 dark:text-green-300">
-                        You can only update the email and contact number.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form
-                      onSubmit={handleEditSubmit}
-                      className="space-y-4 mt-4"
-                    >
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-green-900 dark:text-green-200">
-                          Email
-                        </label>
-                        <input
-                          name="email"
-                          type="email"
-                          value={editForm.email}
-                          onChange={handleEditChange}
-                          required
-                          className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-green-900 dark:text-green-200">
-                          Contact Number
-                        </label>
-                        <input
-                          name="contactNo"
-                          type="text"
-                          value={editForm.contactNo}
-                          onChange={handleEditChange}
-                          required
-                          className="w-full px-4 py-2 rounded-md border border-green-300 dark:border-green-600 bg-white dark:bg-[#222b3a] text-green-900 dark:text-green-100 focus:outline-none focus:ring-2 focus:ring-green-400"
-                        />
-                      </div>
-                      <div className="flex justify-end gap-4">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setEditOpen(false)}
-                          className="border-green-300 dark:border-green-600 text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/30"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="submit"
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          Save Changes
-                        </Button>
-                      </div>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </td>
-            </tr>
-          </tbody>
-        </motion.table>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Research Division Name (read-only) */}
+                <FormItem>
+                  <FormLabel className="text-green-800 dark:text-green-200">
+                    Research Division Name
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      value={researchCenter.name}
+                      disabled
+                      className="dark:bg-[#1f2937] dark:border-green-800 focus-visible:ring-green-500"
+                    />
+                  </FormControl>
+                </FormItem>
 
+                {/* Location (read-only) */}
+                <FormItem>
+                  <FormLabel className="text-green-800 dark:text-green-200">
+                    Location
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      value={researchCenter.location}
+                      disabled
+                      className="dark:bg-[#1f2937] dark:border-green-800 focus-visible:ring-green-500"
+                    />
+                  </FormControl>
+                </FormItem>
+
+                {/* Email (editable) */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-green-800 dark:text-green-200">
+                        Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter email"
+                          {...field}
+                          disabled={!isEditing}
+                          className="dark:bg-[#1f2937] dark:border-green-800 focus-visible:ring-green-500"
+                        />
+                      </FormControl>
+                      <FormMessage className="dark:text-red-400" />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Contact Number (editable) */}
+                <FormField
+                  control={form.control}
+                  name="contactNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-green-800 dark:text-green-200">
+                        Contact Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter contact number"
+                          {...field}
+                          disabled={!isEditing}
+                          className="dark:bg-[#1f2937] dark:border-green-800 focus-visible:ring-green-500"
+                        />
+                      </FormControl>
+                      <FormMessage className="dark:text-red-400" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 flex gap-4">
+                {!isEditing ? (
+                  <Button
+                    type="button"
+                    variant="default"
+                    size="lg"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800 transition-colors"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Edit Details
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      className="flex-1"
+                      onClick={() => {
+                        setIsEditing(false);
+                        form.reset({
+                          email: researchCenter.email,
+                          contactNo: researchCenter.contactNo,
+                        });
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="default"
+                      size="lg"
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800 transition-colors"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Saving..." : "Save Changes"}
+                    </Button>
+                  </>
+                )}
+              </div>
+            </form>
+          </Form>
+        </motion.div>
+
+        {/* Footer Text */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.6 }}
           className="text-center text-green-700 dark:text-green-100/70 text-sm mt-10"
         >
-          Research center details are managed by regional administrators
+          Research division details are managed by regional administrators
         </motion.p>
       </div>
     </div>
